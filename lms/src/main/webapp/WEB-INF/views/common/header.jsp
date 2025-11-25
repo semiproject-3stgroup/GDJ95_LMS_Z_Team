@@ -14,11 +14,11 @@
         <c:choose>
             <c:when test="${not empty loginUser}">
                 <span>
-                    ${loginUser.departmentName}
-                    /
-                    ${loginUser.userName}
-                    /
-                    ${loginUser.studentNo}
+					${loginUser.departmentId}
+					/
+					${loginUser.userName}
+					/
+					${loginUser.studentNo}
                 </span>
 
                 <a href="${pageContext.request.contextPath}/mypage">마이페이지</a>
