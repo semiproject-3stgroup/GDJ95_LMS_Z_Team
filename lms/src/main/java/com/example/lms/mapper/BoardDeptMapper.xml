@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.BoardDeptMapper">
+
+	<select id="selectBoardDeptListRowPerPage" parameterType="int" resultType="com.example.lms.dto.BoardDepartment">
+		SELECT post_Id postId, user_id userId, category, title, createdate, updatedate 
+		FROM board_department
+		WHERE department_id = #{departmentId}
+		LIMIT #{startRow}, #{rowPerPage}
+	</select>
+	
+	
+
+</mapper>
