@@ -89,25 +89,33 @@
 	
 
 			<div class="board-footer">
-	          
 				<div class="pagination">
-	          		
-	          
-	          
-	            
+				<c:if test="${currentPage>1}">
+	          			<a href="${pageContext.request.contextPath}/deptBoard?currentPage=${beginPage-1}">이전</a>
+	          		</c:if>
+
+	          		<c:forEach var="i" begin="${beginPage}" end="${endPage}">
+	          			<c:if test="${i!=currentPage}">
+	          				<a href="${pageContext.request.contextPath}/deptBoard?currentPage=${i}">${i}</a>
+	          			</c:if>
+	          			<c:if test="${i==currentPage}">
+	          				${i}
+	          			</c:if>       			
+	          		</c:forEach>
+	          		          				          			
+	          		<c:if test="${currentPage < lastPage}"> 
+	          		   	<a href="${pageContext.request.contextPath}/deptBoard?currentPage=${endPage+1}">다음</a>
+	            	</c:if>
+				
 				</div>
 			</div>
 		</section>
 		</main>
-
 	</div>
-
 	<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 		
 </body>
 <script>
 	
-
-
 </script>
 </html>

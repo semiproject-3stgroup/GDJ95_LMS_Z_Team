@@ -29,4 +29,12 @@ public class BoardDeptService {
 						
 		return boardDeptMapper.selectBoardDeptListRowPerPage(departmentId, startRow, rowPerPage);
 	}
+	
+	public int cntDeptBoardListPage(int departmentId, int rowPerPage) {
+		
+		return (boardDeptMapper.selectCountBoardDeptList(departmentId)+rowPerPage-1)/rowPerPage;
+	}
+	
+	
+	
 }

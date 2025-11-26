@@ -3,12 +3,21 @@
 <mapper namespace="com.example.lms.mapper.BoardDeptMapper">
 
 	<select id="selectBoardDeptListRowPerPage" parameterType="int" resultType="com.example.lms.dto.BoardDepartment">
-		SELECT post_Id postId, user_id userId, category, title, createdate, updatedate 
+		SELECT post_Id postId
+				, user_id userId
+				, category, title
+				, createdate
+				, updatedate 
 		FROM board_department
 		WHERE department_id = #{departmentId}
+		ORDER BY createdate DESC
 		LIMIT #{startRow}, #{rowPerPage}
 	</select>
 	
-	
+	<select id="selectCountBoardDeptList" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM board_department
+		WHERE department_id = #{departmentId}
+	</select>
 
 </mapper>
