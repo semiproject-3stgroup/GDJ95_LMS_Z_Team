@@ -17,14 +17,14 @@
 
     <div class="layout">
 
-        <!-- 🔹 왼쪽 사이드바: 이제 공통 파일 include -->
+        <!-- 왼쪽 사이드바 include -->
         <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
-        <%-- 또는 <jsp:include page="/WEB-INF/views/common/sidebar.jsp" /> 도 가능 --%>
 
-        <!-- 🔹 오른쪽 본문 -->
+        <!-- 오른쪽 본문 -->
         <main class="main-content">
             <h2>메인 페이지</h2>
 
+            <!-- 로그인/환영 박스 -->
             <div class="box">
                 <c:choose>
                     <c:when test="${not empty loginUser}">
@@ -52,6 +52,40 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <!-- 다가오는 학사 일정 박스 -->
+            <div class="box upcoming-box">
+                <h3 class="box-title">다가오는 학사 일정</h3>
+
+                <c:choose>
+                    <c:when test="${empty upcoming}">
+                        <p class="empty-text">등록된 다가오는 일정이 없습니다.</p>
+                    </c:when>
+                    <c:otherwise>
+                        <ul class="event-list">
+                            <c:forEach var="e" items="${upcoming}">
+                                <li class="event-item">
+                                    <div class="event-title">
+                                        ${e.eventName}
+                                    </div>
+                                    <div class="event-date">
+                                        ${e.eventFromdate}
+                                        <c:if test="${e.eventTodate != null}">
+                                            ~ ${e.eventTodate}
+                                        </c:if>
+                                    </div>
+                                    <c:if test="${not empty e.eventContext}">
+                                        <div class="event-context">
+                                            ${e.eventContext}
+                                        </div>
+                                    </c:if>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
         </main>
 
     </div>
