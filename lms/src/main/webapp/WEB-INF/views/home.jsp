@@ -17,29 +17,11 @@
 
     <div class="layout">
 
-        <!-- 왼쪽 사이드바 -->
-        <nav class="sidebar">
-            <div class="sidebar-title">메인</div>
-            <ul class="sidebar-menu">
-                <li>대시보드</li>
-            </ul>
+        <!-- 🔹 왼쪽 사이드바: 이제 공통 파일 include -->
+        <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
+        <%-- 또는 <jsp:include page="/WEB-INF/views/common/sidebar.jsp" /> 도 가능 --%>
 
-            <div class="sidebar-title" style="margin-top: 16px;">수업</div>
-            <ul class="sidebar-menu">
-                <li>공지사항</li>
-                <li>수강신청</li>
-                <li>학점조회</li>
-            </ul>
-
-            <div class="sidebar-title" style="margin-top: 16px;">관리</div>
-            <ul class="sidebar-menu">
-                <li>학과 관리</li>
-                <li>학과별 게시판</li>
-                <li>마이페이지</li>
-            </ul>
-        </nav>
-
-        <!-- 오른쪽 본문 -->
+        <!-- 🔹 오른쪽 본문 -->
         <main class="main-content">
             <h2>메인 페이지</h2>
 
