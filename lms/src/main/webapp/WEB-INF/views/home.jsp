@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -52,6 +53,48 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+            
+            <!--  공지사항 카드 -->
+			<div class="box notice-box" style="margin-bottom: 24px;">
+			    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+			        <h3 style="font-size: 18px; font-weight: 600; margin: 0;">공지사항</h3>
+			        <a href="${pageContext.request.contextPath}/notice/list"
+			           style="font-size: 14px; color: #4a8fff; text-decoration: none; font-weight: 500;">
+			            더보기
+			        </a>
+			    </div>
+			
+			    <c:choose>
+			        <c:when test="${empty recentNotices}">
+			            <p style="color: #666; font-size: 14px; margin: 0;">등록된 공지사항이 없습니다.</p>
+			        </c:when>
+			
+			        <c:otherwise>
+			            <ul style="list-style: none; padding: 0; margin: 0;">
+			                <c:forEach var="n" items="${recentNotices}">
+			                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+			
+			                        <a href="${pageContext.request.contextPath}/notice/detail?noticeId=${n.noticeId}"
+			                           style="text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
+			
+			                            <span style="font-size: 15px; color: #111; font-weight: 500;">
+			                                <c:if test="${n.pinnedYn == 'Y'}">
+			                                    <span style="color:#d14; font-weight:700; margin-right:6px;">[중요]</span>
+			                                </c:if>
+			                                ${n.title}
+			                            </span>
+			
+			                            <span style="font-size: 13px; color: #888;">
+			                                ${fn:substring(n.createdate, 0, 10)}
+			                            </span>
+			                        </a>
+			
+			                    </li>
+			                </c:forEach>
+			            </ul>
+			        </c:otherwise>
+			    </c:choose>
+			</div>
 
             <!-- 다가오는 학사 일정 박스 -->
             <div class="box upcoming-box">
