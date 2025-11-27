@@ -1,7 +1,5 @@
 package com.example.lms.controller;
 
-import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.lms.dto.User;
 import com.example.lms.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class LoginController {
 
@@ -33,7 +35,9 @@ public class LoginController {
             model.addAttribute("msg", "아이디 또는 비밀번호가 틀렸습니다.");
             return "login";
         }
-
+        
+        // 디버그 
+        log.debug("loginUser = {}", loginUser);
         // 로그인 성공 → 세션에 저장
         session.setAttribute("loginUser", loginUser);
 
