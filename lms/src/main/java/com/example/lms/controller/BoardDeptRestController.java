@@ -32,6 +32,7 @@ public class BoardDeptRestController {
 		if(lastPage<endPage) endPage = lastPage;
 				
 		Map<String, Object> map = new HashMap<>();
+		map.put("rowPerPage", rowPerPage);
 		map.put("currentPage", currentPage);
 		map.put("lastPage", lastPage);
 		map.put("beginPage", beginPage);
