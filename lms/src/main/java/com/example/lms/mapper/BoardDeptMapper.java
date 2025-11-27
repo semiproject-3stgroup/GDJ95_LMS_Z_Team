@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.lms.dto.BoardDepartment;
+import com.example.lms.dto.BoardDepartmentFile;
 
 @Mapper
 public interface BoardDeptMapper {
@@ -14,4 +15,8 @@ public interface BoardDeptMapper {
 	
 	// 학과 페이지 갯수
 	int selectCountBoardDeptList(int departmentId);
+	
+	// 학과 페이지 글추가
+	int insertBoardDept(BoardDepartment boardDept);
+	int insertBoardDeptFile(BoardDepartmentFile boardDeptFile);
 }
