@@ -11,7 +11,7 @@
 				, updatedate 
 		FROM board_department
 		WHERE department_id = #{departmentId}
-		ORDER BY createdate DESC
+		ORDER BY postId DESC
 		LIMIT #{startRow}, #{rowPerPage}
 	</select>
 	
@@ -44,7 +44,7 @@
 		WHERE b.post_id = #{postId}	
 	</select>
 	<select id="selectBoardDeptPostFileList" parameterType="int" resultType="com.example.lms.dto.BoardDepartmentFile">
-		SELECT file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
+		SELECT file_id fileId, file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
 		FROM board_department_file
 		WHERE post_id = #{postId}		 
 	</select>

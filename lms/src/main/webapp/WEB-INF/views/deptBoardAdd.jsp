@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +7,7 @@
 
     <!-- CSS 로딩 -->
     <link rel="stylesheet" href="/css/layout.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/common/header.jsp" %>
@@ -22,7 +22,7 @@
 	    <!-- 페이지 헤더 -->
 	    <section class="board-header">
 	      <div class="board-header-text">
-	        <h1 class="board-title">학과 게시판 글쓰기</h1>
+	        <h2 class="board-title">학과 게시판 글쓰기</h2>
 	        <p class="board-subtitle">학과 공지 및 안내 글을 작성합니다.</p>
 	      </div>
 	    </section>
@@ -70,10 +70,6 @@
 		
 		$('form').submit();
 	});
-	
-	$('#cancelBtn').click(()=>{
-		response.sendRedirect
-	})
 	
 </script>
 </html>

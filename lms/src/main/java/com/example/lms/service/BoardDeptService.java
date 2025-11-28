@@ -128,4 +128,9 @@ public class BoardDeptService {
 		}
 	}
 	
+	// 게시물 수정
+	public void modifyDeptBoardPost(int postId, String path) {
+		
+	}
+	
 }

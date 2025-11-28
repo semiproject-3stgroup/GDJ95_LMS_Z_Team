@@ -9,6 +9,7 @@
             user_id AS userId,
             login_id AS loginId,
             user_name AS userName,
+            department_id AS departmentId,
             role
         FROM users
         WHERE login_id = #{loginId}

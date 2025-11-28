@@ -28,4 +28,7 @@ public interface BoardDeptMapper {
 	// 학과 게시물 삭제
 	int deleteBoardDeptPost(int postId);
 	int deleteBoardDeptPostFile(int postId);
+	
+	// 학과 게시물 수정
+	
 }

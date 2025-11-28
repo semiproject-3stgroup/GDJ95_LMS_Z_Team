@@ -5,8 +5,10 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
+	
 	<!-- CSS 로딩 -->
     <link rel="stylesheet" href="/css/layout.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/common/header.jsp" %>
@@ -43,7 +45,7 @@
 				<form>	
 					<input type="hidden" name="postId" value="${one.bo.postId}">
 					
-					<button>수정</button>
+					<button type="button" id="modify">수정</button>
 					<button type="button" id="delete">삭제</button>
 				</form>
 			</c:if>										
@@ -55,9 +57,15 @@
 <script>
 	$('#delete').click(()=>{
 		if (confirm('삭제하시겠습니까?')) {
-			$('form').arrt('action', '${pageContext.request.contextPath}/deptBoardRemove');
+			$('form').attr('action', '${pageContext.request.contextPath}/deptBoardRemove');
 			$('form').submit();
 		}
 	});
+	
+	$('#modify').click(()=>{
+		$('form').attr('action', '${pageContext.request.contextPath}/deptBoardModify');
+		$('form').submit();
+	})
+	
 </script>
 </html>

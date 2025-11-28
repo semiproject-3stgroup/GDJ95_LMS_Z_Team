@@ -39,8 +39,7 @@ public class BoardDeptController {
 		
 		User user = (User)session.getAttribute("loginUser");
 		
-		Map<String, Object> one = boardDeptService.getDeptBoardPost(postId);
-				
+		Map<String, Object> one = boardDeptService.getDeptBoardPost(postId); // Map(제목,내용,카테고리,작성자,id) List(첨부파일)
 		log.debug(one+"");
 		
 		model.addAttribute("userId", user.getUserId());
@@ -60,6 +59,16 @@ public class BoardDeptController {
 		return "redirect:/deptBoard";
 	}
 	
+	// 학과게시판 글 수정 폼
+	@GetMapping("/deptBoardModify")
+	public String BoardDepartmentModify(Model model, int postId) {
+		
+		Map<String, Object> one = boardDeptService.getDeptBoardPost(postId); 
+		
+		model.addAttribute("one", one);
+		
+		return "deptBoardModify";
+	}
 	
 	// 학과게시판 글쓰기 폼
 	@GetMapping("/deptBoardAdd")
