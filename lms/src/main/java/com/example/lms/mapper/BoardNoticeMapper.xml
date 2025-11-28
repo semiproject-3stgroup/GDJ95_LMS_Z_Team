@@ -10,28 +10,106 @@
         n.title       AS title,
         n.content     AS content,
         n.pinned_yn   AS pinnedYn,
+        n.pin_start   AS pinStart,
+        n.pin_end     AS pinEnd,
         n.hit_count   AS hitCount,
         n.createdate  AS createdate,
         n.updatedate  AS updatedate,
         u.user_name   AS writerName
     </sql>
 
-    <!-- 1) 공지 목록 (전체 목록 화면용) -->
-    <select id="selectNoticeList"
-            resultType="com.example.lms.dto.BoardNotice">
-        SELECT
-            <include refid="noticeColumns" />
-        FROM board_notice n
-        JOIN users u
-          ON n.user_id = u.user_id
-        ORDER BY
-            n.pinned_yn DESC,   -- 상단 고정(Y) 먼저
-            n.createdate DESC   -- 최신순
-    </select>
+    <!-- 공지 등록 -->
+    <insert id="insertNotice" parameterType="com.example.lms.dto.BoardNotice"
+            useGeneratedKeys="true" keyProperty="noticeId" keyColumn="notice_id">
+        INSERT INTO board_notice (
+            user_id,
+            title,
+            content,
+            pinned_yn,
+            pin_start,
+            pin_end
+        )
+        VALUES (
+            #{userId},
+            #{title},
+            #{content},
+            #{pinnedYn},
+            #{pinStart},
+            #{pinEnd}
+        )
+    </insert>
 
-    <!-- 2) 공지 상세 -->
-    <select id="selectNoticeOne"
-            parameterType="long"
+
+    <!-- 조회수 증가 -->
+    <update id="updateNoticeHit" parameterType="long">
+        UPDATE board_notice
+        SET hit_count = hit_count + 1
+        WHERE notice_id = #{noticeId}
+    </update>
+    
+
+    <!-- 공지 목록  -->
+    <select id="selectNoticeList" parameterType="map"
+        resultType="com.example.lms.dto.BoardNotice">
+	    SELECT
+	        <include refid="noticeColumns" />
+	    FROM board_notice n
+	    JOIN users u
+	      ON n.user_id = u.user_id
+	    WHERE 1 = 1
+	    <if test="searchWord != null and searchWord != ''">
+		    <choose>
+		        <when test="searchType == 'title'">
+		            AND n.title LIKE CONCAT('%', #{searchWord}, '%')
+		        </when>
+		        <when test="searchType == 'content'">
+		            AND n.content LIKE CONCAT('%', #{searchWord}, '%')
+		        </when>
+		        <otherwise>
+		            AND (n.title LIKE CONCAT('%', #{searchWord}, '%')
+		             OR n.content LIKE CONCAT('%', #{searchWord}, '%'))
+		        </otherwise>
+		    </choose>
+		</if>
+	    ORDER BY
+	        CASE 
+	            WHEN n.pinned_yn = 'Y'
+	             AND (n.pin_start IS NULL OR n.pin_start &lt;= NOW())
+	             AND (n.pin_end   IS NULL OR n.pin_end   &gt;= NOW())
+	            THEN 0
+	            ELSE 1
+	        END,
+	        n.notice_id DESC
+	    LIMIT #{beginRow}, #{rowPerPage}
+	</select>
+
+
+    <!-- 전체 개수 -->
+    <select id="selectNoticeCount" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM board_notice n
+	    JOIN users u
+	      ON n.user_id = u.user_id
+	    WHERE 1 = 1
+	    <if test="searchWord != null and searchWord != ''">
+	        <choose>
+	            <when test="searchType == 'title'">
+	                AND n.title LIKE CONCAT('%', #{searchWord}, '%')
+	            </when>
+	            <when test="searchType == 'content'">
+	                AND n.content LIKE CONCAT('%', #{searchWord}, '%')
+	            </when>
+	            <otherwise>
+	                AND (n.title LIKE CONCAT('%', #{searchWord}, '%')
+	                 OR n.content LIKE CONCAT('%', #{searchWord}, '%'))
+	            </otherwise>
+	        </choose>
+	    </if>
+	</select>
+
+
+    <!-- 공지 상세 -->
+    <select id="selectNoticeOne" parameterType="long"
             resultType="com.example.lms.dto.BoardNotice">
         SELECT
             <include refid="noticeColumns" />
@@ -41,9 +119,9 @@
         WHERE n.notice_id = #{noticeId}
     </select>
 
-    <!-- 3) 메인 페이지용: 최신 공지 N건 -->
-    <select id="selectRecentNoticeList"
-            parameterType="int"
+
+    <!-- 메인 페이지용: 최신 공지 N건 -->
+    <select id="selectRecentNoticeList" parameterType="int"
             resultType="com.example.lms.dto.BoardNotice">
         SELECT
             <include refid="noticeColumns" />
@@ -51,9 +129,34 @@
         JOIN users u
           ON n.user_id = u.user_id
         ORDER BY
-            n.pinned_yn DESC,
+            CASE 
+                WHEN n.pinned_yn = 'Y'
+                 AND (n.pin_start IS NULL OR n.pin_start &lt;= NOW())
+                 AND (n.pin_end   IS NULL OR n.pin_end   &gt;= NOW())
+                THEN 0
+                ELSE 1
+            END,
             n.createdate DESC
         LIMIT #{limit}
     </select>
+    
+    <!-- 공지 수정 -->
+    <update id="updateNotice" parameterType="com.example.lms.dto.BoardNotice">
+    	UPDATE board_notice
+        SET
+            title      = #{title},
+            content    = #{content},
+            pinned_yn  = #{pinnedYn},
+            pin_start  = #{pinStart},
+            pin_end    = #{pinEnd},
+            updatedate = NOW()
+        WHERE notice_id = #{noticeId}
+    </update>
+    
+    <!-- 공지 삭제 -->
+    <delete id="deleteNotice" parameterType="long">
+        DELETE FROM board_notice
+        WHERE notice_id = #{noticeId}
+    </delete>
 
 </mapper>

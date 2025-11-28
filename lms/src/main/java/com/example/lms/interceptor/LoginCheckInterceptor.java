@@ -19,7 +19,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
 
-        // 1) 로그인 여부 체크
+        // 로그인 여부 체크
         if (session == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
@@ -32,16 +32,23 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 2) 권한(role) 체크
-        String role = loginUser.getRole();   // STUDENT / PROF / ADMIN 이라고 가정
+        // 권한(role) 체크
+        String role = loginUser.getRole();   // STUDENT / PROF / ADMIN
         String uri  = request.getRequestURI();
         String ctx  = request.getContextPath();
         
-        // 디버그 출력
         log.debug("Interceptor - uri = {}, role = {}", uri, role);
 
         // 관리자 전용 URL
         if (uri.startsWith(ctx + "/admin")) {
+            if (!"ADMIN".equals(role)) {
+                response.sendRedirect(ctx + "/access-denied");
+                return false;
+            }
+        }
+
+        // 공지 등록 접근 관리자만 허용 (/notice/add GET, POST 둘 다)
+        if (uri.startsWith(ctx + "/notice/add")) {
             if (!"ADMIN".equals(role)) {
                 response.sendRedirect(ctx + "/access-denied");
                 return false;
@@ -64,7 +71,6 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             }
         }
 
-        // 여기까지 성공
         return true;
     }
 }
