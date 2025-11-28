@@ -34,4 +34,30 @@
 		INTO board_department_file(post_id, file_name, origin_name, file_size, file_extension)
 		VALUES(#{postId}, #{fileName}, #{originName}, #{fileSize}, #{fileExtension})
 	</insert>
+	
+	<!-- 게시물 읽기 -->
+	<select id="selectBaordDeptPost" parameterType="int" resultType="map">		
+		SELECT b.post_id postId, b.user_id userId, b.title, b.category, b.content, b.createdate, b.updatedate, u.user_name userName
+		FROM board_department b
+		INNER JOIN users u
+		ON b.user_id = u.user_id
+		WHERE b.post_id = #{postId}	
+	</select>
+	<select id="selectBoardDeptPostFileList" parameterType="int" resultType="com.example.lms.dto.BoardDepartmentFile">
+		SELECT file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
+		FROM board_department_file
+		WHERE post_id = #{postId}		 
+	</select>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteBoardDeptPost" parameterType="int">
+		DELETE
+		FROM board_department
+		WHERE post_id = #{postId}	
+	</delete>
+	<delete id="deleteBoardDeptPostFile" parameterType="int">
+		DELETE
+		FROM board_department_file
+		WHERE post_id = #{postId}
+	</delete>
 </mapper>

@@ -1,6 +1,7 @@
 package com.example.lms.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,36 +14,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.lms.service.BoardDeptService;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
 import com.example.lms.dto.BoardDepartment;
 import com.example.lms.dto.BoardDepartmentForm;
+import com.example.lms.dto.User;
 
+@Slf4j
 @Controller
 public class BoardDeptController {
 	@Autowired
 	BoardDeptService boardDeptService;
-	
+
+	// 학과게시판 목록
 	@GetMapping("/deptBoard")
-	public String BoardDepartment(
-			Model model
-			, @RequestParam(defaultValue = "1") int currentPage
-			, @RequestParam(defaultValue = "10") int rowPerPage
-			, @RequestParam(defaultValue = "1") int departmentId) {
-		
-		List<BoardDepartment> list = boardDeptService.getDeptBoardList(currentPage, rowPerPage, departmentId);
-		int lastPage = boardDeptService.cntDeptBoardListPage(departmentId, rowPerPage);		
-		int beginPage = ((currentPage-1)/10)*10+1;
-		int endPage = beginPage + 9;
-		if(lastPage<endPage) endPage = lastPage;
-				
-		model.addAttribute("currentPage", currentPage);
-		model.addAttribute("lastPage", lastPage);
-		model.addAttribute("beginPage", beginPage);
-		model.addAttribute("endPage", endPage);
-		model.addAttribute("list", list);		
+	public String BoardDepartment() {
 		
 		return "deptBoard";
 	}
+	
+	// 학과게시판 글 상세
+	@GetMapping("/deptBoardOne")
+	public String BoardDepartmentOne(Model model, HttpSession session, int postId) {
+		
+		User user = (User)session.getAttribute("loginUser");
+		
+		Map<String, Object> one = boardDeptService.getDeptBoardPost(postId);
+				
+		log.debug(one+"");
+		
+		model.addAttribute("userId", user.getUserId());
+		model.addAttribute("one", one);
+		
+		return "deptBoardOne";
+	}
+	
+	// 학과게시판 글 삭제
+	@GetMapping("/deptBoardRemove")
+	public String BoardDepartmentRemove(HttpSession session, int postId) {
+						
+		String path = session.getServletContext().getRealPath("/upload/");
+				
+		boardDeptService.removeDeptBoardPost(postId, path);	
+				
+		return "redirect:/deptBoard";
+	}
+	
 	
 	// 학과게시판 글쓰기 폼
 	@GetMapping("/deptBoardAdd")

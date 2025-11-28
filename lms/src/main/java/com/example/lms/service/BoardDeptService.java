@@ -2,7 +2,9 @@ package com.example.lms.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.ibatis.annotations.Param;
@@ -79,8 +81,50 @@ public class BoardDeptService {
 					mf.transferTo(new File(path+fileName+"."+extension));
 				} catch (Exception e) {
 					throw new RuntimeException("학과 게시판 파일 업로드 실패!");
-				}
+				}								
 			}
+		}
+	}
+	
+	// 게시물 상세
+	public Map<String, Object> getDeptBoardPost(int postId) {
+				
+		Map<String, Object> bo = boardDeptMapper.selectBaordDeptPost(postId);
+		List<BoardDepartmentFile> fl = boardDeptMapper.selectBoardDeptPostFileList(postId);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("bo", bo);
+		map.put("fl", fl);
+		
+		log.debug(fl+"");
+		log.debug(bo+"");
+		
+		return map;
+	}
+
+	// 게시물 삭제
+	public void removeDeptBoardPost(int postId, String path) {
+		
+		List<BoardDepartmentFile> list = boardDeptMapper.selectBoardDeptPostFileList(postId);
+				
+		for(BoardDepartmentFile b : list) {
+			File file = new File(path + b.getFileName()+"."+b.getFileExtension());
+			
+			if(file.exists()) {
+				boolean deleted = file.delete();
+				
+				if(!deleted) {						
+					throw new RuntimeException("파일 삭제 실패: " + b.getOriginName());
+				}
+			} else {
+				log.debug("파일이 존재하지 않습니다:" + b.getOriginName());
+			}					
+		}		
+		
+		boardDeptMapper.deleteBoardDeptPostFile(postId);
+		int row = boardDeptMapper.deleteBoardDeptPost(postId);
+		if (row != 1) {
+			throw new RuntimeException("게시판 DB 삭제 실패:" + postId);
 		}
 	}
 	

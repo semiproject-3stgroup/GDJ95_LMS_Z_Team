@@ -19,27 +19,8 @@
 	   
 	<div class="layout">
 	    
-	    <!-- 왼쪽 사이드바 -->
-        <nav class="sidebar">
-            <div class="sidebar-title">메인</div>
-            <ul class="sidebar-menu">
-                <li>대시보드</li>
-            </ul>
-
-            <div class="sidebar-title" style="margin-top: 16px;">수업</div>
-            <ul class="sidebar-menu">
-                <li>공지사항</li>
-                <li>수강신청</li>
-                <li>학점조회</li>
-            </ul>
-
-            <div class="sidebar-title" style="margin-top: 16px;">관리</div>
-            <ul class="sidebar-menu">
-                <li>학과 관리</li>
-                <li>학과별 게시판</li>
-                <li>마이페이지</li>
-            </ul>
-        </nav>  
+	    <!-- 왼쪽 사이드바 include -->
+        <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
         
 	    <!-- 메인 콘텐츠 -->
 	    <main class="content">
@@ -52,7 +33,7 @@
 	        </div>
 	      </section>
 	
-	      <!-- 과제 리스트 카드 -->
+	      <!-- -->
 	      <section class="board-body">
 	      
 	      	<div>
@@ -120,7 +101,9 @@
 				<tr>
 					<td>\${item.postId}</td>
           			<td>\${item.category}</td>
-          			<td>\${item.title}</td>
+          			<td>
+          				<a href="${pageContext.request.contextPath}/deptBoardOne?postId=\${item.postId}">\${item.title}</a>
+          			</td>
           			<td>\${item.userId}</td>
           			<td>\${item.createdate}</td>
           			<td>0</td>

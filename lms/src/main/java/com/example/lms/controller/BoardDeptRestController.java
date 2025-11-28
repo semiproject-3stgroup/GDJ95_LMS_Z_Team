@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.lms.dto.BoardDepartment;
+import com.example.lms.dto.User;
 import com.example.lms.service.BoardDeptService;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +26,10 @@ public class BoardDeptRestController {
 	public Map<String, Object> BoardDepartment(
 			@RequestParam(defaultValue = "1") int currentPage
 			, @RequestParam(defaultValue = "10") int rowPerPage
-			, @RequestParam(defaultValue = "1") int departmentId) {
+			, HttpSession session) {
+		
+		User user = (User)session.getAttribute("loginUser");
+		int departmentId = user.getDepartmentId();
 		
 		List<BoardDepartment> list = boardBeptService.getDeptBoardList(currentPage, rowPerPage, departmentId);
 		int lastPage = boardBeptService.cntDeptBoardListPage(departmentId, rowPerPage);		
