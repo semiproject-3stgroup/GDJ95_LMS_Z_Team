@@ -62,7 +62,7 @@ public class BoardQnaController {
         model.addAttribute("searchKeyword", searchKeyword);
         model.addAttribute("myCourses", myCourses);
 
-        return "qnaList"; // JSP 설정 가정
+        return "qnaList";
     }
 
     @GetMapping("/one/{courseId}/{postId}")
@@ -88,7 +88,7 @@ public class BoardQnaController {
         // 현재 로그인한 사용자의 ID를 JSP로 전달 (수정/삭제 버튼 표시를 위함)
         model.addAttribute("currentUserId", loginUser.getUserId());
 
-        return "qnaOne"; // JSP 설정 가정
+        return "qnaOne";
     }
     
     @GetMapping("/writeForm/{courseId}")
@@ -107,7 +107,7 @@ public class BoardQnaController {
         // 글쓰기 폼에서 바인딩할 빈 DTO 객체 추가
         model.addAttribute("boardQnaWriteRequest", new BoardQnaWriteRequest()); 
         
-        return "qnaWrite"; // JSP 설정 가정
+        return "qnaWrite"; 
     }
 
     @PostMapping("/write/{courseId}")
@@ -162,12 +162,9 @@ public class BoardQnaController {
         model.addAttribute("currentUserId", loginUser.getUserId());
         model.addAttribute("myCourses", myCourses);
 
-        return "qnaModify"; // qnaModify.jsp 설정 가정
+        return "qnaModify";
     }
 
-    /**
-     * ✅ [추가] QnA 게시글 수정 처리 (POST)
-     */
     @PostMapping("/modify/{courseId}/{postId}")
     public String qnaModify(@PathVariable("courseId") Long courseId,
                              @PathVariable("postId") Long postId,
@@ -195,9 +192,6 @@ public class BoardQnaController {
         }
     }
 
-    /**
-     * ✅ [추가] QnA 게시글 삭제 처리 (POST)
-     */
     @PostMapping("/delete/{courseId}/{postId}")
     public String qnaDelete(@PathVariable("courseId") Long courseId,
                             @PathVariable("postId") Long postId,

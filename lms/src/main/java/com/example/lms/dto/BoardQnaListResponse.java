@@ -13,4 +13,5 @@ public class BoardQnaListResponse {
     private int hitCount;
     private int commentCount;
     private String status;
+    
 }

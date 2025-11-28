@@ -4,14 +4,12 @@
 
     <select id="selectBoardQnaList" resultType="com.example.lms.dto.BoardQna">
         SELECT
-            bq.post_id AS postId,
-            bq.course_id,
+            bq.post_id AS postId,         bq.course_id,
             bq.user_id,
-            u.user_name AS userName,
             bq.title,
-            bq.hit_count AS hitCount,
-            bq.createdate,
-            (SELECT COUNT(*) FROM board_qna_comment bqc WHERE bqc.post_id = bq.post_id) AS commentCount
+            bq.content, 
+            bq.hit_count AS hitCount,     bq.createdate,
+            u.user_name AS userName,      (SELECT COUNT(*) FROM board_qna_comment bqc WHERE bqc.post_id = bq.post_id) AS commentCount
         FROM
             board_qna bq
         JOIN
@@ -26,10 +24,9 @@
                 )
             </if>
         ORDER BY
-            bq.post_id DESC
-        LIMIT #{limit} OFFSET #{offset}
+            bq.createdate DESC
     </select>
-
+    
     <select id="getBoardQnaCount" resultType="int">
         SELECT
             COUNT(*)
@@ -37,7 +34,6 @@
             board_qna bq
         WHERE
             bq.course_id = #{courseId}
-        
             <if test="searchKeyword != null and searchKeyword != ''">
                 AND (
                     bq.title LIKE CONCAT('%', #{searchKeyword}, '%')
@@ -45,10 +41,29 @@
                 )
             </if>
     </select>
-
+    
+    <select id="findQnaListByCourseId" resultType="com.example.lms.dto.BoardQnaListResponse">
+        SELECT
+            bq.post_id AS postId,
+            bq.course_id,
+            bq.title,
+            bq.hit_count AS hitCount,
+            bq.createdate,
+            u.user_name AS userName,
+            (SELECT COUNT(*) FROM board_qna_comment bqc WHERE bqc.post_id = bq.post_id) AS commentCount
+        FROM
+            board_qna bq
+        JOIN
+            users u ON bq.user_id = u.user_id
+        WHERE
+            bq.course_id = #{courseId}
+        ORDER BY
+            bq.createdate DESC
+    </select>
+    
     <select id="selectBoardQnaDetail" resultType="com.example.lms.dto.BoardQna">
         SELECT
-            bq.post_id,
+            bq.post_id AS postId,
             bq.course_id,
             bq.user_id,
             bq.title,
@@ -87,15 +102,16 @@
             updatedate = NOW()
         WHERE
             post_id = #{postId}
-            AND user_id = #{userId} 
     </update>
 
     <delete id="deleteBoardQna" parameterType="Long">
         DELETE FROM board_qna
         WHERE post_id = #{postId}
-        </delete>
-    
-    <select id="findQnaListByCourseId" resultType="com.example.lms.dto.BoardQnaListResponse">
-        SELECT * FROM board_qna WHERE course_id = #{courseId}
-    </select>
+    </delete>
+
+    <update id="updateHitCount" parameterType="Long">
+        UPDATE board_qna
+        SET hit_count = hit_count + 1
+        WHERE post_id = #{postId}
+    </update>
 </mapper>

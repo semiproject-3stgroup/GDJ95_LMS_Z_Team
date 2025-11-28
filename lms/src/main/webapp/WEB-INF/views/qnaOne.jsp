@@ -6,7 +6,6 @@
     <meta charset="UTF-8" />
     <title>LMS &gt; 질문 게시판 &gt; 상세</title>
     <style>
-        /* CSS는 HTML 파일과 동일하게 유지됩니다. */
         *{margin:0;padding:0;box-sizing:border-box;}
         body{
             font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -39,7 +38,6 @@
         .nav-item.active .nav-dot{background:#bbf7d0;}
         .content{flex:1;padding:24px 32px 32px;display:flex;flex-direction:column;gap:16px;}
 
-        /* 페이지 전용 */
         .breadcrumb{font-size:13px;color:#9ca3af;}
         .page-title-lg{font-size:20px;font-weight:600;margin-top:4px;}
         .page-subtitle{font-size:14px;margin-top:2px;color:#6b7280;}
@@ -51,8 +49,7 @@
             padding:24px 28px;
             box-shadow:0 1px 3px rgba(15,23,42,0.06);
         }
-        
-        /* 상세 페이지 스타일 추가 */
+
         .detail-header{
             padding-bottom:15px;
             border-bottom:1px solid #e5e7eb;
@@ -75,7 +72,7 @@
             padding: 20px 0;
             font-size:16px;
             line-height:1.6;
-            white-space: pre-wrap; /* 줄바꿈 유지 */
+            white-space: pre-wrap;
         }
         
         .btn-row{
@@ -204,8 +201,6 @@
                                 목록
                             </a>
 
-                            <%-- qnaPost.userId: DB에서 가져온 게시글 작성자 ID --%>
-                            <%-- currentUserId: Controller에서 Model에 담아준 현재 로그인 사용자 ID --%>
                             <c:if test="${qnaPost.userId == currentUserId}">
                                 <a href="${pageContext.request.contextPath}/qna/modifyForm/${courseId}/${qnaPost.postId}" class="btn-sm btn-primary">수정</a>
                                 
@@ -216,7 +211,6 @@
                         </div>
                     </section>
 
-                    <%-- TODO: 댓글 목록 및 작성 영역 구현 --%>
                 </c:if>
             </main>
         </div>

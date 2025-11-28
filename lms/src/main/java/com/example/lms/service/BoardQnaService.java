@@ -44,32 +44,24 @@ public class BoardQnaService {
         return qnaList;
     }
 
+    // 이 메서드가 BoardQnaMapper.xml에 매핑될 쿼리가 없어 오류가 발생했습니다.
     public int getBoardQnaCount(Long courseId, String searchKeyword) {
         return boardQnaMapper.getBoardQnaCount(courseId, searchKeyword);
     }
-    
-    /**
-     * QnA 게시글을 저장하는 메서드 (추가된 기능)
-     * @param requestDto 게시글 작성 요청 DTO
-     */
+
     @Transactional
     public void saveQnaPost(BoardQnaWriteRequest requestDto) {
-        // BoardQnaWriteRequest DTO를 Mapper로 전달. 
-        // Mapper.xml의 <insert id="saveQnaPost">가 이 요청을 처리합니다.
         boardQnaMapper.saveQnaPost(requestDto); 
     }
 
-    /**
-     * ✅ [수정] 게시글 상세 조회 및 조회수 증가, 날짜 포맷팅 처리
-     */
     @Transactional
     public BoardQna getBoardQnaDetail(Long postId) {
         // 1. 게시글 상세 정보 조회
         BoardQna qna = boardQnaMapper.selectBoardQnaDetail(postId);
         
         if (qna != null) {
-            // 2. 조회수 증가 (실제 구현 필요: mapper에 updateBoardQnaHitCount(postId) 호출 필요)
-            // boardQnaMapper.incrementHitCount(postId); 
+            // 2. 조회수 증가 (BoardQnaMapper.xml의 updateHitCount ID를 호출)
+            boardQnaMapper.updateHitCount(postId); 
             
             // 3. 날짜 포맷팅 (상세 페이지는 시/분까지 포함)
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -86,23 +78,13 @@ public class BoardQnaService {
         
         return qna;
     }
-    
-    /**
-     * ✅ [추가] 게시글 수정 처리
-     * @param qna 수정 데이터 (postId, userId, title, content 포함)
-     * @return 수정된 행의 수
-     */
+
     @Transactional
     public int updateBoardQna(BoardQna qna) {
         // Mapper.xml에서 postId와 userId를 모두 조건으로 사용하여 본인 글만 수정되도록 보안 적용
         return boardQnaMapper.updateBoardQna(qna);
     }
-    
-    /**
-     * ✅ [추가] 게시글 삭제 처리
-     * @param postId 삭제할 게시글 ID
-     * @return 삭제된 행의 수
-     */
+
     @Transactional
     public int deleteBoardQna(Long postId) {
         // Mapper는 postId만 받아서 삭제 (Controller에서 이미 작성자 권한 검증 완료)

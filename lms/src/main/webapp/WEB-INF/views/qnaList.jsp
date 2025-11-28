@@ -8,7 +8,6 @@
   <meta charset="UTF-8" />
   <title>LMS &gt; 질문 게시판</title>
   <style>
-    /* CSS는 생략 */
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -249,11 +248,9 @@
 
         <div class="pagination">
           <c:set var="basePath" value="${pageContext.request.contextPath}/qna/list/${currentCourseId}" />
-          <%-- 검색 키워드가 있으면 URL에 추가할 쿼리 문자열을 준비 --%>
           <c:set var="searchQuery" value="${not empty searchKeyword ? '&searchKeyword=' : ''}" />
           <c:set var="searchQuery" value="${searchQuery}${searchKeyword}" />
 
-          <%-- 🚨 첫 페이지 (<<) --%>
           <c:choose>
               <c:when test="${currentPage > 1}">
                   <a href="${basePath}?page=1${searchQuery}" class="page-btn">&laquo;</a>
@@ -263,7 +260,6 @@
               </c:otherwise>
           </c:choose>
 
-          <%-- 🚨 이전 페이지 블록 (<) --%>
           <c:choose>
               <c:when test="${startPage > 1}">
                   <a href="${basePath}?page=${startPage - 1}${searchQuery}" class="page-btn">&lsaquo;</a>
@@ -273,7 +269,6 @@
               </c:otherwise>
           </c:choose>
 
-          <%-- 🚨 페이지 번호 출력 --%>
           <c:forEach begin="${startPage}" end="${endPage}" var="p">
               <c:choose>
                   <c:when test="${p eq currentPage}">
@@ -285,7 +280,6 @@
               </c:choose>
           </c:forEach>
 
-          <%-- 🚨 다음 페이지 블록 (>) --%>
           <c:choose>
               <c:when test="${endPage < totalPages}">
                   <a href="${basePath}?page=${endPage + 1}${searchQuery}" class="page-btn">&rsaquo;</a>
@@ -294,8 +288,7 @@
                   <button class="page-btn" disabled>&rsaquo;</button>
               </c:otherwise>
           </c:choose>
-          
-          <%-- 🚨 마지막 페이지 (>>) --%>
+
           <c:choose>
               <c:when test="${currentPage < totalPages}">
                   <a href="${basePath}?page=${totalPages}${searchQuery}" class="page-btn">&raquo;</a>
