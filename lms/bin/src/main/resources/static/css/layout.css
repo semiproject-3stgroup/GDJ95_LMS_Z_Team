@@ -1,0 +1,121 @@
+/* 전체 기본 레이아웃 공통 설정 */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background-color: #f3f6fb;
+}
+
+/* 최상단 헤더 영역 */
+.site-header {
+    height: 60px;
+    background-color: #0f172a; /* 나중에 바꿔도 됨 */
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+/* 왼쪽 로고 + 타이틀 */
+.site-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.site-logo {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background-color: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.site-title-main {
+    font-size: 18px;
+    font-weight: 600;
+    margin-right: 6px;
+}
+
+.site-title-sub {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* 오른쪽 사용자 정보 영역 */
+.site-header-right {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.site-header-right a {
+    color: #e5e7eb;
+    text-decoration: none;
+}
+
+.site-header-right a:hover {
+    text-decoration: underline;
+}
+
+/* 메인 레이아웃 기본 (왼쪽 사이드바 + 오른쪽 본문) */
+.layout {
+    display: flex;
+    min-height: calc(100vh - 100px); /* 헤더 + 푸터 제외 높이 */
+}
+
+/* 사이드바 (지금은 간단한 틀만) */
+.sidebar {
+    width: 220px;
+    background-color: #020617;
+    color: #e5e7eb;
+    padding: 20px 16px;
+    box-sizing: border-box;
+}
+
+.sidebar-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.sidebar-menu li:hover {
+    background-color: #111827;
+}
+
+/* 오른쪽 메인 콘텐츠 영역 */
+.main-content {
+    flex: 1;
+    padding: 24px 32px;
+    box-sizing: border-box;
+}
+
+/* 푸터 */
+.site-footer {
+    height: 40px;
+    background-color: #020617;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
