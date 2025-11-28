@@ -14,4 +14,5 @@ public class BoardDepartment {
 	private String file;
 	private String createdate;
 	private String updatedate;
+	private String writerName;
 }
