@@ -158,5 +158,11 @@
         DELETE FROM board_notice
         WHERE notice_id = #{noticeId}
     </delete>
+	
+	<!-- BoardNoticeFileMapper.xml -->
+	<delete id="deleteNoticeFile" parameterType="long">
+	    DELETE FROM board_notice_file
+	    WHERE file_id = #{fileId}
+	</delete>
 
 </mapper>

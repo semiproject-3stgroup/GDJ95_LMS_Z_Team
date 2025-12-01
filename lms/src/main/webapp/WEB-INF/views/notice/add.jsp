@@ -25,7 +25,7 @@
             <h2 style="margin-top: 0; margin-bottom: 16px;">공지사항 등록</h2>
 
             <div class="box">
-                <form action="${pageContext.request.contextPath}/notice/add" method="post">
+                <form action="${pageContext.request.contextPath}/notice/add" method="post" enctype="multipart/form-data">
 
                     <!-- 제목 -->
                     <div style="margin-bottom: 16px;">
@@ -41,6 +41,29 @@
                                   style="width: 100%; max-width: 600px; padding: 8px 10px; box-sizing: border-box; resize: vertical;"></textarea>
                     </div>
 
+                    <!-- 첨부파일 (드래그&드롭) -->
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; font-weight:600; margin-bottom:6px;">
+                            첨부파일
+                        </label>
+
+                        <%-- 실제 파일 인풋(숨김) --%>
+                        <input type="file" id="files" name="files" multiple style="display:none;">
+
+                        <%-- 드래그&드롭 존 --%>
+                        <div id="dropZone" class="file-dropzone">
+                            여기로 파일을 드래그 하거나<br>
+                            <span class="file-dropzone-click">클릭해서 선택</span>
+                        </div>
+
+                        <%-- 선택된 파일 목록 --%>
+                        <ul id="fileList" class="file-list"></ul>
+
+                        <div style="font-size:12px; color:#6b7280; margin-top:4px;">
+                            * 여러 개 파일을 한 번에 선택할 수 있어요.
+                        </div>
+                    </div>
+                    
                     <!-- 상단 고정 여부 -->
                     <div style="margin-bottom: 16px;">
                         <span style="display:block; font-weight:600; margin-bottom:6px;">상단 고정</span>
@@ -100,10 +123,71 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            // 상단 고정 라디오 이벤트
             document.querySelectorAll('input[name="pinnedYn"]').forEach(radio => {
                 radio.addEventListener("change", togglePinPeriod);
             });
             togglePinPeriod(); // 초기 상태 한 번 반영
+
+            // ====== 파일 드래그&드롭 설정 ======
+            const dropZone = document.getElementById("dropZone");
+            const fileInput = document.getElementById("files");
+            const fileList = document.getElementById("fileList");
+
+            if (dropZone && fileInput) {
+
+                // 파일 목록 출력
+                const updateFileList = (files) => {
+                    fileList.innerHTML = "";
+                    for (let i = 0; i < files.length; i++) {
+                        const li = document.createElement("li");
+                        const file = files[i];
+                        const sizeText = file.size ? ` (${file.size} byte)` : "";
+                        li.textContent = file.name + sizeText;
+                        fileList.appendChild(li);
+                    }
+                };
+
+                // 클릭하면 파일 선택창
+                dropZone.addEventListener("click", () => {
+                    fileInput.click();
+                });
+
+                // input으로 고른 경우
+                fileInput.addEventListener("change", () => {
+                    updateFileList(fileInput.files);
+                });
+
+                // 드래그 올라왔을 때
+                dropZone.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add("dragover");
+                });
+
+                // 드래그 나갔을 때
+                dropZone.addEventListener("dragleave", (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove("dragover");
+                });
+
+                // 드롭됐을 때
+                dropZone.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove("dragover");
+
+                    const files = e.dataTransfer.files;
+                    if (!files || files.length === 0) return;
+
+                    // FileList는 읽기 전용이라 DataTransfer 사용
+                    const dt = new DataTransfer();
+                    for (let i = 0; i < files.length; i++) {
+                        dt.items.add(files[i]);
+                    }
+                    fileInput.files = dt.files;
+
+                    updateFileList(fileInput.files);
+                });
+            }
         });
     </script>
 
