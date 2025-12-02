@@ -37,7 +37,7 @@
 		    카테고리
 	        <div class="form-field">
 	          <select name="category" id="category" class="form-select">
-	            <option selected>선택하세요</option>
+	            <option selected disabled hidden>선택하세요</option>
 	            <option>공지</option>
 	            <option>질문</option>
 	            <option>기타</option>

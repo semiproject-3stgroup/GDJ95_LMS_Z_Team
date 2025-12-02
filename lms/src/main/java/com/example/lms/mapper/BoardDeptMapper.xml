@@ -60,4 +60,25 @@
 		FROM board_department_file
 		WHERE post_id = #{postId}
 	</delete>
+	
+	
+	<select id="selectBoardDeptPostFile" parameterType="int" resultType="com.example.lms.dto.BoardDepartmentFile">
+		SELECT file_id fileId, file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
+		FROM board_department_file
+		WHERE file_id = #{fileId}	
+	</select>
+	
+	<update id="updateBaordDeptPost" parameterType="com.example.lms.dto.BoardDepartment">
+		UPDATE board_department 
+		SET updatedate = now()
+			<if test="title != null and title != ''">, title=#{title}</if>
+			<if test="category != null and category!= ''">, category=#{category}</if>
+			<if test="content != null and content!= ''">, content=#{content}</if>
+		WHERE post_id=#{postId}		
+	</update>
+	<delete id="deleteBoardDeptUploadedFile" parameterType="int">
+		DELETE
+		FROM board_department_file
+		WHERE file_id = #{fileId}
+	</delete>
 </mapper>

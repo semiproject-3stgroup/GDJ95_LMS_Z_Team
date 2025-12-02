@@ -58,7 +58,7 @@ public class BoardDeptController {
 				
 		return "redirect:/deptBoard";
 	}
-	
+			
 	// 학과게시판 글 수정 폼
 	@GetMapping("/deptBoardModify")
 	public String BoardDepartmentModify(Model model, int postId) {
@@ -68,6 +68,25 @@ public class BoardDeptController {
 		model.addAttribute("one", one);
 		
 		return "deptBoardModify";
+	}
+	
+	// 학과게시판 글 수정 액션
+	@PostMapping("/deptBoardModify")
+	public String BoardDepartmentModify(BoardDepartment boardDepartment
+							, @RequestParam(required=false) List<String> uploadedFileIds
+							, @RequestParam(required=false) List<String> uploadedFileNames
+							, @RequestParam(required=false) List<Integer> deletedFileIds
+							, HttpSession session) {
+		
+		log.debug("=============================="+deletedFileIds+"deletedFileIds");
+		log.debug("=============================="+boardDepartment+"boardDepartment");
+		String path = session.getServletContext().getRealPath("/upload/");
+		if(deletedFileIds!=null) {
+			deletedFileIds.forEach(i->boardDeptService.removeDeptBoardUploadedFile(i, path)); // 게시물 수정(첨부파일 삭제)
+		}
+		boardDeptService.saveDeptBoardFile(boardDepartment, uploadedFileIds, uploadedFileNames, path); // 게시물 수정(첨부파일 추가 및 DB 등록)
+		
+		return "redirect:/deptBoardOne?postId="+boardDepartment.getPostId();
 	}
 	
 	// 학과게시판 글쓰기 폼

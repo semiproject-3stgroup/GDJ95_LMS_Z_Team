@@ -12,8 +12,10 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 
@@ -45,7 +47,38 @@ public class BoardDeptRestController {
 		map.put("endPage", endPage);
 		map.put("list", list);		
 		
-		return map;
-			
+		return map;			
 	}
+	
+	@PostMapping("/rest/uploadFile")
+	public Map<String, Object> BoardFileTemp(
+				@RequestParam("uploadFile") MultipartFile file
+				, HttpSession session) {
+		
+		String path = session.getServletContext().getRealPath("/upload/");
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		String tempFileId = boardBeptService.saveTempFile(file, path);
+		
+		result.put("success", true);
+		result.put("tempFileId", tempFileId);
+		
+		return result;
+	}
+	
+	@PostMapping("/rest/deleteFile")
+	public Map<String, Object> deleteTempFile(
+				@RequestParam("tempFileId") String tempFileId
+				, HttpSession session) {
+		
+		String path = session.getServletContext().getRealPath("/upload/");
+		Map<String, Object> result = new HashMap<>();
+		
+		boardBeptService.deleteTempFile(tempFileId, path);
+		
+		result.put("success", true);
+		return result;
+	}
+	
 }

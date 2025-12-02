@@ -30,5 +30,7 @@ public interface BoardDeptMapper {
 	int deleteBoardDeptPostFile(int postId);
 	
 	// 학과 게시물 수정
-	
+	BoardDepartmentFile selectBoardDeptPostFile(int fileId);
+	int updateBaordDeptPost(BoardDepartment boardDept);
+	int deleteBoardDeptUploadedFile(int fileId);
 }

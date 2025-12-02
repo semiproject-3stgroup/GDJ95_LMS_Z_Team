@@ -128,9 +128,98 @@ public class BoardDeptService {
 		}
 	}
 	
-	// 게시물 수정
-	public void modifyDeptBoardPost(int postId, String path) {
+	// 게시물 수정(첨부파일 삭제)
+	public void removeDeptBoardUploadedFile(int fileId, String path) {
 		
+		BoardDepartmentFile bf = boardDeptMapper.selectBoardDeptPostFile(fileId);
+		File file = new File(path + bf.getFileName()+"."+bf.getFileExtension());
+		
+		if(file.exists()) {
+			boolean deleted = file.delete(); 
+			
+			if(!deleted) {
+				log.debug("파일 삭제 실패");
+			}
+			
+			log.debug("파일 삭제");
+			
+		} else {
+			log.debug("파일이 존재하지 않습니다");
+		}
+		
+		int row1 = boardDeptMapper.deleteBoardDeptUploadedFile(fileId);
+		if(row1!=1) {
+			throw new RuntimeException("게시판 DB 삭제 실패:" + fileId);
+		} else {
+			log.debug("게시판 파일 DB 삭제:" + fileId);
+		}			
 	}
 	
+	// 게시물 수정(첨부파일 추가)
+	public void saveDeptBoardFile(BoardDepartment boardDepartment, List<String> uploadedFileIds, List<String> uploadedFileNames, String path) {
+				
+		int row1 = boardDeptMapper.updateBaordDeptPost(boardDepartment);
+		if(row1 != 1) {
+			throw new RuntimeException("학과 게시판 글 수정 실패!");
+		}		
+		if(uploadedFileIds==null) return;
+		for(int i=0; i<uploadedFileIds.size(); i++) {
+			String fileName = uploadedFileIds.get(i);
+			int idx = uploadedFileNames.get(i).lastIndexOf(".");
+			String originName = uploadedFileNames.get(i).substring(0, idx);
+			String extension = uploadedFileNames.get(i).substring(idx+1);
+			
+			
+			File tempFile = new File(path+"temp/"+fileName);
+			BoardDepartmentFile boardDepartmentFile = new BoardDepartmentFile();
+			boardDepartmentFile.setPostId(boardDepartment.getPostId());
+			boardDepartmentFile.setFileName(fileName);
+			boardDepartmentFile.setOriginName(originName);
+			boardDepartmentFile.setFileExtension(extension);
+			boardDepartmentFile.setFileSize(tempFile.length());
+			
+			int row2 = boardDeptMapper.insertBoardDeptFile(boardDepartmentFile);
+			
+			if(row2!=1) {
+				throw new RuntimeException("학과 게시판 파일 DB 업로드 실패!");
+			}
+									
+			File file = new File(path + fileName + "." + extension);
+			
+			try {
+				tempFile.renameTo(file);
+			} catch (Exception e) {
+				throw new RuntimeException("파일 전환 실패");
+			}			
+		}							
+	}		
+	
+	// 파일 임시저장
+	public String saveTempFile(MultipartFile file, String path) {
+		
+		String tempFileId = UUID.randomUUID().toString().replace("-", "");				
+		
+		try {
+			file.transferTo(new File(path + "temp/" + tempFileId));
+		} catch(Exception e) {
+			throw new RuntimeException("파일 임시저장 실패!");
+		}
+						
+		return tempFileId;
+	}
+	
+	// 임시파일 삭제
+	public void deleteTempFile(String tempFileId, String path) {
+		File file = new File(path + "temp/" + tempFileId);
+		
+		if(file.exists()) {
+			boolean deleted = file.delete();
+			
+			if(!deleted) {
+				log.debug("임시파일 삭제 실패");
+			}
+		} else {
+			log.debug("임시파일이 존재하지 않습니다");
+		}
+	}	
 }
