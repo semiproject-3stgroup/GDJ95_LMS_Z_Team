@@ -123,4 +123,68 @@
           AND password = #{currentPassword}
     </update>
 
+	<!-- 회원가입 -->
+    <insert id="insertUser" parameterType="com.example.lms.dto.User">
+        INSERT INTO users (
+            login_id,
+            password,
+            role,
+            student_no,
+            employee_no,
+            user_name,
+            gender,
+            user_grade,
+            phone,
+            email,
+            zip_code,
+            address1,
+            address2,
+            status,
+            department_id
+        ) VALUES (
+            #{loginId},
+            #{password},
+            #{role},
+            #{studentNo},
+            #{employeeNo},
+            #{userName},
+            #{gender},
+            #{userGrade},
+            #{phone},
+            #{email},
+            #{zipCode},
+            #{address1},
+            #{address2},
+            #{status},
+            #{departmentId}
+        )
+    </insert>
+    
+    <!-- 아이디 찾기 -->
+    <select id="findLoginIdByNameAndEmail"
+            resultType="string">
+        SELECT login_id
+        FROM users
+        WHERE user_name = #{userName}
+          AND email = #{email}
+    </select>
+    
+    <!-- 비밀번호 찾기: 사용자 존재 여부 확인 -->
+    <select id="findUserIdForPasswordReset"
+            resultType="java.lang.Integer">
+        SELECT user_id
+        FROM users
+        WHERE login_id = #{loginId}
+          AND user_name = #{userName}
+          AND email = #{email}
+    </select>
+
+    <!-- 비밀번호 업데이트 -->
+    <update id="updatePassword">
+        UPDATE users
+        SET password = #{password}
+        WHERE login_id = #{loginId}
+    </update>
+    
+    
 </mapper>

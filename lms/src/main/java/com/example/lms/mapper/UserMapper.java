@@ -22,4 +22,22 @@ public interface UserMapper {
             @Param("currentPassword") String currentPassword,
             @Param("newPassword") String newPassword
     );
+    
+    // 회원가입
+    int insertUser(User user);
+    
+    // 아이디 찾기용
+    String findLoginIdByNameAndEmail(@Param("userName") String userName,
+                                     @Param("email") String email);
+    
+    // 비밀번호 찾기용: 존재 여부 확인
+    Integer findUserIdForPasswordReset(@Param("loginId") String loginId,
+                                       @Param("userName") String userName,
+                                       @Param("email") String email);
+
+    // 비밀번호 업데이트
+    int updatePassword(@Param("loginId") String loginId,
+                       @Param("password") String password);
+    
+    
 }

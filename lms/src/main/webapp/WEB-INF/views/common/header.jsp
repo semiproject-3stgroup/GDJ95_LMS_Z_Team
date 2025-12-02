@@ -28,7 +28,7 @@
             <c:otherwise>
                 <a href="${pageContext.request.contextPath}/login">로그인</a>
                 <a href="${pageContext.request.contextPath}/findId">아이디 찾기</a>
-                <a href="${pageContext.request.contextPath}/resetPassword">비밀번호 초기화</a>
+                <a href="${pageContext.request.contextPath}/reset-Password">비밀번호 찾기</a>
             </c:otherwise>
         </c:choose>
     </div>
