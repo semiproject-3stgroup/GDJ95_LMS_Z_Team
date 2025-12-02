@@ -1,0 +1,282 @@
+/* 마이페이지 카드 래퍼 */
+.mypage-wrap {
+    max-width: 520px;
+    margin: 48px auto;
+    padding: 28px 32px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+/* 마이페이지 폼 각 줄 */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.form-row label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.form-row small {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* 인풋 & 셀렉트 */
+.form-input,
+.form-select {
+    padding: 9px 11px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* 버튼 영역 */
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+/* -------------------------
+   비밀번호 변경 페이지 공통 스타일
+   ------------------------- */
+
+.pw-container {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 32px 28px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.pw-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.pw-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+.pw-form-group {
+    margin-bottom: 16px;
+}
+
+.pw-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #0f172a;
+}
+
+.pw-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.pw-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.pw-helper {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.pw-btn-area {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.pw-btn-primary {
+    flex: 1;
+    border: none;
+    padding: 10px 0;
+    border-radius: 999px;
+    background: #4f46e5;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pw-btn-secondary {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    padding: 10px 0;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.pw-alert {
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+}
+
+/* -------------------------
+   마이페이지 공통 카드 (조회/수정 공용)
+   ------------------------- */
+
+.mypage-card {
+    max-width: 480px;
+    margin: 32px auto;
+    padding: 32px 28px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+.mypage-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #0f172a;
+}
+
+.mypage-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+/* 마이페이지 정보 목록 */
+.mypage-info-grid {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 8px;
+    padding-top: 12px;
+    margin-bottom: 24px;
+}
+
+.mypage-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+/* 라벨/값 – 조회 화면용 */
+.mypage-label,
+.mypage-info-label {
+    color: #64748b;
+}
+
+.mypage-value,
+.mypage-info-value {
+    color: #0f172a;
+    font-weight: 500;
+    text-align: right;
+}
+
+/* 폼 공통 (수정 화면) */
+.mypage-form {
+    margin-top: 8px;
+}
+
+.mypage-form-group {
+    margin-bottom: 14px;
+}
+
+.mypage-input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.mypage-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.2);
+}
+
+/* 우편번호 + 버튼 가로 배치 */
+.mypage-zip-row {
+    display: flex;
+    gap: 8px;
+}
+
+/* 버튼들 */
+.mypage-btn-area {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.mypage-btn-primary,
+.mypage-btn-secondary,
+.mypage-btn-outline {
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mypage-btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.mypage-btn-primary:hover {
+    background: #4338ca;
+}
+
+.mypage-btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.mypage-btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.mypage-btn-outline {
+    background: white;
+    color: #4f46e5;
+    border: 1px solid #4f46e5;
+}
+
+.mypage-btn-outline:hover {
+    background: #eef2ff;
+}

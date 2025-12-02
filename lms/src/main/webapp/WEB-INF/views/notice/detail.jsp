@@ -6,7 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <title>공지 상세</title>
+    
     <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/notice.css">
 </head>
 <body>
 
@@ -49,6 +51,24 @@
                     ${notice.content}
                 </div>
             </div>
+
+			<c:if test="${not empty fileList}">
+			    <div style="margin-top: 20px;">
+			        <strong>첨부파일</strong>
+			        <ul>
+			            <c:forEach var="file" items="${fileList}">
+			                <li>
+			                    <!-- 다운로드 매핑 -->
+			                    <a href="/notice/file/download?fileId=${file.fileId}">
+			                        ${file.originName}
+			                    </a>
+			                    (${file.fileSize} Byte)
+			                </li>
+			            </c:forEach>
+			        </ul>
+			    </div>
+			</c:if>
+
 
             <div style="margin-top:16px;">
                 <a href="/notice/list?page=${currentPage}

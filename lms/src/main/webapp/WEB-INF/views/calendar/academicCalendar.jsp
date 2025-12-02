@@ -6,8 +6,9 @@
     <meta charset="UTF-8">
     <title>학사 일정 캘린더</title>
 
-    <!-- 공통 레이아웃 CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/calendar.css">
 
     <!-- FullCalendar CSS & JS (CDN) -->
     <link rel="stylesheet"

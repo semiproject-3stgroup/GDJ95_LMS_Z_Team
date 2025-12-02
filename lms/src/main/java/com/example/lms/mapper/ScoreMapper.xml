@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.ScoreMapper">
+
+<resultMap id="scoreRecordMap" type="com.example.lms.dto.ScoreRecord">
+        <id property="userId" column="user_id"/>
+        <id property="courseId" column="course_id"/>
+
+        <result property="courseName"     column="course_name"/>
+        <result property="courseYear"     column="course_year"/>
+        <result property="courseSemester" column="course_semester"/>
+        <result property="credit"         column="credit"/>
+
+        <result property="exam1Score"      column="exam1_score"/>
+        <result property="exam2Score"      column="exam2_score"/>
+        <result property="assignmentScore" column="assignment_score"/>
+        <result property="attendanceScore" column="attendance_score"/>
+        <result property="scoreTotal"      column="score_total"/>
+    </resultMap>
+
+    <select id="selectStudentScores" resultMap="scoreRecordMap">
+        SELECT
+            s.user_id,
+            s.course_id,
+            c.course_name,
+            c.course_year,
+            c.course_semester,
+            c.credit,
+            s.exam1_score,
+            s.exam2_score,
+            s.assignment_score,
+            s.attendance_score,
+            s.score_total
+        FROM score s
+        JOIN course c ON s.course_id = c.course_id
+        WHERE s.user_id = #{userId}
+        ORDER BY c.course_year DESC, c.course_semester DESC, c.course_name ASC
+    </select>
+    
+</mapper>
+

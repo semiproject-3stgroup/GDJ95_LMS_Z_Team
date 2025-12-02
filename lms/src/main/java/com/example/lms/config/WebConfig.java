@@ -13,13 +13,17 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(new LoginCheckInterceptor())
-                .addPathPatterns("/**")  // 기본적으로 전체에 적용
-                .excludePathPatterns(
-                        "/", "/home",
-                        "/login", "/logout",
-                        "/signup",
-                        "/css/**", "/js/**", "/images/**", "/webjars/**",
-                        "/error"
-                );
+        .addPathPatterns("/**")  // 전체에 인터셉터 적용
+        .excludePathPatterns(
+                "/", "/home",
+                "/login", "/logout",
+                "/signup",
+                "/css/**", "/js/**", "/images/**", "/webjars/**",
+                "/error",
+                // 아이디 / 비밀번호 찾기
+                "/find-id",
+                "/find-password",
+                "/reset-password"
+        );
     }
 }
