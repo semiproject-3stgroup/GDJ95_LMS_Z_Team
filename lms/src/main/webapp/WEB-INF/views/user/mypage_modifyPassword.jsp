@@ -6,35 +6,67 @@
 <head>
     <meta charset="UTF-8">
     <title>비밀번호 변경</title>
-    
+
+    <!-- 공통 레이아웃 CSS -->
     <link rel="stylesheet" href="/css/layout.css">
+
+    <!-- 마이페이지  CSS -->
     <link rel="stylesheet" href="/css/mypage.css">
 </head>
 <body>
 
-<h2>비밀번호 변경</h2>
+<%@ include file="/WEB-INF/views/common/header.jsp" %>
 
-<c:if test="${not empty errorMsg}">
-    <p style="color:red;">${errorMsg}</p>
-</c:if>
+<div class="layout">
+    <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
 
-<form action="/mypage/password" method="post">
-    <p>
-        현재 비밀번호 :
-        <input type="password" name="currentPassword">
-    </p>
-    <p>
-        새 비밀번호 :
-        <input type="password" name="newPassword">
-    </p>
-    <p>
-        새 비밀번호 확인 :
-        <input type="password" name="confirmPassword">
-    </p>
+    <main class="content">
 
-    <button type="submit">변경</button>
-    <a href="/mypage">취소</a>
-</form>
+        <div class="pw-container">
+            <div class="pw-title">비밀번호 변경</div>
+            <div class="pw-subtitle">
+                현재 비밀번호를 확인하고<br>
+                새 비밀번호를 설정바랍니다.
+            </div>
+
+            <c:if test="${not empty msg}">
+                <div class="pw-alert">
+                    ${msg}
+                </div>
+            </c:if>
+
+            <form action="/mypage/password" method="post">
+
+                <div class="pw-form-group">
+                    <label class="pw-label" for="currentPassword">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" name="currentPassword"
+                           class="pw-input" required>
+                </div>
+
+                <div class="pw-form-group">
+                    <label class="pw-label" for="newPassword">새 비밀번호</label>
+                    <input type="password" id="newPassword" name="newPassword"
+                           class="pw-input" required>
+                    <div class="pw-helper">숫자 + 특수문자 포함 8~16자</div>
+                </div>
+
+                <div class="pw-form-group">
+                    <label class="pw-label" for="newPasswordConfirm">새 비밀번호 확인</label>
+                    <input type="password" id="newPasswordConfirm" name="newPasswordConfirm"
+                           class="pw-input" required>
+                </div>
+
+                <div class="pw-btn-area">
+                    <button type="submit" class="pw-btn-primary">비밀번호 변경</button>
+                    <button type="button" class="pw-btn-secondary"
+        					onclick="location.href='/mypage';">마이페이지로</button>
+
+                </div>
+            </form>
+        </div>
+
+    </main>
+</div>
 
 </body>
 </html>

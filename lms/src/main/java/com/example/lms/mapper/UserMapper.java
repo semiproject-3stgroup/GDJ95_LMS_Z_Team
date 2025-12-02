@@ -16,7 +16,7 @@ public interface UserMapper {
     // 마이페이지: 내 정보 수정
     int updateUserInfo(User user);
 
-    // 비밀번호 변경 (기존 비밀번호 체크까지 한 번에)
+    // 비밀번호 변경 (기존 비밀번호 체크도 포함)
     int updateUserPassword(
             @Param("userId") Long userId,
             @Param("currentPassword") String currentPassword,

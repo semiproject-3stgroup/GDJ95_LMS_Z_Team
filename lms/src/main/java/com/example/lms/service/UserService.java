@@ -27,9 +27,12 @@ public class UserService {
         return userMapper.updateUserInfo(user) == 1;
     }
 
-    // 비밀번호 변경 (기존 비번 체크 포함)
+    // 비빌번호변경
     public boolean changePassword(Long userId, String currentPassword, String newPassword) {
+
+        // (암호화 사용 안 한다고 가정) 
+
         int row = userMapper.updateUserPassword(userId, currentPassword, newPassword);
-        return row == 1;   // 1이면 성공, 0이면 기존 비번 불일치
+        return row == 1;
     }
 }
