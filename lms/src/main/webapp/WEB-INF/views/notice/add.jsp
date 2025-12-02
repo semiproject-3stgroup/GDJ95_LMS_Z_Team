@@ -7,8 +7,8 @@
     <meta charset="UTF-8">
     <title>공지사항 등록</title>
 
-    <!-- 공통 레이아웃 CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/notice.css">
 </head>
 <body>
 

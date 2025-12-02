@@ -6,7 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <title>공지 상세</title>
+    
     <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/notice.css">
 </head>
 <body>
 

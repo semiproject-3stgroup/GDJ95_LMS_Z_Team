@@ -31,4 +31,5 @@ public class User {
     private LocalDateTime updatedate; // updatedate
 
     private Integer departmentId;     // department_id
+    private String departmentName;    // department_name
 }

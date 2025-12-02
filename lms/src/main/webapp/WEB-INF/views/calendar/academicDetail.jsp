@@ -6,7 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <title>학사 일정 상세</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/calendar.css">
 </head>
 <body>
 

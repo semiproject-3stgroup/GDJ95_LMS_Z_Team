@@ -3,17 +3,124 @@
 
 <mapper namespace="com.example.lms.mapper.UserMapper">
 
+    <!-- 공통으로 쓸 ResultMap -->
+    <resultMap id="userResultMap" type="com.example.lms.dto.User">
+	    <id     property="userId"       column="user_id"/>
+	
+	    <result property="loginId"      column="login_id"/>
+	    <result property="password"     column="password"/>
+	    <result property="role"         column="role"/>
+	
+	    <result property="studentNo"    column="student_no"/>
+	    <result property="employeeNo"   column="employee_no"/>
+	
+	    <result property="userName"     column="user_name"/>
+	    <result property="gender"       column="gender"/>
+	    <result property="userGrade"    column="user_grade"/>
+	
+	    <result property="phone"        column="phone"/>
+	    <result property="email"        column="email"/>
+	
+	    <result property="zipCode"      column="zip_code"/>
+	    <result property="address1"     column="address1"/>
+	    <result property="address2"     column="address2"/>
+	
+	    <result property="status"       column="status"/>
+	
+	    <result property="createdate"   column="createdate"/>
+	    <result property="updatedate"   column="updatedate"/>
+	
+	    <result property="departmentId"   column="department_id"/>
+	    <result property="departmentName" column="department_name"/> <!-- ★ 추가 -->
+	</resultMap>
+
+
+    <!-- 로그인  -->
     <select id="login" parameterType="com.example.lms.dto.User"
-            resultType="com.example.lms.dto.User">
-        SELECT 
-            user_id AS userId,
-            login_id AS loginId,
-            user_name AS userName,
-            department_id AS departmentId,
-            role
-        FROM users
-        WHERE login_id = #{loginId}
-          AND password = #{password}
+        	resultMap="userResultMap">
+	    SELECT
+	        u.user_id,
+	        u.login_id,
+	        u.password,
+	        u.role,
+	        u.student_no,
+	        u.employee_no,
+	        u.user_name,
+	        u.gender,
+	        u.user_grade,
+	        u.phone,
+	        u.email,
+	        u.zip_code,
+	        u.address1,
+	        u.address2,
+	        u.status,
+	        u.createdate,
+	        u.updatedate,
+	        u.department_id,
+	        d.department_name
+	    FROM users u
+	    LEFT JOIN department d ON u.department_id = d.department_id
+	    WHERE u.login_id = #{loginId}
+	      AND u.password = #{password}
+	</select>
+
+    <!-- 마이페이지: 내 정보 조회 (user_id 기준 단건) -->
+    <select id="selectUserById" parameterType="long"
+            resultMap="userResultMap">
+        SELECT
+	        u.user_id,
+	        u.login_id,
+	        u.password,
+	        u.role,
+	        u.student_no,
+	        u.employee_no,
+	        u.user_name,
+	        u.gender,
+	        u.user_grade,
+	        u.phone,
+	        u.email,
+	        u.zip_code,
+	        u.address1,
+	        u.address2,
+	        u.status,
+	        u.createdate,
+	        u.updatedate,
+	        u.department_id,
+	        d.department_name
+	    FROM users u
+	    LEFT JOIN department d ON u.department_id = d.department_id
+	    WHERE u.user_id = #{userId}
     </select>
+
+    <!-- 마이페이지: 내 정보 수정 -->
+    <update id="updateUserInfo" parameterType="com.example.lms.dto.User">
+        UPDATE users
+        <set>
+            user_name = #{userName},
+            phone     = #{phone},
+            email     = #{email},
+            <if test="zipCode != null">
+                zip_code = #{zipCode},
+            </if>
+            <if test="address1 != null">
+                address1 = #{address1},
+            </if>
+            <if test="address2 != null">
+                address2 = #{address2},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId},
+            </if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 비밀번호 변경 (현재 비밀번호가 맞을 때만 변경) -->
+    <update id="updateUserPassword">
+        UPDATE users
+        SET password = #{newPassword}
+        WHERE user_id  = #{userId}
+          AND password = #{currentPassword}
+    </update>
 
 </mapper>

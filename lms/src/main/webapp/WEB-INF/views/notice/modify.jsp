@@ -7,7 +7,8 @@
     <meta charset="UTF-8">
     <title>공지사항 수정</title>
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/notice.css">
 </head>
 <body>
 
