@@ -98,6 +98,12 @@
                         onclick="location.href='/mypage/password';">
                     비밀번호 변경
                 </button>
+                
+                <button type="button"
+			            class="mypage-btn-secondary"
+			            onclick="location.href='/mypage/score';">
+			        학점 조회
+			    </button>
             </div>
         </div>
 

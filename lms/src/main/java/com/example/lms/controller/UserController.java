@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.lms.dto.Department;
 import com.example.lms.dto.User;
 import com.example.lms.service.DepartmentService;
+import com.example.lms.service.ScoreService;
 import com.example.lms.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,7 +26,10 @@ public class UserController {
     private UserService userService;
     
     @Autowired
-    private DepartmentService departmentService; // 
+    private DepartmentService departmentService; 
+    
+    @Autowired
+    private ScoreService scoreService;   
 
     // 마이페이지 메인
     @GetMapping("/mypage")
@@ -254,5 +258,26 @@ public class UserController {
             model.addAttribute("loginId", loginId);
             return "auth/resetPassword";
         }
+    }
+    
+ // 학점 조회 (GPA 포함)
+    @GetMapping("/mypage/score")
+    public String myScore(HttpSession session, Model model) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
+        Long userId = loginUser.getUserId();
+
+        // ScoreService에서 성적 리스트 + GPA 가져오기
+        Map<String, Object> data = scoreService.getStudentGrades(userId);
+
+        model.addAttribute("scoreList", data.get("scoreList"));
+        model.addAttribute("gpa", data.get("gpa"));
+
+        // /WEB-INF/views/user/mypage_grades.jsp
+        return "user/mypage_score";
     }
 }
