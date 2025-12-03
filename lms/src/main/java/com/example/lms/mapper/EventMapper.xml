@@ -85,5 +85,23 @@
         DELETE FROM events
         WHERE event_id = #{eventId}
     </delete>
+    
+     <!-- 기간 내 학사 일정 (캘린더용) -->
+    <select id="selectEventsBetween"
+            resultType="com.example.lms.dto.Event">
+        SELECT
+            event_id       AS eventId,
+            event_name     AS eventName,
+            event_fromdate AS eventFromdate,
+            event_todate   AS eventTodate,
+            event_context  AS eventContext,
+            user_id        AS userId,
+            createdate,
+            updatedate
+        FROM events
+        WHERE event_fromdate &lt; #{end}
+          AND event_todate   &gt; #{start}
+        ORDER BY event_fromdate ASC
+    </select>
 
 </mapper>
