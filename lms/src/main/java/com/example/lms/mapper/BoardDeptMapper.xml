@@ -68,6 +68,7 @@
 		WHERE file_id = #{fileId}	
 	</select>
 	
+	<!-- 게시물 수정 -->
 	<update id="updateBaordDeptPost" parameterType="com.example.lms.dto.BoardDepartment">
 		UPDATE board_department 
 		SET updatedate = now()

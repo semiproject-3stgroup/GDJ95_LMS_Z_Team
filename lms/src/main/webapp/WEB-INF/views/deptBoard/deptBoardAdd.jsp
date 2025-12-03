@@ -65,10 +65,9 @@
 </body>
 <script>
 	$('#submitBtn').click(()=>{
-			
-		
-		
-		$('form').submit();
+		if(confirm('정말?'){
+			$('form').submit();	
+		}							
 	});
 	
 </script>

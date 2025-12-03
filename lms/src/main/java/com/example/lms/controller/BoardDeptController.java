@@ -30,7 +30,7 @@ public class BoardDeptController {
 	@GetMapping("/deptBoard")
 	public String BoardDepartment() {
 		
-		return "deptBoard";
+		return "deptBoard/deptBoard";
 	}
 	
 	// 학과게시판 글 상세
@@ -45,7 +45,7 @@ public class BoardDeptController {
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("one", one);
 		
-		return "deptBoardOne";
+		return "deptBoard/deptBoardOne";
 	}
 	
 	// 학과게시판 글 삭제
@@ -67,7 +67,7 @@ public class BoardDeptController {
 		
 		model.addAttribute("one", one);
 		
-		return "deptBoardModify";
+		return "deptBoard/deptBoardModify";
 	}
 	
 	// 학과게시판 글 수정 액션
@@ -92,7 +92,7 @@ public class BoardDeptController {
 	// 학과게시판 글쓰기 폼
 	@GetMapping("/deptBoardAdd")
 	public String BoardDepartmentAdd() {						
-		return "deptBoardAdd";
+		return "deptBoard/deptBoardAdd";
 	}
 	
 	// 학과게시판 글쓰기 액션
@@ -109,6 +109,6 @@ public class BoardDeptController {
 		
 		boardDeptService.addDeptBoard(bf, path);
 		
-		return "deptBoard";
+		return "deptBoard/deptBoard";
 	}	
 }

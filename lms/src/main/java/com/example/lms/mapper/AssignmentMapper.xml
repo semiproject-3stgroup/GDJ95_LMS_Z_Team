@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.AssignmentMapper">
+	
+	<!-- 과제 상세 -->
+	<select id="selectAssignmentOne" parameterType="int" resultType="com.example.lms.dto.Assignment">
+		SELECT assignment_id assignmentId  
+			, course_id courseId
+			, assignment_name assignmentName
+			, assignment_content assignmentContent
+			, startdate
+			, enddate
+			, createdate
+			, updatedate
+		FROM assignment
+		WHERE assignment_id = #{assignmentId}
+	</select>
+	
+	<!-- 교수 과제 목록  -->
+	<select id="selectCourseAndAssignmentByProf" parameterType="long" resultType="map">
+		SELECT c.course_name courseName
+			, a.assignment_id assignmentId
+			, a.assignment_name assignmentName
+			, a.startdate
+			, a.enddate
+			, a.createdate
+			, a.updatedate
+		FROM course	c INNER JOIN assignment a
+		ON c.course_id = a.course_id
+		WHERE user_id = #{userId} 	
+	</select>
+	
+	<!-- 교수 강의목록 -->
+	<select id="selectCourseByProf" parameterType="long" resultType="com.example.lms.dto.Course">
+		SELECT course_id courseId
+			, course_name courseName
+		FROM course
+		WHERE user_id = #{userId} 
+	</select>
+	
+	<!-- 과제 등록 -->
+	<insert id="insertAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
+		INSERT INTO 
+			assignment(
+				course_id
+				, assignment_name
+				, assignment_content
+				, startdate
+				, enddate
+				, createdate
+				)						
+		VALUES(
+			#{courseId}
+			, #{assignmentName}
+			, #{assignmentContent}
+			, #{startdate}
+			, #{enddate}
+			, now()					
+			)
+	</insert>
+	
+	<!-- 과제 삭제 -->
+	<delete id="deleteAssignmentByProf" parameterType="int">
+		DELETE 
+		FROM assignment
+		WHERE assignment_id = #{assignmentId}
+	</delete>
+	
+	<!-- 과제 수정 -->
+	<update id="updateAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
+		UPDATE assignment
+		SET updatedate = now()
+			<if test="assignmentName != null and assignmentName != ''">, assignment_name=#{assignmentName}</if> 
+			<if test="assignmentContent != null and assignmentContent!= ''">, assignment_content=#{assignmentContent}</if>
+			<if test="startdate != null and startdate!= ''">, startdate=#{startdate}</if>
+			<if test="enddate != null and enddate!= ''">, enddate=#{enddate}</if>
+		WHERE assignment_id = #{assignmentId}
+	</update>
+	
+	<!-- 강의 정보 -->
+	<select id="selectCourseByCourseId" parameterType="long" resultType="map">
+		SELECT course_id courseId
+			, course_name courseName
+			, user_id userId
+		FROM course
+		WHERE course_id = #{courseId}
+	</select>
+	
+	
+</mapper>
