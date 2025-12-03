@@ -27,7 +27,7 @@ public class CalendarController {
      */
     @GetMapping("/calendar/academic")
     public String academicCalendar() {
-        // 일정 JS에서 AJAX로 불러오기
+        // 일정 AJAX로 불러오기
         return "calendar/academicCalendar";
     }
 
@@ -66,7 +66,7 @@ public class CalendarController {
     @GetMapping("/calendar/academic/{eventId}")
     public String academicDetail(@PathVariable("eventId") Long eventId,
                                  Model model) {
-        Event event = eventService.getEvent(eventId); // 단건 조회 메서드 이미 있을 거라 가정
+        Event event = eventService.getEvent(eventId); 
         model.addAttribute("event", event);
         return "calendar/academicDetail";
     }

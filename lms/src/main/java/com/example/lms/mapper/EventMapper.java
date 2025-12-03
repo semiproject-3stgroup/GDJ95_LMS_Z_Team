@@ -1,8 +1,10 @@
 package com.example.lms.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.lms.dto.Event;
 
@@ -20,4 +22,10 @@ public interface EventMapper {
     int updateEvent(Event event);   // 수정
 
     int deleteEvent(Long eventId);  // 삭제
+    
+    								// 캘린더 기간 안에 걸치는 학사 일정만 조회
+    List<Event> selectEventsBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end")   LocalDateTime end
+    );
 }

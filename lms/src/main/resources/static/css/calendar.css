@@ -39,3 +39,49 @@
     font-size: 13px;
     color: #6b7280;
 }
+
+/* ========================
+   내 캘린더 상단 필터 & 범례
+   ======================== */
+
+.calendar-filters {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-size: 14px;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-filters select,
+.calendar-filters input[type="checkbox"] {
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+.legend {
+    display: inline-block;
+    margin-left: 8px;
+    padding-left: 16px;
+    position: relative;
+    font-size: 12px;
+}
+
+.legend::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+}
+
+/* 수업 / 시험 / 과제 / 학사 일정 색상 */
+.legend-class::before { background-color: #2563eb; }    /* 수업 */
+.legend-exam::before { background-color: #dc2626; }     /* 시험 */
+.legend-assignment::before { background-color: #16a34a; } /* 과제 */
+.legend-school::before { background-color: #0f766e; }   /* 학사 일정 */

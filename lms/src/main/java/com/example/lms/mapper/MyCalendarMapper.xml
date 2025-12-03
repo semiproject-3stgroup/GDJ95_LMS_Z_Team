@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.MyCalendarMapper">
+
+    <!-- 공통 resultMap -->
+    <resultMap id="myCalendarEventMap" type="com.example.lms.dto.MyCalendarEvent">
+        <id property="eventId" column="event_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="title" column="title"/>
+        <result property="start" column="start_datetime"/>
+        <result property="end" column="end_datetime"/>
+        <result property="type" column="type"/>
+        <result property="backgroundColor" column="background_color"/>
+    </resultMap>
+
+    <!-- ================= 학생 ================= -->
+    <select id="selectStudentCalendarEvents" parameterType="map"
+            resultMap="myCalendarEventMap">
+        <![CDATA[
+        SELECT
+            cs.schedule_id AS event_id,
+            cs.course_id AS course_id,
+            c.course_name AS course_name,
+            cs.title AS title,
+            cs.start_datetime AS start_datetime,
+            cs.end_datetime AS end_datetime,
+            cs.schedule_type AS type,
+            CASE cs.schedule_type
+                WHEN 'CLASS' THEN '#2563eb'
+                WHEN 'EXAM'  THEN '#dc2626'
+                ELSE '#6b21a8'
+            END AS background_color
+        FROM course_schedule cs
+        JOIN course c ON cs.course_id = c.course_id
+        JOIN course_registration cr ON cr.course_id = c.course_id
+        WHERE cr.user_id = #{userId}
+          AND cr.status = 'ENROLLED'
+          AND cs.start_datetime >= #{start}
+          AND cs.end_datetime   <= #{end}
+
+        UNION ALL
+
+        SELECT
+            a.assignment_id AS event_id,
+            a.course_id AS course_id,
+            c.course_name AS course_name,
+            CONCAT('[과제] ', a.assignment_name) AS title,
+            a.enddate AS start_datetime,
+            a.enddate AS end_datetime,
+            'ASSIGNMENT' AS type,
+            '#16a34a' AS background_color
+        FROM assignment a
+        JOIN course c ON a.course_id = c.course_id
+        JOIN course_registration cr ON cr.course_id = c.course_id
+        WHERE cr.user_id = #{userId}
+          AND cr.status = 'ENROLLED'
+          AND a.enddate >= #{start}
+          AND a.enddate <= #{end}
+
+        ORDER BY start_datetime
+        ]]>
+    </select>
+
+    <!-- ================= 교수 ================= -->
+    <select id="selectProfessorCalendarEvents" parameterType="map"
+            resultMap="myCalendarEventMap">
+        <![CDATA[
+        SELECT
+            cs.schedule_id AS event_id,
+            cs.course_id AS course_id,
+            c.course_name AS course_name,
+            cs.title AS title,
+            cs.start_datetime AS start_datetime,
+            cs.end_datetime AS end_datetime,
+            cs.schedule_type AS type,
+            CASE cs.schedule_type
+                WHEN 'CLASS' THEN '#2563eb'
+                WHEN 'EXAM'  THEN '#dc2626'
+                ELSE '#6b21a8'
+            END AS background_color
+        FROM course_schedule cs
+        JOIN course c ON cs.course_id = c.course_id
+        WHERE c.user_id = #{userId}
+          AND cs.start_datetime >= #{start}
+          AND cs.end_datetime   <= #{end}
+
+        UNION ALL
+
+        SELECT
+            a.assignment_id AS event_id,
+            a.course_id AS course_id,
+            c.course_name AS course_name,
+            CONCAT('[과제] ', a.assignment_name) AS title,
+            a.enddate AS start_datetime,
+            a.enddate AS end_datetime,
+            'ASSIGNMENT' AS type,
+            '#16a34a' AS background_color
+        FROM assignment a
+        JOIN course c ON a.course_id = c.course_id
+        WHERE c.user_id = #{userId}
+          AND a.enddate >= #{start}
+          AND a.enddate <= #{end}
+
+        ORDER BY start_datetime
+        ]]>
+    </select>
+
+</mapper>

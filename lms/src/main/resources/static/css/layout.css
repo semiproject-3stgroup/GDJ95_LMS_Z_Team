@@ -181,3 +181,80 @@ body {
     justify-content: center;
     font-size: 12px;
 }
+
+/* 카드 공통 스타일 */
+.home-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.home-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.home-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.home-card-more {
+    font-size: 14px;
+    color: #4a8fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* 수강중인 강의 */
+
+.course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.course-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.course-item:last-child {
+    border-bottom: none;
+}
+
+.course-main {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.course-name {
+    font-size: 15px;
+    color: #111;
+    font-weight: 500;
+}
+
+.course-credit {
+    font-size: 14px;
+    color: #555;
+}
+
+.course-sub {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #777;
+}
+
+/* 공지/일정과 동일 스타일 */
+.notice-list, .event-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
