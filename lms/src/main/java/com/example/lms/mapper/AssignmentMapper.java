@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.lms.dto.Assignment;
+import com.example.lms.dto.AssignmentSubmit;
 import com.example.lms.dto.Course;
 
 @Mapper
@@ -24,4 +25,11 @@ public interface AssignmentMapper {
 	Map<String, Object> selectCourseByCourseId(Long courseId);
 	// 과제 수정
 	int updateAssignmentByProf(Assignment assignment);
+	// 수강 목록(학생)
+	List<Map<String, Object>> selectCourseByStudent(Long userId);
+	// 수강 과제목록(학생)
+	List<Map<String, Object>> selectAssignmentByStudent(Long userId);
+	// 수강 과제제출여부(학생)
+	AssignmentSubmit selectSubmittedAssignmentOne(Map<String, Object> data);
+	
 }

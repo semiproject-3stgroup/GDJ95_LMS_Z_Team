@@ -86,5 +86,24 @@
 		WHERE course_id = #{courseId}
 	</select>
 	
+	<!-- 학생 수강목록 -->
+	<select id="selectCourseByStudent" parameterType="long" resultType="map">
+		SELECT cr.course_id courseId, c.course_name courseName
+		FROM course_registration cr INNER JOIN course c
+		ON cr.course_id = c. course_id 
+		WHERE cr.user_id = #{userId}	
+	</select>
 	
+	<select id="selectAssignmentByStudent" parameterType="long" resultType="map">
+		SELECT cr.user_id userId, cr.course_id courseId, a.assignment_id assignmentId, a.assignment_name assignmentName, a.startdate, a.enddate 
+		FROM course_registration cr INNER JOIN assignment a
+		ON cr.course_id = a.course_id
+		WHERE cr.user_id = #{userId}		
+	</select>
+	
+	<select id="selectSubmittedAssignmentOne" parameterType="map" resultType="com.example.lms.dto.AssignmentSubmit">
+		SELECT file, assignment_score assignmentScore, createdate, updatedate
+		FROM submitted_assignment
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId}	
+	</select>	
 </mapper>

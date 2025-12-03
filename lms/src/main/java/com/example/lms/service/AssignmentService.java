@@ -1,5 +1,6 @@
 package com.example.lms.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.lms.dto.Assignment;
+import com.example.lms.dto.AssignmentSubmit;
 import com.example.lms.dto.Course;
 import com.example.lms.mapper.AssignmentMapper;
 
@@ -44,7 +46,7 @@ public class AssignmentService {
 		}
 	}
 	// 과제 상세
-	public Assignment profAssignmentOne(int assignmentId) {
+	public Assignment assignmentOne(int assignmentId) {
 		Assignment assignment = assignmentMapper.selectAssignmentOne(assignmentId);
 		
 		return assignment;
@@ -70,5 +72,24 @@ public class AssignmentService {
 		if(row!=1) {
 			throw new RuntimeException("과제 수정 실패");
 		}
+	}
+	
+	// 학생 수강 목록
+	public List<Map<String, Object>> courseListByStudent(Long userId) {
+		return assignmentMapper.selectCourseByStudent(userId);				
+	}
+	
+	// 학생 수강 과제목록
+	public List<Map<String, Object>> assignmentListByStudent(Long userId) {
+		return assignmentMapper.selectAssignmentByStudent(userId); 				
+	}
+	// 학생 과제제출여부
+	public AssignmentSubmit assignmentOneSubmit(long userId, int assignmentId) {
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("userId", userId);
+		data.put("assignmentId", assignmentId);
+		
+		return assignmentMapper.selectSubmittedAssignmentOne(data);
 	}
 }

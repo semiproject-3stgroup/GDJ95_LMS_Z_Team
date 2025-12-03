@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Assignment {
 	private int assignmentId;
-	private int courseId;
+	private long courseId;
 	private String assignmentName;
 	private String assignmentContent;
 	private String startdate;
