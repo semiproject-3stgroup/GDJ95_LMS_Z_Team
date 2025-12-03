@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.CourseMapper">
+
+    <resultMap id="enrolledCourseSummaryMap"
+               type="com.example.lms.dto.EnrolledCourseSummary">
+        <id property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseYear" column="course_year"/>
+        <result property="courseSemester" column="course_semester"/>
+        <result property="credit" column="credit"/>
+        <result property="professorName" column="professor_name"/>
+        <result property="courseStatus" column="course_status"/>
+    </resultMap>
+
+    <!-- 메인 페이지: 학생이 수강 중인 강의 상위 N개 -->
+    <select id="selectEnrolledCoursesForHome"
+            resultMap="enrolledCourseSummaryMap">
+        SELECT
+            c.course_id,
+            c.course_name,
+            c.course_year,
+            c.course_semester,
+            c.credit,
+            c.status        AS course_status,
+            p.user_name     AS professor_name
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status = 'ENROLLED'
+        ORDER BY c.course_year DESC,
+                 c.course_semester DESC,
+                 c.course_name ASC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

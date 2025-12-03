@@ -95,6 +95,32 @@
 			        </c:otherwise>
 			    </c:choose>
 			</div>
+			
+			
+			<!-- 수강 중인 강의 카드 -->
+            <c:if test="${not empty enrolledCourses}">
+                <div class="home-card">
+                    <div class="home-card-header">
+                        <h3 class="home-card-title">수강 중인 강의</h3>
+                    </div>
+
+                    <ul class="course-list">
+                        <c:forEach var="course" items="${enrolledCourses}">
+                            <li class="course-item">
+                                <div class="course-main">
+                                    <span class="course-name">${course.courseName}</span>
+                                    <span class="course-credit">${course.credit}학점</span>
+                                </div>
+                                <div class="course-sub">
+                                    <span>${course.courseYear}년 ${course.courseSemester}</span>
+                                    <span>${course.professorName}</span>
+                                </div>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
+            </c:if>
+			
 
             <!-- 다가오는 학사 일정 박스 -->
             <div class="box upcoming-box">
