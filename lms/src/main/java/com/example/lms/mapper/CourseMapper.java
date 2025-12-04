@@ -15,4 +15,9 @@ public interface CourseMapper {
             @Param("studentId") Long studentId,
             @Param("limit") int limit
     );
+    
+    // 알림 기능: 해당 강의를 수강 중인 학생 ID 목록
+    List<Long> selectEnrolledStudentIdsByCourseId(
+            @Param("courseId") Long courseId
+    );
 }
