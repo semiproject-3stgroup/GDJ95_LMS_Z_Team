@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.lms.dto.BoardNotice;
 import com.example.lms.dto.EnrolledCourseSummary;
 import com.example.lms.dto.Event;
+import com.example.lms.dto.MyCalendarEvent;
 import com.example.lms.dto.User;
 import com.example.lms.service.BoardNoticeService;
 import com.example.lms.service.CourseService;
 import com.example.lms.service.EventService;
+import com.example.lms.service.MyCalendarService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +29,16 @@ public class HomeController {
 	
 	@Autowired
 	private EventService eventService;
+
+    @Autowired
+    private MyCalendarService myCalendarService;
 	
     @Autowired
     private BoardNoticeService boardNoticeService;
 
 	@GetMapping("/access-denied")
 	public String accessDenied() {
-	    return "error/accessDenied";  // /WEB-INF/views/error/accessDenied.jsp
+	    return "error/accessDenied";
 	}
 
 	@GetMapping({"/", "/home"})
@@ -43,13 +48,22 @@ public class HomeController {
 	    List<BoardNotice> recentNotices = boardNoticeService.getRecentNotices(5);
 	    model.addAttribute("recentNotices", recentNotices);
 
-	    // 2) 다가오는 일정 5개
-	    List<Event> upcoming = eventService.getUpcomingEvents(5);
-	    model.addAttribute("upcoming", upcoming);
-
-	    // 3) 수강 중인 강의 요약 (학생일 때만)
+	    // 로그인 유저 정보
 	    User loginUser = (User) session.getAttribute("loginUser");
 
+	    // 2) 다가오는 일정 3~5개 (학사 + 내 일정 통합)
+	    if (loginUser != null) {
+	        List<MyCalendarEvent> upcomingEvents =
+	                myCalendarService.getUpcomingMyAndSchoolEvents(loginUser, 5);
+	        model.addAttribute("upcomingEvents", upcomingEvents);
+
+	    } else {
+	        // 비로그인 상태면 학사 일정만 보여주기
+	        List<Event> upcoming = eventService.getUpcomingEvents(5);
+	        model.addAttribute("upcomingAcademicEvents", upcoming);
+	    }
+
+	    // 3) 수강 중인 강의 요약 (학생일 때만)
 	    if (loginUser != null && "STUDENT".equals(loginUser.getRole())) {
 
 	        Long studentId = loginUser.getUserId();

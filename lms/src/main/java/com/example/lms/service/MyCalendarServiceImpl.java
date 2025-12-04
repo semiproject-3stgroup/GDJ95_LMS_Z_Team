@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,5 +80,32 @@ public class MyCalendarServiceImpl implements MyCalendarService {
 
         log.debug("MyCalendar events size (with academic) = {}", result.size());
         return result;
+    }
+    
+    // ✅ 메인페이지용 다가오는 일정 요약
+    @Override
+    public List<MyCalendarEvent> getUpcomingMyAndSchoolEvents(User loginUser, int limit) {
+
+        if (loginUser == null) {
+            throw new IllegalStateException("로그인 정보가 없습니다.");
+        }
+
+        // 지금 시점 기준 ~ 1개월 정도만 조회 (원하면 주 단위로 바꿔도 됨)
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime end = now.plusMonths(1);
+
+        // 기존 메서드 재사용 (이미 학사+내 일정 통합 로직 있음)
+        List<MyCalendarEvent> all = getMyCalendarEvents(loginUser, now, end);
+
+        // 혹시 모를 과거 데이터 필터 + 정렬 + limit
+        List<MyCalendarEvent> upcoming = all.stream()
+                .filter(e -> e.getStart() != null && !e.getStart().isBefore(now))
+                .sorted(Comparator.comparing(MyCalendarEvent::getStart))
+                .limit(limit)
+                .collect(Collectors.toList());
+
+        log.debug("Upcoming my+school events (limit {}): {}", limit, upcoming.size());
+
+        return upcoming;
     }
 }

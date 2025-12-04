@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.lms.dto.Event;
+import com.example.lms.dto.User;
 import com.example.lms.service.EventService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CalendarController {
@@ -23,17 +26,41 @@ public class CalendarController {
     private EventService eventService;
 
     /**
-     * 학사 일정 캘린더 화면
+     * 캘린더
+     * - 비로그인: 학사 캘린더
+     * - 학생: 내 강의/과제 + 학사 통합 캘린더
+     * - 교수: 교수용 캘린더
+     */
+    @GetMapping("/calendar")
+    public String calendarRoot(HttpSession session) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        // 비로그인 → 학사 일정만 보는 캘린더
+        if (loginUser == null) {
+            return "redirect:/calendar/academic";
+        }
+
+        // 교수 → 교수용 캘린더
+        if ("PROF".equals(loginUser.getRole())) {
+            return "redirect:/calendar/prof";
+        }
+
+        // 그 외(학생, 필요하면 ADMIN도 같이) → 내 캘린더
+        return "redirect:/calendar/my";
+    }
+
+    /**
+     * 학사 일정 캘린더 
      */
     @GetMapping("/calendar/academic")
     public String academicCalendar() {
-        // 일정 AJAX로 불러오기
+        // 일정은 AJAX로 불러옴
         return "calendar/academicCalendar";
     }
 
     /**
      * FullCalendar용 학사 일정 JSON
-     * id / title / start / end 형식으로 내려줌
      */
     @GetMapping("/api/calendar/events")
     @ResponseBody
@@ -61,12 +88,12 @@ public class CalendarController {
     }
 
     /**
-     * 일정 상세 화면
+     * 학사 일정 상세 화면
      */
     @GetMapping("/calendar/academic/{eventId}")
     public String academicDetail(@PathVariable("eventId") Long eventId,
                                  Model model) {
-        Event event = eventService.getEvent(eventId); 
+        Event event = eventService.getEvent(eventId);
         model.addAttribute("event", event);
         return "calendar/academicDetail";
     }

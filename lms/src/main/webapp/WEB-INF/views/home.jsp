@@ -55,49 +55,49 @@
             </div>
             
             <!--  공지사항 카드 -->
-			<div class="box notice-box" style="margin-bottom: 24px;">
-			    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-			        <h3 style="font-size: 18px; font-weight: 600; margin: 0;">공지사항</h3>
-			        <a href="${pageContext.request.contextPath}/notice/list"
-			           style="font-size: 14px; color: #4a8fff; text-decoration: none; font-weight: 500;">
-			            더보기
-			        </a>
-			    </div>
-			
-			    <c:choose>
-			        <c:when test="${empty recentNotices}">
-			            <p style="color: #666; font-size: 14px; margin: 0;">등록된 공지사항이 없습니다.</p>
-			        </c:when>
-			
-			        <c:otherwise>
-			            <ul style="list-style: none; padding: 0; margin: 0;">
-			                <c:forEach var="n" items="${recentNotices}">
-			                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-			
-			                        <a href="${pageContext.request.contextPath}/notice/detail?noticeId=${n.noticeId}"
-			                           style="text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
-			
-			                            <span style="font-size: 15px; color: #111; font-weight: 500;">
-			                                <c:if test="${n.pinnedYn == 'Y'}">
-			                                    <span style="color:#d14; font-weight:700; margin-right:6px;">[중요]</span>
-			                                </c:if>
-			                                ${n.title}
-			                            </span>
-			
-			                            <span style="font-size: 13px; color: #888;">
-			                                ${fn:substring(n.createdate, 0, 10)}
-			                            </span>
-			                        </a>
-			
-			                    </li>
-			                </c:forEach>
-			            </ul>
-			        </c:otherwise>
-			    </c:choose>
-			</div>
-			
-			
-			<!-- 수강 중인 강의 카드 -->
+            <div class="box notice-box" style="margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin: 0;">공지사항</h3>
+                    <a href="${pageContext.request.contextPath}/notice/list"
+                       style="font-size: 14px; color: #4a8fff; text-decoration: none; font-weight: 500;">
+                        더보기
+                    </a>
+                </div>
+            
+                <c:choose>
+                    <c:when test="${empty recentNotices}">
+                        <p style="color: #666; font-size: 14px; margin: 0;">등록된 공지사항이 없습니다.</p>
+                    </c:when>
+            
+                    <c:otherwise>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <c:forEach var="n" items="${recentNotices}">
+                                <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+            
+                                    <a href="${pageContext.request.contextPath}/notice/detail?noticeId=${n.noticeId}"
+                                       style="text-decoration: none; display: flex; justify-content: space-between; align-items: center;">
+            
+                                        <span style="font-size: 15px; color: #111; font-weight: 500;">
+                                            <c:if test="${n.pinnedYn == 'Y'}">
+                                                <span style="color:#d14; font-weight:700; margin-right:6px;">[중요]</span>
+                                            </c:if>
+                                            ${n.title}
+                                        </span>
+            
+                                        <span style="font-size: 13px; color: #888;">
+                                            ${fn:substring(n.createdate, 0, 10)}
+                                        </span>
+                                    </a>
+            
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            
+            
+            <!-- 수강 중인 강의 카드 -->
             <c:if test="${not empty enrolledCourses}">
                 <div class="home-card">
                     <div class="home-card-header">
@@ -120,28 +120,66 @@
                     </ul>
                 </div>
             </c:if>
-			
+            
 
-            <!-- 다가오는 학사 일정 박스 -->
+            <!-- 다가오는 일정 카드 -->
             <div class="box upcoming-box">
-                <h3 class="box-title">다가오는 학사 일정</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                    <h3 class="box-title" style="margin:0;">다가오는 일정</h3>
+                    <a href="${pageContext.request.contextPath}/calendar"
+                       style="font-size: 13px; color:#4a8fff; text-decoration:none;">
+                        전체 캘린더 보기
+                    </a>
+                </div>
 
                 <c:choose>
-                    <c:when test="${empty upcoming}">
-                        <p class="empty-text">등록된 다가오는 일정이 없습니다.</p>
-                    </c:when>
-                    <c:otherwise>
+                    <%--: 로그인 사용자 기준 (학사 + 내 강의/과제 일정 통합) --%>
+                    <c:when test="${not empty upcomingEvents}">
                         <ul class="event-list">
-                            <c:forEach var="e" items="${upcoming}">
+                            <c:forEach var="e" items="${upcomingEvents}">
                                 <li class="event-item">
+                                    <div class="event-row">
+                                        <span class="event-date">
+                                            <%-- LocalDateTime toString() 기준으로 앞 16자리만 사용 --%>
+                                            ${fn:substring(e.start, 0, 10)}
+                                            &nbsp;
+                                            <span style="font-size:12px; color:#999;">
+                                                ${fn:substring(e.start, 11, 16)}
+                                            </span>
+                                        </span>
+
+                                        <span class="event-type-pill">
+                                            <c:choose>
+                                                <c:when test="${e.type == 'CLASS'}">수업</c:when>
+                                                <c:when test="${e.type == 'EXAM'}">시험</c:when>
+                                                <c:when test="${e.type == 'ASSIGNMENT'}">과제</c:when>
+                                                <c:when test="${e.type == 'SCHOOL'}">학사</c:when>
+                                                <c:otherwise>기타</c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </div>
+
+                                    <div class="event-title">
+                                        ${e.title}
+                                    </div>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:when>
+
+                    <%-- 비로그인 , 학사 일정만 있는 경우 --%>
+                    <c:when test="${empty upcomingEvents and not empty upcomingAcademicEvents}">
+                        <ul class="event-list">
+                            <c:forEach var="e" items="${upcomingAcademicEvents}">
+                                <li class="event-item">
+                                    <div class="event-row">
+                                        <span class="event-date">
+                                            ${fn:substring(e.eventFromdate, 0, 10)}
+                                        </span>
+                                        <span class="event-type-pill">학사</span>
+                                    </div>
                                     <div class="event-title">
                                         ${e.eventName}
-                                    </div>
-                                    <div class="event-date">
-                                        ${e.eventFromdate}
-                                        <c:if test="${e.eventTodate != null}">
-                                            ~ ${e.eventTodate}
-                                        </c:if>
                                     </div>
                                     <c:if test="${not empty e.eventContext}">
                                         <div class="event-context">
@@ -151,6 +189,11 @@
                                 </li>
                             </c:forEach>
                         </ul>
+                    </c:when>
+
+                    <%-- 둘 다 없는 경우 --%>
+                    <c:otherwise>
+                        <p class="empty-text">등록된 다가오는 일정이 없습니다.</p>
                     </c:otherwise>
                 </c:choose>
             </div>

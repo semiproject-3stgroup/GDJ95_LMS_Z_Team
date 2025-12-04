@@ -56,9 +56,6 @@ public class UserService {
             user.setUserGrade(null);
         }
 
-        // TODO: 비밀번호 암호화는 로그인 쿼리 수정할 때 함께 적용
-        // String encoded = passwordEncoder.encode(user.getPassword());
-        // user.setPassword(encoded);
 
         return userMapper.insertUser(user);
     }

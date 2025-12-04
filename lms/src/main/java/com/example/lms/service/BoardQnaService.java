@@ -28,7 +28,7 @@ public class BoardQnaService {
         // Mapper 호출 시 offset과 pageSize 전달
         List<BoardQna> qnaList = boardQnaMapper.selectBoardQnaList(courseId, searchKeyword, offset, pageSize);
         
-        // 핵심 로직: LocalDateTime을 "yyyy-MM-dd" 문자열로 변환하여 DTO에 저장
+        // LocalDateTime을 "yyyy-MM-dd" 로 변환하여 DTO에 저장
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (BoardQna qna : qnaList) {
@@ -44,7 +44,6 @@ public class BoardQnaService {
         return qnaList;
     }
 
-    // 이 메서드가 BoardQnaMapper.xml에 매핑될 쿼리가 없어 오류가 발생했습니다.
     public int getBoardQnaCount(Long courseId, String searchKeyword) {
         return boardQnaMapper.getBoardQnaCount(courseId, searchKeyword);
     }
@@ -81,13 +80,12 @@ public class BoardQnaService {
 
     @Transactional
     public int updateBoardQna(BoardQna qna) {
-        // Mapper.xml에서 postId와 userId를 모두 조건으로 사용하여 본인 글만 수정되도록 보안 적용
+        //  본인 글만 수정되도록 
         return boardQnaMapper.updateBoardQna(qna);
     }
 
     @Transactional
     public int deleteBoardQna(Long postId) {
-        // Mapper는 postId만 받아서 삭제 (Controller에서 이미 작성자 권한 검증 완료)
         return boardQnaMapper.deleteBoardQna(postId);
     }
 }

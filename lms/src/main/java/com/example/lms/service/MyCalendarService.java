@@ -11,4 +11,6 @@ public interface MyCalendarService {
     List<MyCalendarEvent> getMyCalendarEvents(User loginUser,
                                               LocalDateTime start,
                                               LocalDateTime end);
+    // 다가오는 일정 3~5건 요약
+    List<MyCalendarEvent> getUpcomingMyAndSchoolEvents(User loginUser, int limit);
 }
