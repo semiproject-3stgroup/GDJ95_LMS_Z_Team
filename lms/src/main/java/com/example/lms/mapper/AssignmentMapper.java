@@ -23,6 +23,8 @@ public interface AssignmentMapper {
 	int deleteAssignmentByProf(int assignmentId);
 	// 강의 정보
 	Map<String, Object> selectCourseByCourseId(Long courseId);
+	// 강의 수강생 목록
+	List<Map<String, Object>> selectStudentsListByCourseId(long courseId);
 	// 과제 수정
 	int updateAssignmentByProf(Assignment assignment);
 	// 수강 목록(학생)

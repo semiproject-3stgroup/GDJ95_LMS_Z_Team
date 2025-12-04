@@ -101,11 +101,13 @@ public class AssignmentController {
 		
 		log.debug(assignment+"");
 		
-		Map<String, Object> course = assignmentService.courseOne((long)assignment.getCourseId());
-
+		Map<String, Object> course = assignmentService.courseOne(assignment.getCourseId());
+		List<Map<String, Object>> students = assignmentService.courseStudentsList(assignment.getCourseId());
+		
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("assignment", assignment);
 		model.addAttribute("course", course);
+		model.addAttribute("students", students);
 		
 		return "assignment/profAssignmentOne";
 	}

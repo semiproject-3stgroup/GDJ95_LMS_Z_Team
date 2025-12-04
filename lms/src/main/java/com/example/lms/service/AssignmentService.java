@@ -26,20 +26,15 @@ public class AssignmentService {
 	AssignmentMapper assignmentMapper;
 
 	// 강의 과제 목록
-	public List<Map<String, Object>> courseListWithAssignment(Long userId) {
-		
-		List<Map<String, Object>> list = assignmentMapper.selectCourseAndAssignmentByProf(userId);
-		
-		return list;		
+	public List<Map<String, Object>> courseListWithAssignment(Long userId) {		
+		return assignmentMapper.selectCourseAndAssignmentByProf(userId);
 	}
 	// 교수 강의 목록
 	public List<Course> courseListByProf(Long userId) {
-		List<Course> course = assignmentMapper.selectCourseByProf(userId);
-		return course;
+		return assignmentMapper.selectCourseByProf(userId);
 	}
 	// 새 과제 등록
-	public void addAssignment(Assignment assignment) {
-		
+	public void addAssignment(Assignment assignment) {		
 		assignment.setEnddate(assignment.getEnddate() + " 23:59:59");
 		
 		int row = assignmentMapper.insertAssignmentByProf(assignment);
@@ -49,9 +44,7 @@ public class AssignmentService {
 	}
 	// 과제 상세
 	public Assignment assignmentOne(int assignmentId) {
-		Assignment assignment = assignmentMapper.selectAssignmentOne(assignmentId);
-		
-		return assignment;
+		return assignmentMapper.selectAssignmentOne(assignmentId);		
 	}
 	// 과제 삭제
 	public void removeAssignment(int assignmentId) {
@@ -62,12 +55,16 @@ public class AssignmentService {
 	}
 	// 강의
 	public Map<String, Object> courseOne(Long courseId) {
-		Map<String, Object> course = assignmentMapper.selectCourseByCourseId(courseId);
-		return course;
+		return assignmentMapper.selectCourseByCourseId(courseId);
 	}
+	
+	// 강의 학생 목록
+	public List<Map<String, Object>> courseStudentsList(long courseId) {
+		return assignmentMapper.selectStudentsListByCourseId(courseId);
+	}
+	
 	// 과제 수정
-	public void modifyAssignment(Assignment assignment) {
-		
+	public void modifyAssignment(Assignment assignment) {		
 		assignment.setEnddate(assignment.getEnddate() + " 23:59:59");
 		
 		int row = assignmentMapper.updateAssignmentByProf(assignment);
@@ -87,8 +84,7 @@ public class AssignmentService {
 	}
 	
 	// 학생 과제제출여부
-	public AssignmentSubmit assignmentOneSubmit(long userId, int assignmentId) {
-		
+	public AssignmentSubmit assignmentOneSubmit(long userId, int assignmentId) {		
 		Map<String, Object> data = new HashMap<>();
 		data.put("userId", userId);
 		data.put("assignmentId", assignmentId);
@@ -98,7 +94,6 @@ public class AssignmentService {
 	
 	// 학생 과제 제출
 	public void addAssignmentSubmit(AssignmentSubmit submit, MultipartFile file, String path) {
-
 		if(!file.getOriginalFilename().isEmpty()) {
 						
 			submit.setFile(file.getOriginalFilename());
@@ -118,8 +113,7 @@ public class AssignmentService {
 	}
 	
 	// 학생 과제 수정
-	public void modifyAssignmentSubmit(AssignmentSubmit submit, MultipartFile file, String path) {
-		
+	public void modifyAssignmentSubmit(AssignmentSubmit submit, MultipartFile file, String path) {		
 		if(!file.getOriginalFilename().isEmpty()) {
 			
 			File submittedFile = new File(path + submit.getAssignmentId() + "/" + submit.getFile());			

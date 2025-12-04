@@ -44,7 +44,11 @@
 				${assignment.startdate} ~ ${assignment.enddate} 		
 				
 				<hr>
-																																															
+						
+				과제 제출 현황 <br>
+				<c:forEach var="stu" items="${students}">
+					${stu.studentNo} ${stu.userName} <br>
+				</c:forEach>
 		</main>
 	</div>
 		
