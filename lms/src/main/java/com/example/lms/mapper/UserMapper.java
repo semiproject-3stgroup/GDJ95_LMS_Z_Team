@@ -1,5 +1,7 @@
 package com.example.lms.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,6 +40,9 @@ public interface UserMapper {
     // 비밀번호 업데이트
     int updatePassword(@Param("loginId") String loginId,
                        @Param("password") String password);
+    
+    // 전체 사용자 조회(알림용)
+    List<User> selectAllUsers();
     
     
 }

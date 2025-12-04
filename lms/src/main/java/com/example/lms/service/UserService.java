@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.lms.dto.Notification;   // ★ 알림 DTO import
 import com.example.lms.dto.User;
 import com.example.lms.mapper.UserMapper;
 
@@ -13,6 +14,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private NotificationService notificationService; // 알림 서비스
     
     // 로그인
     public User login(User user) {
@@ -34,6 +38,22 @@ public class UserService {
 
 
         int row = userMapper.updateUserPassword(userId, currentPassword, newPassword);
+        
+        if (row == 1) {
+            // -----------------------------
+            // 비밀번호 변경→ 알림 발송
+            // -----------------------------
+            Notification n = new Notification();
+            n.setUserId(userId);
+            n.setCategory("system");
+            n.setTargetType("USER");
+            n.setTargetId(userId.intValue());
+            n.setTitle("비밀번호가 변경되었습니다.");
+            n.setMessage("본인이 변경한 것이 아니라면 관리자에게 즉시 문의해주세요.");
+            n.setLinkUrl("/mypage/password");
+
+            notificationService.sendNotification(n);
+        }
         return row == 1;
     }
     
@@ -86,11 +106,29 @@ public class UserService {
     // 비밀번호 재설정
     public int resetPassword(String loginId, String newPassword) {
 
-        // TODO: 나중에 암호화 적용할 거면 여기서 encode
-        // String encoded = passwordEncoder.encode(newPassword);
-        // return userMapper.updatePassword(loginId, encoded);
+        int row = userMapper.updatePassword(loginId, newPassword);
 
-        return userMapper.updatePassword(loginId, newPassword);
+        if (row == 1) {
+            // -----------------------------
+            // ★ 비밀번호 재설정 알림
+            // -----------------------------
+            Integer userId = userMapper.findUserIdForPasswordReset(loginId, null, null);
+
+            if (userId != null) {
+                Notification n = new Notification();
+                n.setUserId(userId.longValue());
+                n.setCategory("system");
+                n.setTargetType("USER");
+                n.setTargetId(userId);
+                n.setTitle("비밀번호가 재설정되었습니다.");
+                n.setMessage("본인이 요청한 비밀번호 초기화가 완료되었습니다.");
+                n.setLinkUrl("/login");
+
+                notificationService.sendNotification(n);
+            }
+        }
+
+        return row;
     }
     
 }

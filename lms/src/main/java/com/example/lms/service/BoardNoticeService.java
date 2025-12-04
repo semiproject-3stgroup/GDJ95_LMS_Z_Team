@@ -1,7 +1,5 @@
 package com.example.lms.service;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,8 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.lms.dto.BoardNotice;
 import com.example.lms.dto.BoardNoticeFile;
+import com.example.lms.dto.Notification;
+import com.example.lms.dto.User;
 import com.example.lms.mapper.BoardNoticeFileMapper;
 import com.example.lms.mapper.BoardNoticeMapper;
+import com.example.lms.mapper.UserMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -30,6 +33,12 @@ public class BoardNoticeService {
 
     @Autowired
     private BoardNoticeFileMapper boardNoticeFileMapper;
+
+    @Autowired
+    private NotificationService notificationService; 
+    
+    @Autowired
+    private UserMapper userMapper;   // ★ 알림 대상 조회용 사용자 매퍼
 
     // 실제 파일이 저장될 경로 (application.properties 에서 주입)
     @Value("${upload.notice.dir}")
@@ -63,14 +72,36 @@ public class BoardNoticeService {
             notice.setPinEnd(null);
         }
 
-        // 공지게시글 먼저 저장
+        // 1) 공지게시글 먼저 저장
         int row = boardNoticeMapper.insertNotice(notice);
         Long noticeId = notice.getNoticeId();
         log.debug("★ addNotice noticeId = {}", noticeId);
         log.debug("★ addNotice files = {}", files);
 
-        // 첨부파일이 있으면 저장
+        // 2) 첨부파일이 있으면 저장
         saveFiles(noticeId, files);
+
+     // 3) 🔔 알림 발사 (insert 성공했을 때만)
+        if (row > 0 && noticeId != null) {
+
+            // ★ 전체 사용자 조회
+            List<User> allUsers = userMapper.selectAllUsers();
+
+            for (User u : allUsers) {
+                Notification noti = new Notification();
+                noti.setUserId(u.getUserId());           // 대상: 전체 사용자
+                noti.setCategory("notice");
+                noti.setTargetType("NOTICE");
+                noti.setTargetId(noticeId.intValue());
+                noti.setTitle("[공지] " + notice.getTitle());
+                noti.setMessage("새 공지가 등록되었습니다.");
+                noti.setLinkUrl("/notice/detail?noticeId=" + noticeId);
+
+                notificationService.sendNotification(noti);
+            }
+
+            log.debug("★ 공지 알림 발송: {}명", allUsers.size());
+        }
 
         return row;
     }
