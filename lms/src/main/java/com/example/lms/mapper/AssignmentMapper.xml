@@ -38,7 +38,7 @@
 		WHERE user_id = #{userId} 
 	</select>
 	
-	<!-- 과제 등록 -->
+	<!-- 교수 과제 등록 -->
 	<insert id="insertAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
 		INSERT INTO 
 			assignment(
@@ -59,14 +59,14 @@
 			)
 	</insert>
 	
-	<!-- 과제 삭제 -->
+	<!-- 교수 과제 삭제 -->
 	<delete id="deleteAssignmentByProf" parameterType="int">
 		DELETE 
 		FROM assignment
 		WHERE assignment_id = #{assignmentId}
 	</delete>
 	
-	<!-- 과제 수정 -->
+	<!-- 교수 과제 수정 -->
 	<update id="updateAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
 		UPDATE assignment
 		SET updatedate = now()
@@ -94,16 +94,53 @@
 		WHERE cr.user_id = #{userId}	
 	</select>
 	
+	<!-- 학생 수강과목 과제목록 -->
 	<select id="selectAssignmentByStudent" parameterType="long" resultType="map">
-		SELECT cr.user_id userId, cr.course_id courseId, a.assignment_id assignmentId, a.assignment_name assignmentName, a.startdate, a.enddate 
+		SELECT cr.user_id userId
+			, cr.course_id courseId
+			, a.assignment_id assignmentId
+			, a.assignment_name assignmentName
+			, a.startdate
+			, a.enddate 
 		FROM course_registration cr INNER JOIN assignment a
 		ON cr.course_id = a.course_id
 		WHERE cr.user_id = #{userId}		
 	</select>
 	
+	<!-- 학생 과제 제출 여부 -->
 	<select id="selectSubmittedAssignmentOne" parameterType="map" resultType="com.example.lms.dto.AssignmentSubmit">
-		SELECT file, assignment_score assignmentScore, createdate, updatedate
+		SELECT user_id userId
+			, assignment_id assignmentId
+			, file
+			, assignment_score assignmentScore
+			, createdate
+			, updatedate
 		FROM submitted_assignment
 		WHERE user_id = #{userId} AND assignment_id = #{assignmentId}	
-	</select>	
+	</select>
+	
+	<!-- 학생 과제 제출 -->
+	<insert id="insertSubmittedAssignment" parameterType="com.example.lms.dto.AssignmentSubmit">
+		INSERT INTO
+			submitted_assignment(			
+			user_id
+			, assignment_id
+			, file
+			, createdate
+			)
+		VALUES (
+			#{userId}
+			, #{assignmentId}
+			, #{file}
+			, now()
+			)				
+	</insert>
+	
+	<!-- 학생 과제 수정 -->
+	<update id="updateSubmittedAssignment" parameterType="com.example.lms.dto.AssignmentSubmit">
+		UPDATE submitted_assignment
+		SET	updatedate = now()
+			, file = #{file}
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId}
+	</update>
 </mapper>

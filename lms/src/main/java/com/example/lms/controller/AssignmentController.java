@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.lms.dto.Assignment;
 import com.example.lms.dto.AssignmentSubmit;
@@ -41,7 +42,7 @@ public class AssignmentController {
 						
 		return "assignment/profAssignment";
 	}
-	
+	// 과제 추가
 	@GetMapping("/profAssignmentAdd")
 	public String profAssignmentAdd(Model model, HttpSession session) {
 		
@@ -52,16 +53,16 @@ public class AssignmentController {
 		
 		return "assignment/profAssignmentAdd";
 	}
-	
+	// 과제 추가 액션
 	@PostMapping("/profAssignmentAddActioin")
 	public String profAssignmentAddActioin(Assignment assignment) {
 		
 		assignmentService.addAssignment(assignment);
 		
 		
-		return "redirect:/profprofAssignment";
+		return "redirect:/profAssignment";
 	}
-		
+	// 과제 삭제
 	@PostMapping("/profAssignmentRemove")
 	public String profAssignmentRemove(int assignmentId) {
 		
@@ -69,7 +70,7 @@ public class AssignmentController {
 						
 		return "redirect:/profAssignment";
 	}
-	
+	// 과제 수정
 	@GetMapping("/profAssignmentModify")
 	public String profAssignmentModify(int assignmentId, Model model) {
 		
@@ -83,7 +84,7 @@ public class AssignmentController {
 		model.addAttribute("enddate", enddate);
 		return "assignment/profAssignmentModify";
 	}
-	
+	// 과제 수정
 	@PostMapping("/profAssignmentModify")
 	public String profAssignmentModifyAction(Assignment assignment) {
 		
@@ -91,7 +92,7 @@ public class AssignmentController {
 		
 		return "redirect:/profAssignmentOne?assignmentId="+assignment.getAssignmentId();
 	}
-	
+	// 과제 상세
 	@GetMapping("/profAssignmentOne")
 	public String profAssignmentOne(Model model, int assignmentId, HttpSession session) {
 		
@@ -111,7 +112,7 @@ public class AssignmentController {
 	
 	
 	// ======================== 학생 ============================
-	
+	// 과제 상세
 	@GetMapping("/stuAssignmentOne")
 	public String stuAssignmentOne(Model model, int assignmentId, HttpSession session) {
 		
@@ -123,7 +124,8 @@ public class AssignmentController {
 		Map<String, Object> course = assignmentService.courseOne(assignment.getCourseId());
 		AssignmentSubmit assignmentSubmit = assignmentService.assignmentOneSubmit(user.getUserId(), assignmentId);
 		
-		
+		log.debug(assignmentSubmit+"");
+				
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("assignment", assignment);
 		model.addAttribute("course", course);
@@ -132,7 +134,7 @@ public class AssignmentController {
 		return "assignment/stuAssignmentOne";
 	}
 	
-	
+	// 과제 목록
 	@GetMapping("/stuAssignment")
 	public String stuAssignment(HttpSession session, Model model) {
 		
@@ -144,5 +146,32 @@ public class AssignmentController {
 		model.addAttribute("assign", assign);		
 		
 		return "assignment/stuAssignment";
-	} 		
+	} 
+	
+	// 과제 제출
+	@PostMapping("/stuAssignmentSubmit")
+	public String stuAssignmentSubmit(
+				AssignmentSubmit submit
+				, MultipartFile uploadFile
+				, HttpSession session) {
+		
+		String path = session.getServletContext().getRealPath("/upload/");
+		
+		assignmentService.addAssignmentSubmit(submit, uploadFile, path);
+				
+		return "redirect:/stuAssignmentOne?assignmentId=" + submit.getAssignmentId();
+	}
+	// 과제 수정
+	@PostMapping("/stuAssignmentModify")
+	public String stuAssignmentSubmitModify(
+				AssignmentSubmit submit
+				, MultipartFile uploadFile
+				, HttpSession session) {
+		
+		String path = session.getServletContext().getRealPath("/upload/");
+		
+		assignmentService.modifyAssignmentSubmit(submit, uploadFile, path);
+		
+		return "redirect:/stuAssignmentOne?assignmentId=" + submit.getAssignmentId();
+	}
 }

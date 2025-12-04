@@ -31,5 +31,8 @@ public interface AssignmentMapper {
 	List<Map<String, Object>> selectAssignmentByStudent(Long userId);
 	// 수강 과제제출여부(학생)
 	AssignmentSubmit selectSubmittedAssignmentOne(Map<String, Object> data);
-	
+	// 수강 과제제출
+	int insertSubmittedAssignment(AssignmentSubmit submit);
+	// 수강 과제수정
+	int updateSubmittedAssignment(AssignmentSubmit submit);
 }
