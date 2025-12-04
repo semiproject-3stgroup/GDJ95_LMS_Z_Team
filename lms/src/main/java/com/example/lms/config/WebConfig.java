@@ -15,15 +15,17 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
         .addPathPatterns("/**")  // 전체에 인터셉터 적용
         .excludePathPatterns(
-                "/", "/home",
+        		"/", "/home",
                 "/login", "/logout",
                 "/signup",
                 "/css/**", "/js/**", "/images/**", "/webjars/**",
                 "/error",
-                // 아이디 / 비밀번호 찾기
                 "/find-id",
                 "/find-password",
-                "/reset-password"
+                "/reset-password",
+                "/calendar",              // 진입점 (비로그인 → academic 으로 redirect)
+                "/calendar/academic",     // 학사 일정 캘린더 화면
+                "/api/calendar/events"    // 학사 일정 JSON
         );
     }
 }

@@ -80,7 +80,7 @@ public class UserController {
     // 비밀번호 변경 폼
     @GetMapping("/mypage/password")
     public String passwordForm() {
-        return "user/mypage_modifyPassword";   // 폴더/파일명 그대로
+        return "user/mypage_modifyPassword";   
     }
 
     // 비밀번호 변경 액션

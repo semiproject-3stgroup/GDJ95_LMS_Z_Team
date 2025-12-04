@@ -49,7 +49,7 @@ public class MyCalendarController {
 
         if (startStr == null || startStr.isBlank()
                 || endStr == null || endStr.isBlank()) {
-            log.warn("FullCalendar에서 start/end 파라미터가 비어 있음. 빈 리스트 반환");
+            log.warn("FullCalendar에서 빈 리스트 반환");
             return List.of();
         }
 
@@ -96,7 +96,7 @@ public class MyCalendarController {
             throw new IllegalStateException("교수 계정만 접근 가능합니다.");
         }
 
-        // FullCalendar에서 넘긴 문자열을 LocalDateTime으로 변환
+        // 문자열 LocalDateTime으로 변환
         LocalDateTime start = OffsetDateTime.parse(startStr).toLocalDateTime();
         LocalDateTime end   = OffsetDateTime.parse(endStr).toLocalDateTime();
 
