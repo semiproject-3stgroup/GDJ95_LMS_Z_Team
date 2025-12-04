@@ -13,7 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.lms.dto.Assignment;
 import com.example.lms.dto.AssignmentSubmit;
 import com.example.lms.dto.Course;
+import com.example.lms.dto.Notification;
 import com.example.lms.mapper.AssignmentMapper;
+import com.example.lms.mapper.CourseMapper;
+import com.example.lms.mapper.NotificationMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +27,14 @@ public class AssignmentService {
 	
 	@Autowired
 	AssignmentMapper assignmentMapper;
+	
+	// [권순표] 알림 기능 추가: 수강 학생 조회용
+    @Autowired
+    private CourseMapper courseMapper;
+
+    // [권순표] 알림 기능 추가: 알림 저장용
+    @Autowired
+    private NotificationMapper notificationMapper;
 
 	// 강의 과제 목록
 	public List<Map<String, Object>> courseListWithAssignment(Long userId) {		
@@ -41,6 +52,9 @@ public class AssignmentService {
 		if(row!=1) {
 			throw new RuntimeException("새 과제 등록 실패");
 		}
+		
+		// [권순표] 알림 기능 추가: 과제 등록 알림 발송
+        notifyAssignmentToCourseStudents(assignment, "CREATE");
 	}
 	// 과제 상세
 	public Assignment assignmentOne(int assignmentId) {
@@ -48,10 +62,20 @@ public class AssignmentService {
 	}
 	// 과제 삭제
 	public void removeAssignment(int assignmentId) {
+		
+		// [권순표] 알림 기능 추가를 위해 삭제 전 과제 정보 조회
+        Assignment assignment = assignmentMapper.selectAssignmentOne(assignmentId);
+        if (assignment == null) {
+            throw new RuntimeException("존재하지 않는 과제입니다.");
+        }
+		
 		int row = assignmentMapper.deleteAssignmentByProf(assignmentId);
 		if(row!=1) {
 			throw new RuntimeException("과제 삭제 실패");
 		}
+		
+		// [권순표] 알림 기능 추가: 과제 삭제 알림 발송
+        notifyAssignmentToCourseStudents(assignment, "DELETE");
 	}
 	// 강의
 	public Map<String, Object> courseOne(Long courseId) {
@@ -71,6 +95,10 @@ public class AssignmentService {
 		if(row!=1) {
 			throw new RuntimeException("과제 수정 실패");
 		}
+		
+		// [권순표] 알림 기능 추가: 과제 수정 알림 발송
+        notifyAssignmentToCourseStudents(assignment, "UPDATE");
+        
 	}
 	
 	// 학생 수강 목록
@@ -140,4 +168,71 @@ public class AssignmentService {
 			catch(Exception e) {throw new RuntimeException("파일 저장 실패");}
 		}
 	}
+	
+	// ======================================================
+    // ★ 알림 기능 추가: 과제 등록/수정/삭제 시 공통 알림 발송 메서드
+    // ======================================================
+    private void notifyAssignmentToCourseStudents(Assignment assignment, String action) {
+
+        Long courseId = assignment.getCourseId();
+        if (courseId == null) {
+            log.warn("notifyAssignmentToCourseStudents: courseId가 null입니다. assignmentId={}", assignment.getAssignmentId());
+            return;
+        }
+
+        // 강의 정보 조회 (courseName 얻기)
+        Map<String, Object> courseMap = courseOne(courseId);
+        String courseName = courseMap != null ? (String) courseMap.get("courseName") : "";
+
+        // 수강 중인 학생 목록 조회
+        List<Long> studentIds = courseMapper.selectEnrolledStudentIdsByCourseId(courseId);
+        if (studentIds == null || studentIds.isEmpty()) {
+            log.debug("notifyAssignmentToCourseStudents: 수강 중인 학생 없음. courseId={}", courseId);
+            return;
+        }
+
+        String prefix;
+        String message;
+
+        switch (action) {
+            case "CREATE":
+                prefix = "[과제 등록] ";
+                message = "새 과제가 등록되었습니다.";
+                break;
+            case "UPDATE":
+                prefix = "[과제 수정] ";
+                message = "등록된 과제가 수정되었습니다.";
+                break;
+            case "DELETE":
+                prefix = "[과제 삭제] ";
+                message = "등록된 과제가 삭제되었습니다.";
+                break;
+            default:
+                prefix = "[과제 알림] ";
+                message = "과제 관련 알림입니다.";
+        }
+
+        String assignmentName = assignment.getAssignmentName() != null ? assignment.getAssignmentName() : "";
+        String title = prefix + courseName + " - " + assignmentName;
+
+        String deadlineInfo = assignment.getEnddate() != null ? " (마감: " + assignment.getEnddate() + ")" : "";
+        String fullMessage = message + deadlineInfo;
+
+        String linkUrl = "/assignment/detail?assignmentId=" + assignment.getAssignmentId();
+
+        for (Long studentId : studentIds) {
+            Notification notification = new Notification();
+            notification.setUserId(studentId);
+            notification.setCategory("ASSIGNMENT");
+            notification.setTargetType("ASSIGNMENT");
+            notification.setTargetId(assignment.getAssignmentId());
+            notification.setTitle(title);
+            notification.setMessage(fullMessage);
+            notification.setLinkUrl(linkUrl);
+            // readYn/deleteYn 은 XML에서 IFNULL(..., 'N') 처리
+
+            notificationMapper.insertNotification(notification);
+        }
+    }
 }
+

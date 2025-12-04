@@ -802,3 +802,169 @@ body {
 .course-list li:last-child {
     border-bottom: none; /* 마지막 줄 밑줄 제거 */
 }
+
+.header-user-info {
+    margin-right: 16px;
+    font-size: 13px;
+    color: #e5e7eb;
+}
+
+/* 알림 공통 */
+.notification-wrapper {
+    position: relative;
+    margin-right: 12px;
+}
+
+.icon-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    position: relative;
+    color: #f9fafb;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+    background-color: #ef4444;
+}
+
+.notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: 34px;
+    width: 360px;
+    max-height: 420px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.notification-dropdown.hidden {
+    display: none;
+}
+
+.dropdown-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(to right, #eff6ff, #f5f3ff);
+}
+
+.header-count {
+    font-size: 12px;
+    color: #ef4444;
+}
+
+.notification-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 10px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: #f9fafb;
+}
+
+.notification-item.unread {
+    background-color: #eff6ff;
+}
+
+.notification-pill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification-category-pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.category-notice {
+    background-color: #e0edff;
+    color: #1d4ed8;
+}
+
+.category-assignment {
+    background-color: #ffedd5;
+    color: #ea580c;
+}
+
+.category-score {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.category-schedule {
+    background-color: #ede9fe;
+    color: #6d28d9;
+}
+
+.notification-unread-badge {
+    font-size: 11px;
+    color: #ef4444;
+}
+
+.notification-title {
+    font-weight: 500;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-message {
+    font-size: 12px;
+    color: #4b5563;
+    max-height: 34px;
+    overflow: hidden;
+}
+
+.notification-meta {
+    font-size: 11px;
+    color: #9ca3af;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dropdown-footer {
+    padding: 8px 16px;
+    font-size: 11px;
+    color: #6b7280;
+    background-color: #f9fafb;
+}

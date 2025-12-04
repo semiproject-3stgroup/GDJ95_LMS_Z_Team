@@ -38,6 +38,7 @@
 		WHERE user_id = #{userId} 
 	</select>
 	
+
 	<!-- 강의 수강생 목록 -->
 	<select id="selectStudentsListByCourseId" parameterType="long" resultType="map">
 		SELECT cr.user_id userId
@@ -47,8 +48,15 @@
 		WHERE course_id = #{courseId}
 	</select>
 	
-	<!-- 교수 과제 등록 -->
-	<insert id="insertAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
+
+	<!-- 교수 과제 등록 --> <!-- [권순표] useGeneratedKeys로 생성된 assignment_id를 Assignment 객체에 자동 세팅 -->
+
+	    <insert id="insertAssignmentByProf"
+            parameterType="com.example.lms.dto.Assignment"
+            useGeneratedKeys="true"
+            keyProperty="assignmentId"
+            keyColumn="assignment_id"> 
+
 		INSERT INTO 
 			assignment(
 				course_id

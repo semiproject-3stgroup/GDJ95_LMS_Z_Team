@@ -38,5 +38,16 @@
                  c.course_name ASC
         LIMIT #{limit}
     </select>
+    
+    <!-- 알림 기능: 해당 강의를 수강 중인 학생 user_id 목록 -->
+    <select id="selectEnrolledStudentIdsByCourseId"
+            parameterType="long"
+            resultType="long">
+        SELECT
+            cr.user_id
+        FROM course_registration cr
+        WHERE cr.course_id = #{courseId}
+          AND cr.status = 'ENROLLED'
+    </select>
 
 </mapper>
