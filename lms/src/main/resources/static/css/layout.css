@@ -258,3 +258,547 @@ body {
     padding: 0;
     margin: 0;
 }
+
+/* 다가오는 일정 카드 공통 스타일 */
+.upcoming-box {
+    margin-top: 16px;
+}
+
+.event-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.event-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.event-item:last-child {
+    border-bottom: none;
+}
+
+.event-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.event-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background-color: #f3f4f6;
+    flex-shrink: 0;
+}
+
+.event-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.event-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.event-date {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.event-time {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.event-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.4;
+}
+
+.event-context {
+    margin-top: 2px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* 비어 있을 때 텍스트 */
+.empty-text {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 4px 0 0 0;
+}
+
+/* 타입 배지 기본 스타일 */
+.event-type-pill {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+/* 타입별 색상 (CLASS / EXAM / ASSIGNMENT / SCHOOL / 기타) */
+.event-type-pill.type-CLASS {
+    background-color: #dbeafe;   /* 파랑 계열 */
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+.event-type-pill.type-EXAM {
+    background-color: #fee2e2;   /* 빨강 계열 */
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.event-type-pill.type-ASSIGNMENT {
+    background-color: #fef3c7;   /* 노랑 계열 */
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.event-type-pill.type-SCHOOL {
+    background-color: #e0f2fe;   /* 하늘색 */
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+/* null / 기타 타입 */
+.event-type-pill.type-null,
+.event-type-pill.type-NULL,
+.event-type-pill.type-,
+.event-type-pill {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    border-color: #d1d5db;
+}
+
+/* ===== 홈 대시보드 레이아웃 ===== */
+
+.home-main {
+    padding-top: 16px;
+}
+
+/* 상단 인사 영역 */
+.home-hero {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 20px 24px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    margin-bottom: 24px;
+    border: 1px solid #e5e7eb;
+}
+
+.home-hero-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #111827;
+}
+
+.home-hero-text {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.home-hero-chips {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.home-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background-color: #eff6ff;
+    font-size: 12px;
+    color: #1d4ed8;
+    text-decoration: none;
+    border: 1px solid #bfdbfe;
+}
+
+.home-chip strong {
+    font-weight: 700;
+}
+
+.home-hero-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.home-btn.primary {
+    background-color: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+.home-btn.secondary {
+    background-color: #ffffff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+/* 메인 그리드 */
+.home-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.8fr;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.home-grid-left,
+.home-grid-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 카드 공통 */
+.box,
+.home-card,
+.upcoming-box {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    border: 1px solid #e5e7eb;
+}
+
+.box-header,
+.home-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.box-title,
+.home-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #111827;
+}
+
+.box-link,
+.home-card-more {
+    font-size: 12px;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* 공지 리스트 */
+.notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notice-item {
+    border-top: 1px solid #f3f4f6;
+}
+
+.notice-item:first-child {
+    border-top: none;
+}
+
+.notice-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    text-decoration: none;
+}
+
+.notice-title {
+    font-size: 14px;
+    color: #111827;
+}
+
+.notice-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.notice-badge {
+    display: inline-block;
+    font-size: 11px;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    background-color: #fee2e2;
+    border-radius: 999px;
+    padding: 2px 6px;
+    margin-right: 6px;
+}
+
+/* 과목/과제 리스트 기존 클래스 살짝 다듬기 */
+.course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.course-item {
+    padding: 8px 0;
+    border-top: 1px solid #f3f4f6;
+}
+
+.course-item:first-child {
+    border-top: none;
+}
+
+.course-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.course-name {
+    font-weight: 500;
+    color: #111827;
+}
+
+.course-credit {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.course-sub {
+    margin-top: 2px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* 일정 리스트 */
+.event-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.event-item {
+    padding: 8px 0;
+    border-top: 1px solid #f3f4f6;
+}
+
+.event-item:first-child {
+    border-top: none;
+}
+
+.event-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.event-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background-color: #f3f4ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.event-body {
+    flex: 1;
+}
+
+.event-meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 2px;
+}
+
+.event-date {
+    font-weight: 400;
+}
+
+.event-time {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.event-title {
+    font-size: 13px;
+    color: #111827;
+}
+
+.event-context {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* 타입별 배지 색상 */
+.event-type-pill {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    border: 1px solid transparent;
+}
+
+.event-type-pill.type-CLASS {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+}
+
+.event-type-pill.type-EXAM {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.event-type-pill.type-ASSIGNMENT {
+    background-color: #ecfdf3;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.event-type-pill.type-SCHOOL {
+    background-color: #eef2ff;
+    color: #4f46e5;
+    border-color: #c7d2fe;
+}
+
+/* 공통 빈 상태 텍스트 */
+.empty-text {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+/* 반응형 (좁은 화면일 때 세로 배치) */
+@media (max-width: 1200px) {
+    .home-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.home-grid-left,
+.home-grid-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* 기존 16px/18px이었다면 이렇게 살짝 벌려주자 */
+}
+
+.box-link,
+.home-card-more {
+    font-size: 12px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;      /* ← 추가 */
+}
+
+/* 진행 중 과제 D-Day 배지 */
+.dday-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+/* 마감 임박 (D-1, D-2...) */
+.dday-soon {
+    background-color: #fef3c7; /* 노랑 */
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+/* 오늘 마감 (D-day) */
+.dday-today {
+    background-color: #fee2e2; /* 빨강 계열 */
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+/* 마감 지남 */
+.dday-over {
+    background-color: #f3f4f6; /* 회색 */
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.home-main {
+    padding-top: 16px;
+    padding-bottom: 24px; /* 없으면 추가해도 좋음 */
+}
+
+.box-title-link,
+.section-more {
+    font-size: 13px;
+    color: #4a8fff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.box-title-link:hover,
+.section-more:hover {
+    text-decoration: underline;
+}
+
+.box,
+.home-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #f1f1f3;
+
+    /* 그림자 업그레이드 */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.box,
+.home-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 24px; /* ← 좌우 살짝 늘리면 카드형 UI 완성됨 */
+    border: 1px solid #f1f1f3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.course-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.course-list li:last-child {
+    border-bottom: none; /* 마지막 줄 밑줄 제거 */
+}

@@ -94,12 +94,14 @@ public class MyCalendarServiceImpl implements MyCalendarService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime end = now.plusMonths(1);
 
-        // 기존 메서드 재사용 (이미 학사+내 일정 통합 로직 있음)
+        // 기존 메서드 재사용 (학사+내 일정 통합 로직 있음)
         List<MyCalendarEvent> all = getMyCalendarEvents(loginUser, now, end);
 
         // 혹시 모를 과거 데이터 필터 + 정렬 + limit
         List<MyCalendarEvent> upcoming = all.stream()
-                .filter(e -> e.getStart() != null && !e.getStart().isBefore(now))
+        		.filter(e -> e.getStart() != null)
+                .filter(e -> !e.getStart().isBefore(now))          // 과거 제외
+                .filter(e -> !"ASSIGNMENT".equals(e.getType()))    // 과제 제외(다가오는 일정에 중복으로 안보이게)
                 .sorted(Comparator.comparing(MyCalendarEvent::getStart))
                 .limit(limit)
                 .collect(Collectors.toList());

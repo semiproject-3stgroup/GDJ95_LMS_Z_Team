@@ -12,10 +12,12 @@ import com.example.lms.dto.EnrolledCourseSummary;
 import com.example.lms.dto.Event;
 import com.example.lms.dto.MyCalendarEvent;
 import com.example.lms.dto.User;
+import com.example.lms.dto.HomeAssignmentSummary;
 import com.example.lms.service.BoardNoticeService;
 import com.example.lms.service.CourseService;
 import com.example.lms.service.EventService;
 import com.example.lms.service.MyCalendarService;
+import com.example.lms.service.AssignmentHomeService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,9 @@ public class HomeController {
 	
     @Autowired
     private BoardNoticeService boardNoticeService;
+    
+    @Autowired
+	private AssignmentHomeService assignmentHomeService;
 
 	@GetMapping("/access-denied")
 	public String accessDenied() {
@@ -55,6 +60,11 @@ public class HomeController {
 	    if (loginUser != null) {
 	        List<MyCalendarEvent> upcomingEvents =
 	                myCalendarService.getUpcomingMyAndSchoolEvents(loginUser, 5);
+	        
+	        for (MyCalendarEvent ev : upcomingEvents) {
+	            log.debug("### [Home] eventType = {}", ev.getType());
+	        }
+	        
 	        model.addAttribute("upcomingEvents", upcomingEvents);
 
 	    } else {
@@ -79,6 +89,12 @@ public class HomeController {
 	        }
 
 	        model.addAttribute("enrolledCourses", enrolledCourses);
+	        
+	     // 4) 과제 요약 TOP3 (학생일 때만)
+	        List<HomeAssignmentSummary> homeAssignments =
+	                assignmentHomeService.getUpcomingAssignmentsForHome(studentId);
+
+	        model.addAttribute("homeAssignments", homeAssignments);
 
 	    } else {
 	        log.debug("### [HomeController] 학생이 아님 혹은 loginUser = null");
