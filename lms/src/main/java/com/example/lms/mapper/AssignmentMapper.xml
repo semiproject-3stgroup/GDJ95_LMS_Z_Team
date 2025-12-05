@@ -38,7 +38,6 @@
 		WHERE user_id = #{userId} 
 	</select>
 	
-
 	<!-- 강의 수강생 목록 -->
 	<select id="selectStudentsListByCourseId" parameterType="long" resultType="map">
 		SELECT cr.user_id userId
@@ -47,7 +46,25 @@
 		FROM course_registration cr INNER JOIN users u ON cr.user_id = u.user_id
 		WHERE course_id = #{courseId}
 	</select>
+		
+	<!-- 강의 수강생 과제제출목록 -->
+	<select id="selectSubmittedAssignmentByAssignmentId" parameterType="int" resultType="com.example.lms.dto.AssignmentSubmit">
+		SELECT user_id userId
+			, assignment_id assigmentId
+			, file
+			, assignment_score assignmentScore
+			, createdate
+			, updatedate
+		FROM submitted_assignment
+		WHERE assignment_id = #{assignmentId}
+	</select>
 	
+	<!-- 과제 채점 -->
+	<update id="updateSumittedAssignmentByProf" parameterType="com.example.lms.dto.AssignmentSubmit">
+		UPDATE submitted_assignment
+		SET assignment_score = #{assignmentScore}
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId} 	
+	</update>
 
 	<!-- 교수 과제 등록 --> <!-- [권순표] useGeneratedKeys로 생성된 assignment_id를 Assignment 객체에 자동 세팅 -->
 
@@ -151,7 +168,7 @@
 			, #{file}
 			, now()
 			)				
-	</insert>
+	</insert>	
 	
 	<!-- 학생 과제 수정 -->
 	<update id="updateSubmittedAssignment" parameterType="com.example.lms.dto.AssignmentSubmit">

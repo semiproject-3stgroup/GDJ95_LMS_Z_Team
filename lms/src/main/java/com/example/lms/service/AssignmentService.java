@@ -1,6 +1,7 @@
 package com.example.lms.service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,9 +83,51 @@ public class AssignmentService {
 		return assignmentMapper.selectCourseByCourseId(courseId);
 	}
 	
-	// 강의 학생 목록
-	public List<Map<String, Object>> courseStudentsList(long courseId) {
-		return assignmentMapper.selectStudentsListByCourseId(courseId);
+	// 강의 학생 과제제출목록
+	public List<Map<String, Object>> courseStudentsSubmitList(long courseId, int assignmentId) {
+		List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);
+		List<AssignmentSubmit> submits = assignmentMapper.selectSubmittedAssignmentByAssignmentId(assignmentId);
+		
+		Map<Long, AssignmentSubmit> map = new HashMap();
+		for(AssignmentSubmit s : submits) {
+			map.put(s.getUserId(), s);
+		}
+				
+		List<Map<String, Object>> list = new ArrayList<>();
+		for(Map<String, Object> stu : students) {
+			AssignmentSubmit s = map.get(stu.get("userId"));
+			
+			Map<String, Object> submitted = new HashMap<>();
+			submitted.put("userId", stu.get("userId"));
+			submitted.put("userName", stu.get("userName"));
+			submitted.put("studentNo", stu.get("studentNo"));
+			
+			submitted.put("AssignmentId", null);
+			submitted.put("file", null);
+			submitted.put("assignmentScore", null);
+			submitted.put("createdate", null);
+			submitted.put("updatedate", null);
+			
+			if(s != null) {
+				submitted.put("AssignmentId", s.getAssignmentId());
+				submitted.put("file", s.getFile());
+				submitted.put("assignmentScore", s.getAssignmentScore());
+				submitted.put("createdate", s.getCreatedate());
+				submitted.put("updatedate", s.getUpdatedate());	
+			}
+			
+			list.add(submitted);			
+		}
+		
+		return list; 
+	}
+	
+	// 과제 채점
+	public void assignmentScoring(AssignmentSubmit submit) {
+		int row = assignmentMapper.updateSumittedAssignmentByProf(submit);
+		if(row!=1) {
+			throw new RuntimeException("채점 실패");							
+		}
 	}
 	
 	// 과제 수정

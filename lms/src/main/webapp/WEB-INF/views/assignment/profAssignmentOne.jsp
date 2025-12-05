@@ -23,7 +23,7 @@
 			<h1>one</h1>
 				<c:if test="${course.userId==userId}">
 					<form>
-						<input type="text" name=assignmentId value="${assignment.assignmentId}" hidden>
+						<input type="hidden" id="assignmentId" name=assignmentId value="${assignment.assignmentId}">
 						<button type="button" id="modifyBtn">수정</button>
 						<button type="button" id="removeBtn">삭제</button>
 					</form>
@@ -47,8 +47,23 @@
 						
 				과제 제출 현황 <br>
 				<c:forEach var="stu" items="${students}">
-					${stu.studentNo} ${stu.userName} <br>
-				</c:forEach>
+					${stu.studentNo} / ${stu.userName} / 
+					<c:if test="${not empty stu.file}">
+						<a href="${pageContext.request.contextPath}/upload/${assignment.assignmentId}/${stu.file}" download="${stu.file}">${stu.file}</a>
+					</c:if>
+					<c:if test="${empty stu.file}">미제출</c:if>
+					${not empty stu.updatedate ? stu.updatedate : stu.createdate}  
+					
+					<input type="number" min="0" max="100" value="${stu.assignmentScore}" class="scoreInput" data-user-id="${stu.userId}">					
+					<button type="button" class="saveBtn" data-user-id="${stu.userId}">저장</button>
+					
+					<span id="scoreState-${stu.userId}"></span>
+					
+					<br>
+				</c:forEach>	
+				
+				
+							
 		</main>
 	</div>
 		
@@ -71,5 +86,36 @@
 				$('form').submit();
 			}
 		});
+		
+		$('.saveBtn').click((e)=>{
+			const userId = $(e.target).data('userId');
+			const assignmentId = $('#assignmentId').val();
+			const score = $('.scoreInput[data-user-id="'+ userId +'"]').val()
+			
+			if(score === ''){
+				alert('점수를 입력하세요');
+				return;
+			}
+			
+			addScore(userId, assignmentId, score);
+		});
+				
+		function addScore(userId, assignmentId, score){
+			$.ajax({
+				url: '/rest/assignmentScore'
+				, type: 'post'
+				, data: {
+					assignmentId : assignmentId
+					, userId : userId
+					, assignmentScore : score
+				}
+				, success: ()=>{
+					$('#scoreState-'+userId).text('저장완료').css('color', 'green');
+				}		
+				, error: ()=>{
+					$('#scoreState-'+userId).text('저장실패').css('color', 'red');
+				}				
+			});
+		}
 	</script>
 </html>

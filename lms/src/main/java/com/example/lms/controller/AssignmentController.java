@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.lms.dto.Assignment;
@@ -102,7 +103,7 @@ public class AssignmentController {
 		log.debug(assignment+"");
 		
 		Map<String, Object> course = assignmentService.courseOne(assignment.getCourseId());
-		List<Map<String, Object>> students = assignmentService.courseStudentsList(assignment.getCourseId());
+		List<Map<String, Object>> students = assignmentService.courseStudentsSubmitList(assignment.getCourseId(), assignmentId);
 		
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("assignment", assignment);
@@ -110,6 +111,14 @@ public class AssignmentController {
 		model.addAttribute("students", students);
 		
 		return "assignment/profAssignmentOne";
+	}
+	
+	@PostMapping("/rest/assignmentScore")
+	@ResponseBody
+	public String profAssignmentScore(AssignmentSubmit submit) {
+		log.debug(submit+"=================================여기에요");
+		assignmentService.assignmentScoring(submit);		
+		return "score";
 	}
 	
 	

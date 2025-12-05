@@ -25,8 +25,12 @@ public interface AssignmentMapper {
 	Map<String, Object> selectCourseByCourseId(Long courseId);
 	// 강의 수강생 목록
 	List<Map<String, Object>> selectStudentsListByCourseId(long courseId);
+	// 강의 과제제출목록
+	List<AssignmentSubmit> selectSubmittedAssignmentByAssignmentId(int assignmentId);
 	// 과제 수정
 	int updateAssignmentByProf(Assignment assignment);
+	//
+	int updateSumittedAssignmentByProf(AssignmentSubmit submit);
 	// 수강 목록(학생)
 	List<Map<String, Object>> selectCourseByStudent(Long userId);
 	// 수강 과제목록(학생)
