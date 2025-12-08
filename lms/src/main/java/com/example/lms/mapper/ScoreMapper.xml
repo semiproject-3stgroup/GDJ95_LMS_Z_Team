@@ -37,5 +37,40 @@
         ORDER BY c.course_year DESC, c.course_semester DESC, c.course_name ASC
     </select>
     
+    <!-- 
+    [권순표]알림센터 연동
+     -->
+    <insert id="upsertStudentScore"
+        parameterType="com.example.lms.dto.ScoreRecord">
+    INSERT INTO score (
+        user_id,
+        course_id,
+        exam1_score,
+        exam2_score,
+        assignment_score,
+        attendance_score,
+        score_total,
+        createdate,
+        updatedate
+    ) VALUES (
+        #{userId},
+        #{courseId},
+        #{exam1Score},
+        #{exam2Score},
+        #{assignmentScore},
+        #{attendanceScore},
+        #{scoreTotal},
+        NOW(),
+        NOW()
+    )
+    ON DUPLICATE KEY UPDATE
+        exam1_score      = VALUES(exam1_score),
+        exam2_score      = VALUES(exam2_score),
+        assignment_score = VALUES(assignment_score),
+        attendance_score = VALUES(attendance_score),
+        score_total      = VALUES(score_total),
+        updatedate       = NOW()
+</insert>
+    
 </mapper>
 

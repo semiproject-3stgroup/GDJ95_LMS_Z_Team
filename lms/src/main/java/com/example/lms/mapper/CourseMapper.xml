@@ -4,6 +4,9 @@
 
 <mapper namespace="com.example.lms.mapper.CourseMapper">
 
+    <!-- =========================
+         공통 resultMap
+       ========================= -->
     <resultMap id="enrolledCourseSummaryMap"
                type="com.example.lms.dto.EnrolledCourseSummary">
         <id property="courseId" column="course_id"/>
@@ -15,7 +18,9 @@
         <result property="courseStatus" column="course_status"/>
     </resultMap>
 
-    <!-- 메인 페이지: 학생이 수강 중인 강의 상위 N개 -->
+    <!-- =========================
+         메인 페이지용 수강중 강의 요약
+       ========================= -->
     <select id="selectEnrolledCoursesForHome"
             resultMap="enrolledCourseSummaryMap">
         SELECT
@@ -38,8 +43,8 @@
                  c.course_name ASC
         LIMIT #{limit}
     </select>
-    
-    <!-- 알림 기능: 해당 강의를 수강 중인 학생 user_id 목록 -->
+
+    <!-- 해당 강의 수강중인 학생 목록 -->
     <select id="selectEnrolledStudentIdsByCourseId"
             parameterType="long"
             resultType="long">
@@ -50,18 +55,198 @@
           AND cr.status = 'ENROLLED'
     </select>
 
-
-	 <!-- 성적 알림용: 과목 기본 정보 조회 -->
+    <!-- 성적 알림용 과목 기본 정보 -->
     <select id="selectCourseBasicById"
-            parameterType="long"
+        parameterType="long"
+        resultType="com.example.lms.dto.Course">
+	    SELECT
+	        course_id        AS courseId,
+	        course_name      AS courseName,
+	        course_year      AS courseYear,
+	        course_semester  AS courseSemester,
+	        credit           AS credit,
+	        max_capacity     AS maxCapacity,   
+	        status           AS status
+	    FROM course
+	    WHERE course_id = #{courseId}
+	</select>
+
+
+    <!-- 수강신청 화면용: 신청 가능한 강의 목록 -->
+    <select id="selectOpenCoursesForRegister"
             resultType="com.example.lms.dto.Course">
         SELECT
-            course_id     AS courseId,
-            course_name   AS courseName,
-            course_year   AS courseYear,
-            course_semester AS courseSemester,
-            credit        AS credit
-        FROM course
-        WHERE course_id = #{courseId}
+            c.course_id     AS courseId,
+            c.course_name   AS courseName,
+            p.user_name     AS profName,
+            c.course_year   AS courseYear,
+            c.course_semester AS courseSemester,
+            c.credit        AS credit,
+            c.max_capacity  AS maxCapacity,
+            c.status        AS status
+        FROM course c
+        JOIN users p          -- 담당 교수
+          ON c.user_id = p.user_id
+        JOIN users s          -- 신청 학생
+          ON s.user_id = #{studentId}
+        LEFT JOIN (
+            SELECT
+                cr.course_id,
+                COUNT(*) AS enrolled_count
+            FROM course_registration cr
+            WHERE cr.status = 'ENROLLED'
+            GROUP BY cr.course_id
+        ) ec
+          ON c.course_id = ec.course_id
+        WHERE 1=1
+          <!-- 과목 상태(개설중) -->
+          AND c.status = 'OPEN'
+          <!-- 같은 학과만 신청 가능: 교수 학과 == 학생 학과 -->
+          AND p.department_id = s.department_id
+          <!-- 이미 수강 신청한 과목 제외 -->
+          AND NOT EXISTS (
+              SELECT 1
+              FROM course_registration cr2
+              WHERE cr2.course_id = c.course_id
+                AND cr2.user_id = #{studentId}
+                AND cr2.status = 'ENROLLED'
+          )
+          <!-- 정원 초과 방지 -->
+          AND IFNULL(ec.enrolled_count, 0) &lt; c.max_capacity
+          <!-- 연도/학기 필터 (파라미터가 있을 때만) -->
+          <if test="year != null">
+              AND c.course_year = #{year}
+          </if>
+          <if test="semester != null and semester != ''">
+              AND c.course_semester = #{semester}
+          </if>
+        ORDER BY c.course_name ASC
     </select>
+
+
+    <!-- 학생이 이미 신청한(ENROLLED) 강의 목록-->
+    <select id="selectMyRegisteredCourses"
+            resultType="com.example.lms.dto.Course">
+        SELECT
+            c.course_id     AS courseId,
+            c.course_name   AS courseName,
+            p.user_name     AS profName,
+            c.course_year   AS courseYear,
+            c.course_semester AS courseSemester,
+            c.credit        AS credit,
+            c.status        AS status
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status = 'ENROLLED'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+        ORDER BY c.course_name ASC
+    </select>
+
+
+    <!-- =====================================================
+         ★ 3. 수강신청 INSERT
+         - CourseRegistration DTO 사용
+       ===================================================== -->
+    <insert id="insertCourseRegistration"
+            parameterType="com.example.lms.dto.CourseRegistration"
+            useGeneratedKeys="true"
+            keyProperty="registrationId"
+            keyColumn="registration_id">
+        INSERT INTO course_registration (
+            course_id,
+            user_id,
+            registration_date,
+            status
+        )
+        VALUES (
+            #{courseId},
+            #{userId},
+            NOW(),
+            #{status}
+        )
+    </insert>
+
+
+    <!-- 수강취소
+         - ENROLLED → CANCELED 로 상태 변경-->
+    <update id="cancelCourseRegistration">
+        UPDATE course_registration
+        SET status    = 'CANCELED',
+            updatedate = NOW()
+        WHERE user_id  = #{studentId}
+          AND course_id = #{courseId}
+          AND status   = 'ENROLLED'
+    </update>
+
+
+    <!-- 학기당 수강 과목 수 카운트 (최대 6과목 제한용)-->
+    <select id="countRegisteredCoursesInSemester"
+            resultType="int">
+        SELECT
+            COUNT(*) 
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status  = 'ENROLLED'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+    </select>
+
+
+    <!-- 특정 과목 현재 수강 인원 수 (정원 체크용) -->
+    <select id="countEnrolledStudentsInCourse"
+            parameterType="long"
+            resultType="int">
+        SELECT
+            COUNT(*)
+        FROM course_registration
+        WHERE course_id = #{courseId}
+          AND status    = 'ENROLLED'
+    </select>
+
+    <!-- 시간 중복 체크용 -->
+    
+    <select id="countTimeConflict"
+            resultType="int">
+        SELECT
+            COUNT(*)
+        FROM course_schedule target
+        JOIN course_schedule other
+          ON other.course_id IN (
+                SELECT cr.course_id
+                FROM course_registration cr
+                WHERE cr.user_id = #{studentId}
+                  AND cr.status = 'ENROLLED'
+          )
+        WHERE target.course_id = #{courseId}
+          AND target.schedule_type = 'CLASS'
+          AND other.schedule_type = 'CLASS'
+          
+          AND target.start_datetime &lt; other.end_datetime
+          AND other.start_datetime &lt; target.end_datetime
+    </select>
+    
+    <!--  중복 체크 -->
+    <select id="countAlreadyRegistered" resultType="int">
+	    SELECT COUNT(*)
+	    FROM course_registration
+	    WHERE course_id = #{courseId}
+	      AND user_id = #{studentId}
+	      AND status = 'ENROLLED';
+	</select>
+
 </mapper>

@@ -6,8 +6,21 @@ import com.example.lms.dto.Course;
 import com.example.lms.dto.EnrolledCourseSummary;
 
 public interface CourseService {
+
+    // 
     List<Course> getMyCourses(Long userId);
-    
-    // 순표: 서희님 저 기능때문에 여기에 메서드좀 추가했습니다. (메인페이지 수강 중 강의 요약 블록용)
+
     List<EnrolledCourseSummary> getEnrolledCoursesForHome(Long studentId, int limit);
+
+    // 신청 가능한 강의 목록 (화면용)
+    List<Course> getOpenCoursesForRegister(Long studentId, Integer year, String semester);
+
+    // 내가 신청한 강의 목록
+    List<Course> getMyRegisteredCourses(Long studentId, Integer year, String semester);
+
+    // 수강 신청
+    void registerCourse(Long studentId, Long courseId);
+
+    // 수강 취소
+    void cancelCourse(Long studentId, Long courseId);
 }
