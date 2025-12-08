@@ -50,4 +50,18 @@
           AND cr.status = 'ENROLLED'
     </select>
 
+
+	 <!-- 성적 알림용: 과목 기본 정보 조회 -->
+    <select id="selectCourseBasicById"
+            parameterType="long"
+            resultType="com.example.lms.dto.Course">
+        SELECT
+            course_id     AS courseId,
+            course_name   AS courseName,
+            course_year   AS courseYear,
+            course_semester AS courseSemester,
+            credit        AS credit
+        FROM course
+        WHERE course_id = #{courseId}
+    </select>
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.lms.dto.Course;
 import com.example.lms.dto.EnrolledCourseSummary;
 
 @Mapper
@@ -20,4 +21,7 @@ public interface CourseMapper {
     List<Long> selectEnrolledStudentIdsByCourseId(
             @Param("courseId") Long courseId
     );
+    
+    //  성적 알림용: 과목 기본 정보 조회
+    Course selectCourseBasicById(@Param("courseId") Long courseId);
 }

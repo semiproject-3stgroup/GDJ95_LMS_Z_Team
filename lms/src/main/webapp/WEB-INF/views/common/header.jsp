@@ -23,11 +23,15 @@
                 </span>
 
                 <!-- 🔔 알림 센터 -->
-                <div class="notification-wrapper">
-                    <button type="button" id="btnNotification" class="icon-button">
-                        🔔
-                        <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
-                    </button>
+					<div class="notification-wrapper">
+					    <button type="button" id="btnNotification" class="icon-button">
+					        🔔
+					        <!-- 🔴 읽지 않은 알림 점 -->
+					        <span id="notificationDot" class="notification-dot" style="display:none;"></span>
+					
+					        <!-- 숫자 배지 -->
+					        <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
+					    </button>
 
                     <div id="notificationDropdown" class="notification-dropdown hidden">
                         <div class="dropdown-header">
@@ -65,29 +69,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const badge = document.getElementById('notificationBadge');
     const listEl = document.getElementById('notificationList');
     const headerCount = document.getElementById('notificationHeaderCount');
-
+    const dot = document.getElementById('notificationDot');
+    
+    
+    const delBtn = document.createElement('span');
+    
+    delBtn.className = 'notification-delete-btn';
+    delBtn.textContent = '삭제';
+    
     // 컨텍스트패스 (ex: /lms)
     const ctx = '<c:out value="${pageContext.request.contextPath}" />';
 
     if (!btn || !dropdown) return;
 
     function categoryLabel(category) {
-        switch (category) {
-            case 'notice': return '공지';
+        if (!category) return '';
+
+        const key = category.toLowerCase();
+        switch (key) {
+            case 'notice':     return '공지';
             case 'assignment': return '과제';
-            case 'score': return '성적';
-            case 'schedule': return '일정';
-            default: return category || '';
+            case 'score':      return '성적';
+            case 'event':      // DB 값이 EVENT 인 경우
+            case 'schedule':   return '학사일정';
+            default:           return category;
         }
     }
 
     function categoryClass(category) {
-        switch (category) {
-            case 'notice': return 'category-notice';
-            case 'assignment': return 'category-assignment';
-            case 'score': return 'category-score';
-            case 'schedule': return 'category-schedule';
-            default: return 'category-notice';
+        const key = (category || '').toUpperCase();
+
+        switch (key) {
+            case 'NOTICE':      return 'category-notice';
+            case 'ASSIGNMENT':  return 'category-assignment';
+            case 'SCORE':       return 'category-score';
+            case 'EVENT':       return 'category-event';   // 🔹 새 클래스명
+            default:            return 'category-notice';
         }
     }
 
@@ -101,9 +118,11 @@ document.addEventListener('DOMContentLoaded', function() {
             badge.style.display = 'inline-flex';
             badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
             headerCount.textContent = '미확인 알림 ' + unreadCount + '건';
+            if (dot) dot.style.display = 'block';
         } else {
             badge.style.display = 'none';
             headerCount.textContent = '미확인 알림 0건';
+            if (dot) dot.style.display = 'none';
         }
     }
 
@@ -132,6 +151,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 윗줄 (카테고리 pill + 미확인 뱃지)
                     const pillRow = document.createElement('div');
                     pillRow.className = 'notification-pill-row';
+
+                    // 카테고리 아이콘
+                    const iconSpan = document.createElement('span');
+                    iconSpan.className = 'notification-category-icon';
+                    iconSpan.textContent = (function(cat) {
+                        const key = (cat || '').toLowerCase();
+                        switch (key) {
+                            case 'notice':     return '📢';
+                            case 'assignment': return '📌';
+                            case 'score':      return '📊';
+                            case 'event':
+                            case 'schedule':   return '🎓';
+                            default:           return '🔔';
+                        }
+                    })(item.category);
+                    pillRow.appendChild(iconSpan);
 
                     const pill = document.createElement('span');
                     pill.className = 'notification-category-pill ' + categoryClass(item.category);
@@ -211,4 +246,5 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(err => console.error(err));
 });
+		
 </script>
