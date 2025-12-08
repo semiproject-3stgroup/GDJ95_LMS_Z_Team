@@ -41,6 +41,7 @@
 	<!-- 강의 수강생 목록 -->
 	<select id="selectStudentsListByCourseId" parameterType="long" resultType="map">
 		SELECT cr.user_id userId
+			, cr.course_id courseId
 			, u.student_no studentNo
 			, u.user_name userName
 		FROM course_registration cr INNER JOIN users u ON cr.user_id = u.user_id
