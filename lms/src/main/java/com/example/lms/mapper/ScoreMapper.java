@@ -12,7 +12,7 @@ import com.example.lms.dto.ScoreRecord;
 public interface ScoreMapper {
 
     List<ScoreRecord> selectStudentScores(@Param("userId") Long userId);
-    
+
     // 출석부 호출
     List<Map<String, Object>> selectTodayAttendance(Map<String, Object> map);
     // 출석부 저장
@@ -21,4 +21,9 @@ public interface ScoreMapper {
     int updateAttendace(Map<String, Object> map);
     // 출석 현황
     List<Map<String, Object>> selectAttendanceStatus(int courseId);
+
+    // [권순표]알림 기능을 위한 메서드 추가
+    int upsertStudentScore(ScoreRecord scoreRecord);
+
+
 }

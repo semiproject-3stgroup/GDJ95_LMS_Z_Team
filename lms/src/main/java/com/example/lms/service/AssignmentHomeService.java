@@ -18,6 +18,11 @@ public class AssignmentHomeService {
     private AssignmentHomeMapper assignmentHomeMapper;
 
     public List<HomeAssignmentSummary> getUpcomingAssignmentsForHome(Long userId) {
+    	
+    	if (userId == null) {
+            return List.of();
+        }
+    	
         log.debug("[AssignmentHomeService] getUpcomingAssignmentsForHome userId={}", userId);
         return assignmentHomeMapper.selectUpcomingAssignmentsForHome(userId);
     }
