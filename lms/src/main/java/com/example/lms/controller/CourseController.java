@@ -52,11 +52,16 @@ public class CourseController {
 
         Long studentId = loginUser.getUserId();
 
-        // year / semester가 없으면 전체 조회 (Mapper에서 null 허용)
+        // 신청가능 강의목록(year / semester가 없으면 전체 조회 (Mapper에서 null 허용))
         List<Course> openCourses =
                 courseService.getOpenCoursesForRegister(studentId, year, semester);
 
+        // 주간 예상 시간표
+        var weeklyTimetable =
+                courseService.getWeeklyTimetable(studentId, year, semester);
+
         model.addAttribute("openCourses", openCourses);
+        model.addAttribute("weeklyTimetable", weeklyTimetable);
         model.addAttribute("year", year);
         model.addAttribute("semester", semester);
 

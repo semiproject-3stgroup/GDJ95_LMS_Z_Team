@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 
 import com.example.lms.dto.Course;
 import com.example.lms.dto.CourseRegistration;
+import com.example.lms.dto.CourseTimeSlot;
 import com.example.lms.dto.EnrolledCourseSummary;
+import com.example.lms.dto.WeeklyTimetableSlot;
 
 @Mapper
 public interface CourseMapper {
@@ -64,5 +66,18 @@ public interface CourseMapper {
     int countAlreadyRegistered(
             @Param("studentId") Long studentId,
             @Param("courseId") Long courseId
+    );
+    
+    // 예상시간표
+    List<WeeklyTimetableSlot> selectWeeklyTimetableByStudent(
+            @Param("studentId") Long studentId,
+            @Param("year") Integer year,
+            @Param("semester") String semester
+    );
+    
+ // 주간 시간표(현재 수강 + 미리보기 과목 포함)
+    List<CourseTimeSlot> selectWeeklyTimetable(
+            @Param("studentId") Long studentId,
+            @Param("previewCourseId") Long previewCourseId
     );
 }

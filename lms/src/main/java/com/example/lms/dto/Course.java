@@ -15,4 +15,7 @@ public class Course {
 
     // 화면용
     private String profName;   
+    
+ // 수업 요일/시간 요약
+    private String scheduleSummary;
 }

@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.lms.dto.Course;
 import com.example.lms.dto.CourseRegistration;
+import com.example.lms.dto.CourseTimeSlot;
 import com.example.lms.dto.EnrolledCourseSummary;
+import com.example.lms.dto.WeeklyTimetableSlot;
 import com.example.lms.mapper.CourseMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -146,5 +148,22 @@ public class CourseServiceImpl implements CourseService {
 
         int rows = courseMapper.cancelCourseRegistration(studentId, courseId);
         log.debug("### [Service] 수강취소 rows={}", rows);
+    }
+    
+    //
+    @Override
+    public List<WeeklyTimetableSlot> getWeeklyTimetable(Long studentId,
+                                                        Integer year,
+                                                        String semester) {
+        if (studentId == null) {
+            return List.of();
+        }
+        return courseMapper.selectWeeklyTimetableByStudent(studentId, year, semester);
+    }
+    
+    @Override
+    public List<CourseTimeSlot> getWeeklyTimetable(Long studentId, Long previewCourseId) {
+        if (studentId == null) return List.of();
+        return courseMapper.selectWeeklyTimetable(studentId, previewCourseId);
     }
 }
