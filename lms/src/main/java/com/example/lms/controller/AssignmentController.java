@@ -105,6 +105,9 @@ public class AssignmentController {
 		Map<String, Object> course = assignmentService.courseOne(assignment.getCourseId());
 		List<Map<String, Object>> students = assignmentService.courseStudentsSubmitList(assignment.getCourseId(), assignmentId);
 		
+		boolean isDateOver = assignmentService.isDateOver(assignment);
+		
+		model.addAttribute("isDateOver", isDateOver);
 		model.addAttribute("userId", user.getUserId());
 		model.addAttribute("assignment", assignment);
 		model.addAttribute("course", course);

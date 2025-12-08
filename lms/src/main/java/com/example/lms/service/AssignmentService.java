@@ -1,6 +1,8 @@
 package com.example.lms.service;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +38,22 @@ public class AssignmentService {
     // [권순표] 알림 기능 추가: 알림 저장용
     @Autowired
     private NotificationMapper notificationMapper;
+    
+    // 날짜 포멧
+    public LocalDateTime toDate(String date) {
+    	DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    	return LocalDateTime.parse(date, f);
+    }
+    // 과제 마감일 지나면 true
+    public boolean isDateOver(Assignment assignment) {
+    	LocalDateTime end = toDate(assignment.getEnddate());
+    	return LocalDateTime.now().isAfter(end);
+    }
+    // 과제 시작일 지나면 true
+    public boolean isDateBegin(Assignment assignment) {
+    	LocalDateTime start = toDate(assignment.getEnddate());
+    	return LocalDateTime.now().isAfter(start);
+    }
 
 	// 강의 과제 목록
 	public List<Map<String, Object>> courseListWithAssignment(Long userId) {		
@@ -121,12 +139,15 @@ public class AssignmentService {
 		
 		return list; 
 	}
-	
+				
 	// 과제 채점
 	public void assignmentScoring(AssignmentSubmit submit) {
 		int row = assignmentMapper.updateSumittedAssignmentByProf(submit);
-		if(row!=1) {
-			throw new RuntimeException("채점 실패");							
+		if(row==0) {
+			int row2 = assignmentMapper.insertSumittedAssignmentOnlyScoreByprof(submit);
+			if(row2!=1) {
+				throw new RuntimeException("채점 실패");
+			}
 		}
 	}
 	
@@ -169,10 +190,13 @@ public class AssignmentService {
 						
 			submit.setFile(file.getOriginalFilename());
 			
-			int row = assignmentMapper.insertSubmittedAssignment(submit);
-			if(row!=1) {
-				throw new RuntimeException("과제 등록 실패");
-			}
+			int row = assignmentMapper.updateSubmittedAssignment(submit);
+			if(row == 0 ) {
+				row = assignmentMapper.insertSubmittedAssignment(submit);
+					if(row != 1) {
+						throw new RuntimeException("파일 등록 실패");
+					}
+			}						 			
 						
 			File submitFile = new File(path + submit.getAssignmentId() + "/" + file.getOriginalFilename());
 			if(!submitFile.getParentFile().exists()) {

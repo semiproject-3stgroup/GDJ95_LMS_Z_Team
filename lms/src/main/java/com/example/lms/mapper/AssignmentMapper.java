@@ -29,8 +29,10 @@ public interface AssignmentMapper {
 	List<AssignmentSubmit> selectSubmittedAssignmentByAssignmentId(int assignmentId);
 	// 과제 수정
 	int updateAssignmentByProf(Assignment assignment);
-	//
+	// 과제 채점
 	int updateSumittedAssignmentByProf(AssignmentSubmit submit);
+	// 미제출 과제 채점
+	int insertSumittedAssignmentOnlyScoreByprof(AssignmentSubmit submit);	
 	// 수강 목록(학생)
 	List<Map<String, Object>> selectCourseByStudent(Long userId);
 	// 수강 과제목록(학생)

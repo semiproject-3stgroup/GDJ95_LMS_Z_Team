@@ -47,23 +47,23 @@
 						
 				과제 제출 현황 <br>
 				<c:forEach var="stu" items="${students}">
-					${stu.studentNo} / ${stu.userName} / 
-					<c:if test="${not empty stu.file}">
-						<a href="${pageContext.request.contextPath}/upload/${assignment.assignmentId}/${stu.file}" download="${stu.file}">${stu.file}</a>
-					</c:if>
-					<c:if test="${empty stu.file}">미제출</c:if>
-					${not empty stu.updatedate ? stu.updatedate : stu.createdate}  
-					
-					<input type="number" min="0" max="100" value="${stu.assignmentScore}" class="scoreInput" data-user-id="${stu.userId}">					
-					<button type="button" class="saveBtn" data-user-id="${stu.userId}">저장</button>
-					
-					<span id="scoreState-${stu.userId}"></span>
-					
-					<br>
-				</c:forEach>	
-				
-				
-							
+					<div>
+						${stu.studentNo} / ${stu.userName} / 
+						<c:if test="${not empty stu.file}">
+							<a href="${pageContext.request.contextPath}/upload/${assignment.assignmentId}/${stu.file}" download="${stu.file}">${stu.file}</a>
+						</c:if>
+						<c:if test="${empty stu.file}">미제출</c:if>
+						${not empty stu.updatedate ? stu.updatedate : stu.createdate}  
+						
+							<input type="number" min="0" max="100" value="${stu.assignmentScore}" class="scoreInput" data-user-id="${stu.userId}" style="display:none">											
+							<button type="button" class="saveBtn" data-user-id="${stu.userId}" style="display:none">저장</button>
+						
+						<span id="scoreState-${stu.userId}"></span>
+					</div>
+				</c:forEach>
+				<c:if test="${isDateOver}">
+					<button type="button" id="scoringBtn">채점</button>
+				</c:if>															
 		</main>
 	</div>
 		
@@ -98,6 +98,17 @@
 			}
 			
 			addScore(userId, assignmentId, score);
+		});
+		
+		$('#scoringBtn').click(()=>{
+			$('.scoreInput').toggle();
+			$('.saveBtn').toggle();
+			
+			if($('.saveBtn').css('display') === 'none') {
+				$('#scoringBtn').text('채점')	;
+			} else {
+				$('#scoringBtn').text('닫기');
+			}			
 		});
 				
 		function addScore(userId, assignmentId, score){

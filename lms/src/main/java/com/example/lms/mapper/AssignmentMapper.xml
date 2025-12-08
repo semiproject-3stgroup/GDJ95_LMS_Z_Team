@@ -65,6 +65,15 @@
 		SET assignment_score = #{assignmentScore}
 		WHERE user_id = #{userId} AND assignment_id = #{assignmentId} 	
 	</update>
+	
+	<!-- 미제출 과제 채점 -->
+	<insert id="insertSumittedAssignmentOnlyScoreByprof" parameterType="com.example.lms.dto.AssignmentSubmit">
+		INSERT INTO 
+			submitted_assignment(
+				user_id, assignment_id,assignment_score)
+		VALUES(
+			#{userId}, #{assignmentId}, #{assignmentScore})		
+	</insert>
 
 	<!-- 교수 과제 등록 --> <!-- [권순표] useGeneratedKeys로 생성된 assignment_id를 Assignment 객체에 자동 세팅 -->
 
