@@ -44,6 +44,9 @@ public class ScoreController {
 	@GetMapping("/profAttendance")
 	public String courseStudentAttendance(int courseId, Model model) {
 		List<Map<String, Object>> list = scoreService.courseStudentList(courseId);
+		List<Map<String, Object>> attendance = scoreService.courseStudentAttendanceStatusList(courseId);
+		
+		model.addAttribute("attendance", attendance);
 		model.addAttribute("list", list);
 		model.addAttribute("courseId", courseId);
 		return "score/attendance";
