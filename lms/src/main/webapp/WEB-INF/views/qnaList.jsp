@@ -156,6 +156,11 @@
   <div class="layout">
 
     <aside class="sidebar">
+    	<div class="sidebar-section-title">대시보드</div>
+	      <a href="${pageContext.request.contextPath}/home" class="nav-item" style="text-decoration:none; color:inherit;">
+	        <div class="nav-dot"></div>대시보드
+	      </a>
+    
       <div class="sidebar-section-title">내 강의</div>
       <%-- 수강 중인 강의 목록 동적 표시 --%>
       <c:forEach var="course" items="${myCourses}">

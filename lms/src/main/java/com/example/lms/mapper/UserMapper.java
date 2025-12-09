@@ -43,6 +43,24 @@ public interface UserMapper {
     
     // 전체 사용자 조회(알림용)
     List<User> selectAllUsers();
+
+    // [관리자] 사용자 관리 목록
+    /**
+     * [관리자] 사용자 목록 조회 (페이징 및 검색 포함)
+     */
+    List<User> selectUsersWithPagingAndSearch(
+            @Param("offset") int offset,
+            @Param("pageSize") int pageSize,
+            @Param("searchType") String searchType,
+            @Param("searchKeyword") String searchKeyword
+    );
     
+    /**
+     * [관리자] 사용자 목록 총 개수 조회 (검색 필터 포함)
+     */
+    int countUsersWithSearch(
+            @Param("searchType") String searchType,
+            @Param("searchKeyword") String searchKeyword
+    );
     
 }

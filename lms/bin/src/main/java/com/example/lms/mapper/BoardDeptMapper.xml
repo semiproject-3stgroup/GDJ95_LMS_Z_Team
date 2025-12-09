@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.BoardDeptMapper">
+	
+	<!-- 페이징 -->
+	<select id="selectBoardDeptListRowPerPage" parameterType="int" resultType="com.example.lms.dto.BoardDepartment">
+		SELECT post_Id postId
+				, user_id userId
+				, category, title
+				, createdate
+				, updatedate 
+		FROM board_department
+		WHERE department_id = #{departmentId}
+		ORDER BY postId DESC
+		LIMIT #{startRow}, #{rowPerPage}
+	</select>
+	
+	<!-- 게시물 카운트 -->
+	<select id="selectCountBoardDeptList" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM board_department
+		WHERE department_id = #{departmentId}
+	</select>
+
+	<!-- 게시물 추가 -->
+	<insert id="insertBoardDept" parameterType="com.example.lms.dto.BoardDepartment" useGeneratedKeys="true" keyColumn="post_id" keyProperty="postId">
+		INSERT
+		INTO board_department(department_id, user_id, category, title, content, hit_count, file)
+		VALUES(#{departmentId}, #{userId}, #{category}, #{title}, #{content}, #{hitCount}, #{file})
+	</insert>
+	<!-- 게시물 첨부파일 -->
+	<insert id="insertBoardDeptFile" parameterType="com.example.lms.dto.BoardDepartmentFile">
+		INSERT
+		INTO board_department_file(post_id, file_name, origin_name, file_size, file_extension)
+		VALUES(#{postId}, #{fileName}, #{originName}, #{fileSize}, #{fileExtension})
+	</insert>
+	
+	<!-- 게시물 읽기 -->
+	<select id="selectBaordDeptPost" parameterType="int" resultType="map">		
+		SELECT b.post_id postId, b.user_id userId, b.title, b.category, b.content, b.createdate, b.updatedate, u.user_name userName
+		FROM board_department b
+		INNER JOIN users u
+		ON b.user_id = u.user_id
+		WHERE b.post_id = #{postId}	
+	</select>
+	<select id="selectBoardDeptPostFileList" parameterType="int" resultType="com.example.lms.dto.BoardDepartmentFile">
+		SELECT file_id fileId, file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
+		FROM board_department_file
+		WHERE post_id = #{postId}		 
+	</select>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteBoardDeptPost" parameterType="int">
+		DELETE
+		FROM board_department
+		WHERE post_id = #{postId}	
+	</delete>
+	<delete id="deleteBoardDeptPostFile" parameterType="int">
+		DELETE
+		FROM board_department_file
+		WHERE post_id = #{postId}
+	</delete>
+	
+	
+	<select id="selectBoardDeptPostFile" parameterType="int" resultType="com.example.lms.dto.BoardDepartmentFile">
+		SELECT file_id fileId, file_name fileName, origin_name originName, file_size fileSize, file_extension fileExtension
+		FROM board_department_file
+		WHERE file_id = #{fileId}	
+	</select>
+	
+	<!-- 게시물 수정 -->
+	<update id="updateBaordDeptPost" parameterType="com.example.lms.dto.BoardDepartment">
+		UPDATE board_department 
+		SET updatedate = now()
+			<if test="title != null and title != ''">, title=#{title}</if>
+			<if test="category != null and category!= ''">, category=#{category}</if>
+			<if test="content != null and content!= ''">, content=#{content}</if>
+		WHERE post_id=#{postId}		
+	</update>
+	<delete id="deleteBoardDeptUploadedFile" parameterType="int">
+		DELETE
+		FROM board_department_file
+		WHERE file_id = #{fileId}
+	</delete>
+</mapper>

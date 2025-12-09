@@ -52,8 +52,8 @@
                                     ${fn:length(homeAssignments)}
                                 </strong>개
                             </a>
-
-                            <a href="#"
+                            
+                            <a href="${pageContext.request.contextPath}/qna/list/1"
                                class="home-chip">
                                 수강 중 강의
                                 <strong>

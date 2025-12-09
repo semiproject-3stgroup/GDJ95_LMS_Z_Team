@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.lms.mapper.NotificationMapper">
+
+    <resultMap id="notificationResultMap" type="com.example.lms.dto.Notification">
+        <id     column="notification_id" property="notificationId"/>
+        <result column="user_id"         property="userId"/>
+        <result column="category"        property="category"/>
+        <result column="target_type"     property="targetType"/>
+        <result column="target_id"       property="targetId"/>
+        <result column="title"           property="title"/>
+        <result column="message"         property="message"/>
+        <result column="link_url"        property="linkUrl"/>
+        <result column="read_yn"         property="readYn"/>
+        <result column="read_date"       property="readDate"/>
+        <result column="delete_yn"       property="deleteYn"/>
+        <result column="delete_date"     property="deleteDate"/>
+        <result column="createdate"      property="createdate"/>
+    </resultMap>
+
+    <!-- 등록 -->
+    <insert id="insertNotification"
+            parameterType="com.example.lms.dto.Notification"
+            useGeneratedKeys="true"
+            keyProperty="notificationId"
+            keyColumn="notification_id">
+        INSERT INTO notifications (
+            user_id,
+            category,
+            target_type,
+            target_id,
+            title,
+            message,
+            link_url,
+            read_yn,
+            delete_yn
+        ) VALUES (
+            #{userId},
+            #{category},
+            #{targetType},
+            #{targetId},
+            #{title},
+            #{message},
+            #{linkUrl},
+            IFNULL(#{readYn}, 'N'),
+            IFNULL(#{deleteYn}, 'N')
+        )
+    </insert>
+
+    <!-- 헤더용 최근 알림 -->
+    <select id="selectRecentNotifications" resultMap="notificationResultMap">
+        SELECT
+            notification_id,
+            user_id,
+            category,
+            target_type,
+            target_id,
+            title,
+            message,
+            link_url,
+            read_yn,
+            read_date,
+            delete_yn,
+            delete_date,
+            createdate
+        FROM notifications
+        WHERE user_id = #{userId}
+          AND delete_yn = 'N'
+        ORDER BY createdate DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 전체(필요 시) -->
+    <select id="selectNotificationsByUser" resultMap="notificationResultMap">
+        SELECT
+            notification_id,
+            user_id,
+            category,
+            target_type,
+            target_id,
+            title,
+            message,
+            link_url,
+            read_yn,
+            read_date,
+            delete_yn,
+            delete_date,
+            createdate
+        FROM notifications
+        WHERE user_id = #{userId}
+          AND delete_yn = 'N'
+        ORDER BY createdate DESC
+    </select>
+
+    <!-- 안 읽은 개수 -->
+    <select id="countUnreadNotifications" resultType="int">
+        SELECT COUNT(*)
+        FROM notifications
+        WHERE user_id = #{userId}
+          AND delete_yn = 'N'
+          AND read_yn = 'N'
+    </select>
+
+    <!-- 읽음 처리 -->
+    <update id="markNotificationAsRead">
+        UPDATE notifications
+        SET read_yn = 'Y',
+            read_date = NOW()
+        WHERE notification_id = #{notificationId}
+          AND user_id = #{userId}
+          AND delete_yn = 'N'
+    </update>
+
+    <!-- 소프트 삭제 -->
+    <update id="softDeleteNotification">
+        UPDATE notifications
+        SET delete_yn = 'Y',
+            delete_date = NOW()
+        WHERE notification_id = #{notificationId}
+          AND user_id = #{userId}
+    </update>
+
+</mapper>

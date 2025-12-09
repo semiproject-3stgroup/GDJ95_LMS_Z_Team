@@ -9,9 +9,7 @@
     </ul>
 
 
-    <!-- ===========================
-         공통 메뉴 (학생 / 교수 / 관리자 모두)
-         =========================== -->
+    <!-- 공통 메뉴 (학생 / 교수 / 관리자 모두) -->
     <div class="sidebar-title" style="margin-top: 16px;">수업</div>
     <ul class="sidebar-menu">
 
@@ -37,9 +35,7 @@
     </ul>
 
 
-    <!-- ===========================
-         관리 메뉴 (역할별 분기)
-         =========================== -->
+    <!-- 관리 메뉴 (역할별 분기) -->
     <div class="sidebar-title" style="margin-top: 16px;">관리</div>
     <ul class="sidebar-menu">
 
@@ -56,6 +52,7 @@
 
         <!-- 관리자용: 학과 관리 + 공지 관리 -->
         <c:if test="${loginUser.role == 'ADMIN'}">
+            <li><a href="${pageContext.request.contextPath}/admin/user/list">사용자 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/admin/department">학과 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/notice/list">공지 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/mypage">마이페이지</a></li>
