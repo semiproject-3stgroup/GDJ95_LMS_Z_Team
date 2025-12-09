@@ -16,7 +16,7 @@ import java.util.List;
 public class AdminUserController {
 
     @Autowired
-    private UserMapper userMapper; // UserMapper 주입
+    private UserMapper userMapper;
 
     /**
      * [관리자] 사용자 목록 조회 및 검색 (getUserList)

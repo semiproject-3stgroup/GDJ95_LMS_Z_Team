@@ -76,7 +76,7 @@
     }
     .nav-item.active{ 
       background:#16a34a; 
-      color:#fff; /* ★ 글자색을 완전한 흰색으로 수정 */
+      color:#fff;
     }
     .nav-dot{
       width:6px; height:6px;
@@ -192,14 +192,14 @@
 
     .table-footer{
       display:flex;
-      justify-content: space-between; /* ★ 양 끝 정렬(space-between) */
+      justify-content: space-between;
       align-items:center;
       margin-top:20px;
       font-size:12px;
       color:#6b7280;
     }
     .pagination{
-      display: inline-flex; /* ★ 중앙 정렬을 위해 inline-flex로 변경 */
+      display: inline-flex;
       gap:4px;
       align-items:center;
     }
@@ -267,13 +267,11 @@
       <c:set var="pageStartPage" value="${startPage != null ? startPage : 1}" />
       <c:set var="pageEndPage" value="${endPage != null ? endPage : 1}" />
 
-      <%-- ★★★ 1. 검색 쿼리 문자열 정의 ★★★ --%>
       <c:set var="searchQuery" value="" />
       <c:if test="${not empty param.searchType and not empty param.searchKeyword}">
           <c:set var="searchQuery" value="&searchType=${param.searchType}&searchKeyword=${param.searchKeyword}" />
       </c:if>
 
-      <%-- ★★★ 2. 사용자 검색 폼 추가 ★★★ --%>
       <form action="/admin/user/list" method="get" class="search-form" style="display: flex; gap: 8px; align-items: center;">
           <input type="hidden" name="page" value="1"> 
           <input type="hidden" name="pageSize" value="${pageSizeValue}">
@@ -296,7 +294,6 @@
             <button type="button" onclick="location.href='/admin/user/list?pageSize=${pageSizeValue}'" style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font-size: 13px; cursor: pointer;">초기화</button>
           </c:if>
       </form>
-      <%-- ★★★ 검색 폼 끝 ★★★ --%>
 
       <section class="list-card">
         <div class="list-header">
