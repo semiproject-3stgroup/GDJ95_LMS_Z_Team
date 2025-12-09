@@ -38,6 +38,12 @@
           ON c.user_id = p.user_id
         WHERE cr.user_id = #{studentId}
           AND cr.status = 'ENROLLED'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
         ORDER BY c.course_year DESC,
                  c.course_semester DESC,
                  c.course_name ASC
@@ -357,6 +363,28 @@
 	          )
 	    ORDER BY dayOfWeek, period, c.course_name
         ]]>
+    </select>
+    
+     <!-- 학생이 수강 중인 과목 중 가장 최근 학년/학기 1건 -->
+    <select id="selectLatestYearSemesterForStudent"
+            parameterType="long"
+            resultType="map">
+        SELECT
+            c.course_year     AS courseYear,
+            c.course_semester AS courseSemester
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status  = 'ENROLLED'
+        ORDER BY
+            c.course_year DESC,
+            CASE c.course_semester
+                WHEN '1학기' THEN 1
+                WHEN '2학기' THEN 2
+                ELSE 99
+            END DESC
+        LIMIT 1
     </select>
 
 </mapper>

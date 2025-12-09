@@ -1,6 +1,7 @@
 package com.example.lms.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,10 +15,12 @@ import com.example.lms.dto.WeeklyTimetableSlot;
 @Mapper
 public interface CourseMapper {
 
-    // 메인페이지: 로그인한 학생의 수강 중 강의 요약 리스트
+	 // 메인페이지: 로그인한 학생의 수강 중 강의 요약 리스트
     List<EnrolledCourseSummary> selectEnrolledCoursesForHome(
             @Param("studentId") Long studentId,
-            @Param("limit") int limit
+            @Param("limit") int limit,
+            @Param("year") Integer year,
+            @Param("semester") String semester
     );
     
     // 알림 기능: 해당 강의를 수강 중인 학생 ID 목록
@@ -75,9 +78,15 @@ public interface CourseMapper {
             @Param("semester") String semester
     );
     
- // 주간 시간표(현재 수강 + 미리보기 과목 포함)
+    // 주간 시간표(현재 수강 + 미리보기 과목 포함)
     List<CourseTimeSlot> selectWeeklyTimetable(
             @Param("studentId") Long studentId,
             @Param("previewCourseId") Long previewCourseId
+    );
+    
+    // 학생이 수강 중인 과목 중 가장 최근 학년/학기 1건
+    //   없으면 null
+    Map<String, Object> selectLatestYearSemesterForStudent(
+            @Param("studentId") Long studentId
     );
 }

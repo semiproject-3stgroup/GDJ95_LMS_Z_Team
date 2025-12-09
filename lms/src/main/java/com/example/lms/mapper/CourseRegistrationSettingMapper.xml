@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.CourseRegistrationSettingMapper">
+
+    <!-- 학년도/학기로 조회 -->
+    <select id="selectByYearAndSemester"
+            resultType="com.example.lms.dto.CourseRegistrationSetting">
+        SELECT
+            setting_id      AS settingId,
+            year,
+            semester,
+            register_start  AS registerStart,
+            register_end    AS registerEnd,
+            cancel_end      AS cancelEnd,
+            manual_open_yn  AS manualOpenYn,
+            createdate,
+            updatedate
+        FROM course_registration_setting
+        WHERE year = #{year}
+          AND semester = #{semester}
+    </select>
+
+    <!-- 가장 최근 설정 1건 -->
+    <select id="selectLatest"
+            resultType="com.example.lms.dto.CourseRegistrationSetting">
+        SELECT
+            setting_id      AS settingId,
+            year,
+            semester,
+            register_start  AS registerStart,
+            register_end    AS registerEnd,
+            cancel_end      AS cancelEnd,
+            manual_open_yn  AS manualOpenYn,
+            createdate,
+            updatedate
+        FROM course_registration_setting
+        ORDER BY year DESC,
+                 CASE semester
+                     WHEN '1학기' THEN 1
+                     WHEN '2학기' THEN 2
+                     ELSE 99
+                 END DESC,
+                 createdate DESC
+        LIMIT 1
+    </select>
+
+    <!-- INSERT -->
+    <insert id="insertSetting"
+            parameterType="com.example.lms.dto.CourseRegistrationSetting"
+            useGeneratedKeys="true"
+            keyProperty="settingId"
+            keyColumn="setting_id">
+        INSERT INTO course_registration_setting (
+            year,
+            semester,
+            register_start,
+            register_end,
+            cancel_end,
+            manual_open_yn,
+            createdate,
+            updatedate
+        ) VALUES (
+            #{year},
+            #{semester},
+            #{registerStart},
+            #{registerEnd},
+            #{cancelEnd},
+            #{manualOpenYn},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- UPDATE 전체 -->
+    <update id="updateSetting"
+            parameterType="com.example.lms.dto.CourseRegistrationSetting">
+        UPDATE course_registration_setting
+        SET
+            year           = #{year},
+            semester       = #{semester},
+            register_start = #{registerStart},
+            register_end   = #{registerEnd},
+            cancel_end     = #{cancelEnd},
+            manual_open_yn = #{manualOpenYn},
+            updatedate     = NOW()
+        WHERE setting_id = #{settingId}
+    </update>
+
+    <!-- 수동 열기 플래그만 ON/OFF -->
+    <update id="updateManualOpenFlag">
+        UPDATE course_registration_setting
+        SET manual_open_yn = #{manualOpenYn},
+            updatedate     = NOW()
+        WHERE setting_id   = #{settingId}
+    </update>
+
+    <!-- 수강신청 화면: 사용 가능한 학년도 목록 -->
+    <select id="selectAvailableYears"
+            resultType="int">
+        SELECT DISTINCT year
+        FROM course_registration_setting
+        ORDER BY year ASC
+    </select>
+
+    <!-- 특정 학년의 사용 가능한 학기 목록 -->
+    <select id="selectAvailableSemesters"
+            parameterType="int"
+            resultType="string">
+        SELECT DISTINCT semester
+        FROM course_registration_setting
+        WHERE year = #{year}
+        ORDER BY
+            CASE semester
+                WHEN '1학기' THEN 1
+                WHEN '2학기' THEN 2
+                ELSE 99
+            END ASC
+    </select>
+    
+      <!-- 현재 시점 기준으로 "열려 있는" 수강신청 설정 1건 (대시보드용) -->
+    <select id="selectCurrentSetting"
+            resultType="com.example.lms.dto.CourseRegistrationSetting">
+        SELECT
+            setting_id      AS settingId,
+            year,
+            semester,
+            register_start  AS registerStart,
+            register_end    AS registerEnd,
+            cancel_end      AS cancelEnd,
+            manual_open_yn  AS manualOpenYn,
+            createdate,
+            updatedate
+        FROM course_registration_setting
+        WHERE
+            manual_open_yn = 'Y'
+            OR (
+                register_start &lt;= NOW()
+                AND (cancel_end IS NULL OR cancel_end >= NOW())
+            )
+        ORDER BY year DESC,
+                 CASE semester
+                     WHEN '1학기' THEN 1
+                     WHEN '2학기' THEN 2
+                     ELSE 99
+                 END DESC,
+                 createdate DESC
+        LIMIT 1
+    </select>
+
+</mapper>

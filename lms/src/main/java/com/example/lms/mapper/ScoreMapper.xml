@@ -112,6 +112,13 @@
         score_total      = VALUES(score_total),
         updatedate       = NOW()
 </insert>
+
+<select id="existsStudentScore" resultType="int">
+    SELECT COUNT(*)
+    FROM score
+    WHERE user_id = #{userId}
+      AND course_id = #{courseId}
+</select>
     
 </mapper>
 
