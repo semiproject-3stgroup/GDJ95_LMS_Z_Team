@@ -91,7 +91,22 @@
     	FROM score
     	WHERE course_id = #{courseId}
     </select>
-
+	
+	<!-- 수강생 성적 -->
+	<select id="selectStudentScore" parameterType="int" resultType="com.example.lms.dto.Score">
+		SELECT
+			exam1_score exam1Score
+			, exam2_score exam2Score
+			, assignment_score assignmentScore 
+			, attendance_score attendanceScore
+			, score_total scoreTotal
+		FROM score
+		WHERE user_id=#{userId} AND course_id=#{courseId}
+	
+	
+	
+	</select>	
+	
     <!-- 
     [권순표]알림센터 연동
      -->

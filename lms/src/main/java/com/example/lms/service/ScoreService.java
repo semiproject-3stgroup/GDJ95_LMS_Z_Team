@@ -131,8 +131,51 @@ public class ScoreService {
     		list.add(m);    		    		    		        	    	
     	}
     	
+    	applyGradesByPercent(list);
+    	
     	return list;
     }
+    
+    private void applyGradesByPercent(List<Map<String, Object>> list) {
+
+        list.sort((a, b) -> {
+            Double s1 = toScore(a.get("scoreTotal"));
+            Double s2 = toScore(b.get("scoreTotal"));
+            return Double.compare(s2, s1);
+        });
+
+        int n = list.size();
+
+        int aEnd = (int)Math.ceil(n * 0.20);       
+        int bEnd = aEnd + (int)Math.ceil(n * 0.30);
+        int cEnd = bEnd + (int)Math.ceil(n * 0.30);
+
+
+        for (int i = 0; i < n; i++) {
+            String grade;
+
+            if (i < aEnd) grade = "A";
+            else if (i < bEnd) grade = "B";
+            else if (i < cEnd) grade = "C";
+            else grade = "D";
+
+            list.get(i).put("grade", grade);
+        }
+        
+        list.sort((a, b) -> {
+            Long u1 = ((Number)a.get("userId")).longValue();
+            Long u2 = ((Number)b.get("userId")).longValue();
+            return Long.compare(u1, u2);
+        });
+    }
+
+
+    private Double toScore(Object obj) {
+        if (obj == null) return 0.0;
+        if (obj instanceof Number) return ((Number) obj).doubleValue();
+        return Double.parseDouble(obj.toString());
+    }
+    
     
     // 수강생 성적 저장
     public void courseStudentScoreSave(Score score) {
@@ -184,6 +227,10 @@ public class ScoreService {
     	}
     	    	    	    	
     	return attendance;
+    }
+    
+    public Score selectStudentScore(int userId, int courseId) {    	    	    
+    	return scoreMapper.selectStudentScore(userId, courseId);    			    			
     }
         
     // 출석부 리스트

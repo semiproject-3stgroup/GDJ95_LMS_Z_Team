@@ -46,34 +46,34 @@
 		<!-- 오른쪽 본문 -->
         <main class="main-content">
 	
-			<h1 class="page-title">학생 성적 입력</h1>
+			<h1 class="page-title">${userName} 성적 입력</h1>
 			
 			<div class="score-card box">
 			    
 			    <form method="post" action="${pageContext.request.contextPath}/profSaveScore">
 				    <div class="score-form-row">
 				        <label>중간고사</label>
-				        <input type="number" class="score-input" min="0" max="100" name="exam1Score">
+				        <input type="number" class="score-input" min="0" max="100" name="exam1Score" value="${score.exam1Score}">
 				    </div>
 				
 				    <div class="score-form-row">
 				        <label>기말고사</label>
-				        <input type="number" class="score-input" min="0" max="100" name="exam2Score">
+				        <input type="number" class="score-input" min="0" max="100" name="exam2Score" value="${score.exam1Score}">
 				    </div>
 				
 				    <div class="score-form-row">
 				        <label>과제</label>
-				        <input type="number" class="score-input" min="0" max="100" name="assignmentScore">
+				        <input type="number" class="score-input" min="0" max="100" name="assignmentScore" value="${score.assignmentScore}">
 				    </div>
 				
 				    <div class="score-form-row">
 				        <label>출석</label>
-				        <input type="number" class="score-input" min="0" max="100" name="attendanceScore">
+				        <input type="number" class="score-input" min="0" max="100" name="attendanceScore" value="${score.attendanceScore}">
 				    </div>
 				
 				    <div class="score-form-row">
 				        <label>총점</label>
-				        <input type="number" class="score-input score-total" min="0" max="100" name="scoreTotal">
+				        <input type="number" class="score-input score-total" min="0" max="100" name="scoreTotal" value="${score.scoreTotal}">
 				    </div>
 				    
 				    <input type="hidden" name="courseId" value="${courseId}">

@@ -4,10 +4,65 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>교수 과제 관리</title>
+    <title>과제 관리</title>
 
     <!-- 공통 레이아웃 CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+   
+   <style>
+    /* 리스트 전체 기본 스타일 */
+    .notice-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 한 줄(제목 + 날짜)을 가로 배치 */
+    .notice-list li {
+        display: flex;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* 제목 영역(왼쪽 영역) */
+    .notice-list a {
+        flex: none;                  /* 확장 금지 → 테이블처럼 보이게 */
+        width: 250px;                /* 제목 칸 폭 */
+        text-decoration: none;
+        color: #374151;
+        font-size: 15px;
+        transition: color 0.15s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;     /* 너무 길면 ... 처리 */
+    }
+
+    /* hover 시 제목 강조 */
+    .notice-list a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    /* 날짜 영역(오른쪽 영역) */
+    .assignment-date {
+        width: 150px;                /* 날짜 칸 폭 */
+        text-align: right;
+        font-size: 12px;
+        color: #6b7280;
+        margin-left: 8px;
+        white-space: nowrap;
+    }
+
+    /* 마감 배지 */
+    .deadline-badge {
+        color: #dc2626;
+        font-weight: 700;
+        margin-left: 4px;
+    }
+</style>
+
+
 </head>
 <body>
     <%@ include file="/WEB-INF/views/common/header.jsp" %>
@@ -21,7 +76,7 @@
         <main class="main-content">
 
             <!-- 공통 페이지 타이틀 클래스 사용 -->
-            <h1 class="page-title">교수 과제 관리</h1>
+            <h1 class="page-title">과제</h1>
 
             <!-- 박스(card) 하나로 과제 목록 감싸기 -->
             <div class="box">
@@ -37,8 +92,11 @@
                                     <a href="${pageContext.request.contextPath}/profAssignmentOne?assignmentId=${a.assignmentId}">
                                         ${a.assignmentName}
                                     </a>
-                                    <span style="font-size: 12px; color:#6b7280; margin-left:8px;">
+                                    <span class = "assignment-date">
                                         ${a.startdate} ~ ${a.enddate}
+	                                    <c:if test="${a.over}">
+										    <span class="deadline-badge">마감</span>
+										</c:if>
                                     </span>
                                 </li>
                             </c:if>

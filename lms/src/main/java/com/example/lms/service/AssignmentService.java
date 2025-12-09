@@ -56,8 +56,20 @@ public class AssignmentService {
     }
 
 	// 강의 과제 목록
-	public List<Map<String, Object>> courseListWithAssignment(Long userId) {		
-		return assignmentMapper.selectCourseAndAssignmentByProf(userId);
+	public List<Map<String, Object>> courseListWithAssignment(Long userId) {
+		
+		List<Map<String, Object>> list = assignmentMapper.selectCourseAndAssignmentByProf(userId);				 						
+		
+		for(Map<String, Object> li : list) {
+			Assignment ass = new Assignment();
+			ass.setEnddate(li.get("enddate").toString().replace("T", " "));
+			
+			boolean over = isDateOver(ass);
+			
+			li.put("over", over);
+		}								
+		
+		return list; 
 	}
 	// 교수 강의 목록
 	public List<Course> courseListByProf(Long userId) {
@@ -131,10 +143,10 @@ public class AssignmentService {
 				submitted.put("file", s.getFile());
 				submitted.put("assignmentScore", s.getAssignmentScore());
 				submitted.put("createdate", s.getCreatedate());
-				submitted.put("updatedate", s.getUpdatedate());	
+				submitted.put("updatedate", s.getUpdatedate());				
 			}
 			
-			list.add(submitted);			
+			list.add(submitted);		
 		}
 		
 		return list; 

@@ -1,6 +1,7 @@
 package com.example.lms.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class AssignmentController {
 		User user = (User)session.getAttribute("loginUser");
 		
 		List<Course> course = assignmentService.courseListByProf(user.getUserId());
-		List<Map<String, Object>> list = assignmentService.courseListWithAssignment(user.getUserId());						
+		List<Map<String, Object>> list = assignmentService.courseListWithAssignment(user.getUserId());					
+		
 		model.addAttribute("list", list);
 		model.addAttribute("course", course);
 						
@@ -105,7 +107,28 @@ public class AssignmentController {
 		Map<String, Object> course = assignmentService.courseOne(assignment.getCourseId());
 		List<Map<String, Object>> students = assignmentService.courseStudentsSubmitList(assignment.getCourseId(), assignmentId);
 		
-		boolean isDateOver = assignmentService.isDateOver(assignment);
+		boolean isDateOver = assignmentService.isDateOver(assignment);										
+		
+		LocalDateTime end = assignmentService.toDate(assignment.getEnddate().toString());						
+		for(Map<String, Object> m : students) {
+
+			boolean isLate = false;
+			
+			if(m.get("file")!=null) {
+				String dateStr;
+				if(m.get("updatedate")!=null) {
+					dateStr = m.get("updatedate").toString();										
+				} else {
+					dateStr = m.get("createdate").toString();
+				}
+				
+				isLate = assignmentService.toDate(dateStr).isAfter(end);
+			}
+			
+			m.put("isLate", isLate);
+		}
+					
+		log.debug(students+"#############################################");
 		
 		model.addAttribute("isDateOver", isDateOver);
 		model.addAttribute("userId", user.getUserId());

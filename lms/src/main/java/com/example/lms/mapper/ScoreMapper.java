@@ -25,6 +25,8 @@ public interface ScoreMapper {
 
     // 수강생 성적 리스트
     List<Score> selectStudentsScore(int courseId);
+    
+    Score selectStudentScore(@Param("userId") int userId, @Param("courseId") int courseId);
         
     // [권순표]알림 기능을 위한 메서드 추가
     int upsertStudentScore(ScoreRecord scoreRecord);

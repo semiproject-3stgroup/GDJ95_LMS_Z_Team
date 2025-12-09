@@ -28,18 +28,22 @@ public class ScoreController {
 		
 		List<Map<String, Object>> list = scoreService.courseStudentList(courseId);
 		
-		log.debug(list+"");
-		
 		model.addAttribute("list", list);
 		
 		return "score/profScoring";
 	}
 	
 	@GetMapping("/profScoringOne")
-	public String courseStudentScoringOne(int courseId, int userId, Model model) {
+	public String courseStudentScoringOne(int courseId, int userId, String userName, Model model) {						
 		
+		Score score = scoreService.selectStudentScore(userId, courseId);
+		
+		model.addAttribute("score", score);
+		model.addAttribute("userName", userName);
 		model.addAttribute("courseId", courseId);
 		model.addAttribute("userId", userId);
+		
+		
 		
 		return "score/profScoringOne";
 	}
