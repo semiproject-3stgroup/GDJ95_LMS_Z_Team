@@ -56,6 +56,7 @@
 
         <!-- 관리자용: 학과 관리 + 공지 관리 -->
         <c:if test="${loginUser.role == 'ADMIN'}">
+            <li><a href="${pageContext.request.contextPath}/admin/user/list">사용자 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/admin/department">학과 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/notice/list">공지 관리</a></li>
             <li><a href="${pageContext.request.contextPath}/mypage">마이페이지</a></li>

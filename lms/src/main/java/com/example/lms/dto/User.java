@@ -1,5 +1,6 @@
 package com.example.lms.dto;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 import lombok.Data;
@@ -27,8 +28,8 @@ public class User {
 
     private String status;      // status
 
-    private LocalDateTime createdate; // createdate
-    private LocalDateTime updatedate; // updatedate
+    private Date createdate; // createdate
+    private Date updatedate; // updatedate
 
     private Integer departmentId;     // department_id
     private String departmentName;    // department_name

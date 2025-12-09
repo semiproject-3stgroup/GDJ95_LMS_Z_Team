@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.ScoreMapper">
+
+<resultMap id="scoreRecordMap" type="com.example.lms.dto.ScoreRecord">
+        <id property="userId" column="user_id"/>
+        <id property="courseId" column="course_id"/>
+
+        <result property="courseName"     column="course_name"/>
+        <result property="courseYear"     column="course_year"/>
+        <result property="courseSemester" column="course_semester"/>
+        <result property="credit"         column="credit"/>
+
+        <result property="exam1Score"      column="exam1_score"/>
+        <result property="exam2Score"      column="exam2_score"/>
+        <result property="assignmentScore" column="assignment_score"/>
+        <result property="attendanceScore" column="attendance_score"/>
+        <result property="scoreTotal"      column="score_total"/>
+    </resultMap>
+
+    <select id="selectStudentScores" resultMap="scoreRecordMap">
+        SELECT
+            s.user_id,
+            s.course_id,
+            c.course_name,
+            c.course_year,
+            c.course_semester,
+            c.credit,
+            s.exam1_score,
+            s.exam2_score,
+            s.assignment_score,
+            s.attendance_score,
+            s.score_total
+        FROM score s
+        JOIN course c ON s.course_id = c.course_id
+        WHERE s.user_id = #{userId}
+        ORDER BY c.course_year DESC, c.course_semester DESC, c.course_name ASC
+    </select>
+    
+    <!-- 날짜별 출석 -->
+    <select id="selectTodayAttendance" parameterType="map" resultType="map">
+    	SELECT
+    		a.attendance_date attendanceDate
+    		, a.user_id userId
+    		, u.user_name userName
+    		, u.student_no studentNo
+    		, a.attendance
+    		, a.createdate
+    		, a.updatedate
+    	FROM attendance a INNER JOIN users u ON u.user_id = a.user_id
+    	WHERE attendance_date = #{date} AND course_id = #{courseId}
+    </select>
+    
+    <!-- 출석 저장 -->
+    <insert id="insertAttedance" parameterType="map">
+    	INSERT INTO attendance(attendance_date, course_id, user_id, attendance, createdate)
+    	VALUES(#{date}, #{courseId}, #{userId}, #{attendance}, now())
+    </insert>
+    
+    <!-- 출석 수정 -->
+    <update id="updateAttendace" parameterType="map">
+    	UPDATE attendance
+    	SET updatedate = now()
+    		, attendance = #{attendance}
+		WHERE attendance_date = #{date} AND course_id = #{courseId} AND user_id = #{userId}    		
+    </update>
+    
+    <!-- 출석 현황 -->
+    <select id="selectAttendanceStatus" parameterType="int" resultType="map">
+    	SELECT
+		    user_id userId
+		    , COUNT(DISTINCT DATE(attendance_date)) AS total_days
+		    , SUM(CASE WHEN attendance = 0 THEN 1 ELSE 0 END) AS count_0
+		    , SUM(CASE WHEN attendance = 1 THEN 1 ELSE 0 END) AS count_1
+		    , SUM(CASE WHEN attendance = 2 THEN 1 ELSE 0 END) AS count_2		    		    		    
+		FROM attendance
+		WHERE course_id = #{courseId}
+		GROUP BY user_id      
+    </select>
+
+    <!-- 
+    [권순표]알림센터 연동
+     -->
+    <insert id="upsertStudentScore"
+        parameterType="com.example.lms.dto.ScoreRecord">
+    INSERT INTO score (
+        user_id,
+        course_id,
+        exam1_score,
+        exam2_score,
+        assignment_score,
+        attendance_score,
+        score_total,
+        createdate,
+        updatedate
+    ) VALUES (
+        #{userId},
+        #{courseId},
+        #{exam1Score},
+        #{exam2Score},
+        #{assignmentScore},
+        #{attendanceScore},
+        #{scoreTotal},
+        NOW(),
+        NOW()
+    )
+    ON DUPLICATE KEY UPDATE
+        exam1_score      = VALUES(exam1_score),
+        exam2_score      = VALUES(exam2_score),
+        assignment_score = VALUES(assignment_score),
+        attendance_score = VALUES(attendance_score),
+        score_total      = VALUES(score_total),
+        updatedate       = NOW()
+</insert>
+    
+</mapper>
+

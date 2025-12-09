@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.CourseMapper">
+
+    <!-- =========================
+         공통 resultMap
+       ========================= -->
+    <resultMap id="enrolledCourseSummaryMap"
+               type="com.example.lms.dto.EnrolledCourseSummary">
+        <id property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseYear" column="course_year"/>
+        <result property="courseSemester" column="course_semester"/>
+        <result property="credit" column="credit"/>
+        <result property="professorName" column="professor_name"/>
+        <result property="courseStatus" column="course_status"/>
+    </resultMap>
+
+    <!-- =========================
+         메인 페이지용 수강중 강의 요약
+       ========================= -->
+    <select id="selectEnrolledCoursesForHome"
+            resultMap="enrolledCourseSummaryMap">
+        SELECT
+            c.course_id,
+            c.course_name,
+            c.course_year,
+            c.course_semester,
+            c.credit,
+            c.status        AS course_status,
+            p.user_name     AS professor_name
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status = 'ENROLLED'
+        ORDER BY c.course_year DESC,
+                 c.course_semester DESC,
+                 c.course_name ASC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 해당 강의 수강중인 학생 목록 -->
+    <select id="selectEnrolledStudentIdsByCourseId"
+            parameterType="long"
+            resultType="long">
+        SELECT
+            cr.user_id
+        FROM course_registration cr
+        WHERE cr.course_id = #{courseId}
+          AND cr.status = 'ENROLLED'
+    </select>
+
+    <!-- 성적 알림용 과목 기본 정보 -->
+    <select id="selectCourseBasicById"
+        parameterType="long"
+        resultType="com.example.lms.dto.Course">
+	    SELECT
+	        course_id        AS courseId,
+	        course_name      AS courseName,
+	        course_year      AS courseYear,
+	        course_semester  AS courseSemester,
+	        credit           AS credit,
+	        max_capacity     AS maxCapacity,   
+	        status           AS status
+	    FROM course
+	    WHERE course_id = #{courseId}
+	</select>
+
+
+    <!-- 수강신청 화면용: 신청 가능한 강의 목록 -->
+    <select id="selectOpenCoursesForRegister"
+        resultType="com.example.lms.dto.Course">
+	    SELECT
+	        c.course_id        AS courseId,
+	        c.course_name      AS courseName,
+	        p.user_name        AS profName,
+	        c.course_year      AS courseYear,
+	        c.course_semester  AS courseSemester,
+	        c.credit           AS credit,
+	        c.max_capacity     AS maxCapacity,
+	        c.status           AS status,
+	        -- ★ 수업 요일/시간 요약
+	        GROUP_CONCAT(
+	            CONCAT(
+	                CASE DAYOFWEEK(cs.start_datetime)
+	                    WHEN 2 THEN '월'
+	                    WHEN 3 THEN '화'
+	                    WHEN 4 THEN '수'
+	                    WHEN 5 THEN '목'
+	                    WHEN 6 THEN '금'
+	                    WHEN 7 THEN '토'
+	                    ELSE '일'
+	                END,
+	                ' ',
+	                DATE_FORMAT(cs.start_datetime, '%H:%i'),
+	                '~',
+	                DATE_FORMAT(cs.end_datetime, '%H:%i')
+	            )
+	            ORDER BY cs.start_datetime
+	            SEPARATOR ', '
+	        ) AS scheduleSummary
+	    FROM course c
+	    JOIN users p
+	      ON c.user_id = p.user_id         -- 담당 교수
+	    JOIN users s
+	      ON s.user_id = #{studentId}      -- 신청 학생
+	    LEFT JOIN course_schedule cs
+	      ON cs.course_id = c.course_id
+	     AND cs.schedule_type = 'CLASS'    -- 수업 시간만
+	
+	    LEFT JOIN (
+	        SELECT
+	            cr.course_id,
+	            COUNT(*) AS enrolled_count
+	        FROM course_registration cr
+	        WHERE cr.status = 'ENROLLED'
+	        GROUP BY cr.course_id
+	    ) ec
+	      ON c.course_id = ec.course_id
+	
+	    WHERE 1=1
+	      AND c.status = 'OPEN'
+	      AND p.department_id = s.department_id
+	      AND NOT EXISTS (
+	          SELECT 1
+	          FROM course_registration cr2
+	          WHERE cr2.course_id = c.course_id
+	            AND cr2.user_id = #{studentId}
+	            AND cr2.status = 'ENROLLED'
+	      )
+	      AND IFNULL(ec.enrolled_count, 0) &lt; c.max_capacity
+	      <if test="year != null">
+	          AND c.course_year = #{year}
+	      </if>
+	      <if test="semester != null and semester != ''">
+	          AND c.course_semester = #{semester}
+	      </if>
+	    GROUP BY
+	        c.course_id, c.course_name, p.user_name,
+	        c.course_year, c.course_semester,
+	        c.credit, c.max_capacity, c.status
+	    ORDER BY c.course_name ASC
+	</select>
+
+
+    <!-- 학생이 이미 신청한(ENROLLED) 강의 목록-->
+    <select id="selectMyRegisteredCourses"
+            resultType="com.example.lms.dto.Course">
+        SELECT
+            c.course_id     AS courseId,
+            c.course_name   AS courseName,
+            p.user_name     AS profName,
+            c.course_year   AS courseYear,
+            c.course_semester AS courseSemester,
+            c.credit        AS credit,
+            c.status        AS status
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status = 'ENROLLED'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+        ORDER BY c.course_name ASC
+    </select>
+
+
+    <!-- =====================================================
+         ★ 3. 수강신청 INSERT
+         - CourseRegistration DTO 사용
+       ===================================================== -->
+    <insert id="insertCourseRegistration"
+            parameterType="com.example.lms.dto.CourseRegistration"
+            useGeneratedKeys="true"
+            keyProperty="registrationId"
+            keyColumn="registration_id">
+        INSERT INTO course_registration (
+            course_id,
+            user_id,
+            registration_date,
+            status
+        )
+        VALUES (
+            #{courseId},
+            #{userId},
+            NOW(),
+            #{status}
+        )
+    </insert>
+
+
+    <!-- 수강취소
+         - ENROLLED → CANCELED 로 상태 변경-->
+    <update id="cancelCourseRegistration">
+        UPDATE course_registration
+        SET status    = 'CANCELED',
+            updatedate = NOW()
+        WHERE user_id  = #{studentId}
+          AND course_id = #{courseId}
+          AND status   = 'ENROLLED'
+    </update>
+
+
+    <!-- 학기당 수강 과목 수 카운트 (최대 6과목 제한용)-->
+    <select id="countRegisteredCoursesInSemester"
+            resultType="int">
+        SELECT
+            COUNT(*) 
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status  = 'ENROLLED'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+    </select>
+
+
+    <!-- 특정 과목 현재 수강 인원 수 (정원 체크용) -->
+    <select id="countEnrolledStudentsInCourse"
+            parameterType="long"
+            resultType="int">
+        SELECT
+            COUNT(*)
+        FROM course_registration
+        WHERE course_id = #{courseId}
+          AND status    = 'ENROLLED'
+    </select>
+
+    <!-- 시간 중복 체크용 -->
+    
+    <select id="countTimeConflict"
+            resultType="int">
+        SELECT
+            COUNT(*)
+        FROM course_schedule target
+        JOIN course_schedule other
+          ON other.course_id IN (
+                SELECT cr.course_id
+                FROM course_registration cr
+                WHERE cr.user_id = #{studentId}
+                  AND cr.status = 'ENROLLED'
+          )
+        WHERE target.course_id = #{courseId}
+          AND target.schedule_type = 'CLASS'
+          AND other.schedule_type = 'CLASS'
+          
+          AND target.start_datetime &lt; other.end_datetime
+          AND other.start_datetime &lt; target.end_datetime
+    </select>
+    
+     <!--  중복 체크 -->
+    <select id="countAlreadyRegistered" resultType="int">
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM course_registration
+        WHERE course_id = #{courseId}
+          AND user_id = #{studentId}
+          AND status = 'ENROLLED'
+        ]]>
+    </select>
+	
+	<!-- 주간 시간표용 resultMap -->
+    <resultMap id="weeklyTimetableSlotMap"
+               type="com.example.lms.dto.WeeklyTimetableSlot">
+        <result property="dayOfWeek"      column="day_of_week"/>
+        <result property="period"         column="period"/>
+        <result property="courseId"       column="course_id"/>
+        <result property="courseName"     column="course_name"/>
+        <result property="professorName"  column="professor_name"/>
+    </resultMap>
+
+    <!-- 학생별 주간 시간표 (수강신청된 과목 + CLASS 타입 스케줄) -->
+    <select id="selectWeeklyTimetableByStudent"
+            resultMap="weeklyTimetableSlotMap">
+        SELECT
+            c.course_id                         AS course_id,
+            c.course_name                       AS course_name,
+            p.user_name                         AS professor_name,
+            DAYOFWEEK(cs.start_datetime)        AS day_of_week,  <!-- 1=일,2=월,... -->
+            (HOUR(cs.start_datetime) - 9) + 1   AS period        <!-- 09시=1교시 -->
+        FROM course_registration cr
+        JOIN course c
+          ON cr.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        JOIN course_schedule cs
+          ON cs.course_id = c.course_id
+        WHERE cr.user_id = #{studentId}
+          AND cr.status  = 'ENROLLED'
+          AND cs.schedule_type = 'CLASS'
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+    </select>
+    
+    <!-- =========================
+         주간 시간표(현재 ENROLLED + 미리보기 과목)
+         - dayOfWeek: 1=월, 2=화, 3=수, 4=목, 5=금  (MySQL 2=월이라 -1 처리)
+         - period: 1~9교시
+       ========================= -->
+    <select id="selectWeeklyTimetable"
+            resultType="com.example.lms.dto.CourseTimeSlot">
+		<![CDATA[
+        SELECT
+            -- MySQL DAYOFWEEK: 일(1)~토(7) → 월(2)~금(6) 을 1~5로 맞추기
+            (DAYOFWEEK(cs.start_datetime) - 1) AS dayOfWeek,
+            CASE
+                WHEN TIME(cs.start_datetime) >= '09:00:00' AND TIME(cs.start_datetime) < '09:50:00' THEN 1
+                WHEN TIME(cs.start_datetime) >= '10:00:00' AND TIME(cs.start_datetime) < '10:50:00' THEN 2
+                WHEN TIME(cs.start_datetime) >= '11:00:00' AND TIME(cs.start_datetime) < '11:50:00' THEN 3
+                WHEN TIME(cs.start_datetime) >= '13:00:00' AND TIME(cs.start_datetime) < '13:50:00' THEN 4
+                WHEN TIME(cs.start_datetime) >= '14:00:00' AND TIME(cs.start_datetime) < '14:50:00' THEN 5
+                WHEN TIME(cs.start_datetime) >= '15:00:00' AND TIME(cs.start_datetime) < '15:50:00' THEN 6
+                WHEN TIME(cs.start_datetime) >= '16:00:00' AND TIME(cs.start_datetime) < '16:50:00' THEN 7
+                WHEN TIME(cs.start_datetime) >= '17:00:00' AND TIME(cs.start_datetime) < '17:50:00' THEN 8
+                ELSE 9
+            END AS period,
+            c.course_id     AS courseId,
+            c.course_name   AS courseName,
+            p.user_name     AS professorName
+        FROM course_schedule cs
+        JOIN course c
+          ON cs.course_id = c.course_id
+        JOIN users p
+          ON c.user_id = p.user_id
+        LEFT JOIN course_registration cr
+          ON cr.course_id = c.course_id
+         AND cr.user_id   = #{studentId}
+         AND cr.status    = 'ENROLLED'
+        WHERE cs.schedule_type = 'CLASS'
+	      AND (
+	            -- 이미 내가 신청해서 timetable에 항상 들어가야 하는 강의
+	            cr.user_id IS NOT NULL
+	
+	            -- + 미리보기용 강의 1개(행 클릭했을 때)
+	            OR ( #{previewCourseId} IS NOT NULL
+	                 AND cs.course_id = #{previewCourseId} )
+	          )
+	    ORDER BY dayOfWeek, period, c.course_name
+        ]]>
+    </select>
+
+</mapper>
+	

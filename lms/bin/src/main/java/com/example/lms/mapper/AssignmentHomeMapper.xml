@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.lms.mapper.AssignmentHomeMapper">
+
+	<resultMap id="homeAssignmentSummaryMap"
+               type="com.example.lms.dto.HomeAssignmentSummary">
+        <id     property="assignmentId"   column="assignment_id"/>
+        <result property="courseId"       column="course_id"/>
+        <result property="courseName"     column="course_name"/>
+        <result property="assignmentName" column="assignment_name"/>
+        <result property="endDate"        column="enddate"/>
+        <result property="dday"           column="dday"/>
+    </resultMap>
+    
+    <!-- 메인페이지 과제 요약: 미제출 + 마감 안 지난 과제 TOP 3 -->
+    <select id="selectUpcomingAssignmentsForHome"
+            parameterType="long"
+            resultMap="homeAssignmentSummaryMap">
+
+        SELECT
+            a.assignment_id,
+            c.course_id,
+            c.course_name,
+            a.assignment_name,
+            a.enddate,
+            TIMESTAMPDIFF(DAY, NOW(), a.enddate) AS dday
+        FROM course_registration cr
+            JOIN course c
+                ON cr.course_id = c.course_id
+            JOIN assignment a
+                ON a.course_id = c.course_id
+            LEFT JOIN submitted_assignment sa
+                ON sa.assignment_id = a.assignment_id
+               AND sa.user_id = cr.user_id
+        WHERE cr.user_id = #{userId}
+          -- 필요하면 수강 상태 조건 추가
+          -- AND cr.status = 'ENROLLED'
+          AND sa.assignment_id IS NULL
+          AND a.enddate >= NOW()
+        ORDER BY a.enddate ASC
+        LIMIT 3
+    </select>
+    
+</mapper>

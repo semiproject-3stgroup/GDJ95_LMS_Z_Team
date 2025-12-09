@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.lms.mapper.AssignmentMapper">
+	
+	<!-- 과제 상세 -->
+	<select id="selectAssignmentOne" parameterType="int" resultType="com.example.lms.dto.Assignment">
+		SELECT assignment_id assignmentId  
+			, course_id courseId
+			, assignment_name assignmentName
+			, assignment_content assignmentContent
+			, startdate
+			, enddate
+			, createdate
+			, updatedate
+		FROM assignment
+		WHERE assignment_id = #{assignmentId}
+	</select>
+	
+	<!-- 교수 과제 목록  -->
+	<select id="selectCourseAndAssignmentByProf" parameterType="long" resultType="map">
+		SELECT c.course_name courseName
+			, a.assignment_id assignmentId
+			, a.assignment_name assignmentName
+			, a.startdate
+			, a.enddate
+			, a.createdate
+			, a.updatedate
+		FROM course	c INNER JOIN assignment a
+		ON c.course_id = a.course_id
+		WHERE user_id = #{userId} 	
+	</select>
+	
+	<!-- 교수 강의목록 -->
+	<select id="selectCourseByProf" parameterType="long" resultType="com.example.lms.dto.Course">
+		SELECT course_id courseId
+			, course_name courseName
+		FROM course
+		WHERE user_id = #{userId} 
+	</select>
+	
+	<!-- 강의 수강생 목록 -->
+	<select id="selectStudentsListByCourseId" parameterType="long" resultType="map">
+		SELECT cr.user_id userId
+			, cr.course_id courseId
+			, u.student_no studentNo
+			, u.user_name userName
+		FROM course_registration cr INNER JOIN users u ON cr.user_id = u.user_id
+		WHERE course_id = #{courseId}
+	</select>
+		
+	<!-- 강의 수강생 과제제출목록 -->
+	<select id="selectSubmittedAssignmentByAssignmentId" parameterType="int" resultType="com.example.lms.dto.AssignmentSubmit">
+		SELECT user_id userId
+			, assignment_id assigmentId
+			, file
+			, assignment_score assignmentScore
+			, createdate
+			, updatedate
+		FROM submitted_assignment
+		WHERE assignment_id = #{assignmentId}
+	</select>
+	
+	<!-- 과제 채점 -->
+	<update id="updateSumittedAssignmentByProf" parameterType="com.example.lms.dto.AssignmentSubmit">
+		UPDATE submitted_assignment
+		SET assignment_score = #{assignmentScore}
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId} 	
+	</update>
+	
+	<!-- 미제출 과제 채점 -->
+	<insert id="insertSumittedAssignmentOnlyScoreByprof" parameterType="com.example.lms.dto.AssignmentSubmit">
+		INSERT INTO 
+			submitted_assignment(
+				user_id, assignment_id,assignment_score)
+		VALUES(
+			#{userId}, #{assignmentId}, #{assignmentScore})		
+	</insert>
+
+	<!-- 교수 과제 등록 --> <!-- [권순표] useGeneratedKeys로 생성된 assignment_id를 Assignment 객체에 자동 세팅 -->
+
+	    <insert id="insertAssignmentByProf"
+            parameterType="com.example.lms.dto.Assignment"
+            useGeneratedKeys="true"
+            keyProperty="assignmentId"
+            keyColumn="assignment_id"> 
+
+		INSERT INTO 
+			assignment(
+				course_id
+				, assignment_name
+				, assignment_content
+				, startdate
+				, enddate
+				, createdate
+				)						
+		VALUES(
+			#{courseId}
+			, #{assignmentName}
+			, #{assignmentContent}
+			, #{startdate}
+			, #{enddate}
+			, now()					
+			)
+	</insert>
+	
+	<!-- 교수 과제 삭제 -->
+	<delete id="deleteAssignmentByProf" parameterType="int">
+		DELETE 
+		FROM assignment
+		WHERE assignment_id = #{assignmentId}
+	</delete>
+	
+	<!-- 교수 과제 수정 -->
+	<update id="updateAssignmentByProf" parameterType="com.example.lms.dto.Assignment">
+		UPDATE assignment
+		SET updatedate = now()
+			<if test="assignmentName != null and assignmentName != ''">, assignment_name=#{assignmentName}</if> 
+			<if test="assignmentContent != null and assignmentContent!= ''">, assignment_content=#{assignmentContent}</if>
+			<if test="startdate != null and startdate!= ''">, startdate=#{startdate}</if>
+			<if test="enddate != null and enddate!= ''">, enddate=#{enddate}</if>
+		WHERE assignment_id = #{assignmentId}
+	</update>
+	
+	<!-- 강의 정보 -->
+	<select id="selectCourseByCourseId" parameterType="long" resultType="map">
+		SELECT course_id courseId
+			, course_name courseName
+			, user_id userId
+		FROM course
+		WHERE course_id = #{courseId}
+	</select>
+	
+	<!-- 학생 수강목록 -->
+	<select id="selectCourseByStudent" parameterType="long" resultType="map">
+		SELECT cr.course_id courseId, c.course_name courseName
+		FROM course_registration cr INNER JOIN course c
+		ON cr.course_id = c. course_id 
+		WHERE cr.user_id = #{userId}	
+	</select>
+	
+	<!-- 학생 수강과목 과제목록 -->
+	<select id="selectAssignmentByStudent" parameterType="long" resultType="map">
+		SELECT cr.user_id userId
+			, cr.course_id courseId
+			, a.assignment_id assignmentId
+			, a.assignment_name assignmentName
+			, a.startdate
+			, a.enddate 
+		FROM course_registration cr INNER JOIN assignment a
+		ON cr.course_id = a.course_id
+		WHERE cr.user_id = #{userId}		
+	</select>
+	
+	<!-- 학생 과제 제출 여부 -->
+	<select id="selectSubmittedAssignmentOne" parameterType="map" resultType="com.example.lms.dto.AssignmentSubmit">
+		SELECT user_id userId
+			, assignment_id assignmentId
+			, file
+			, assignment_score assignmentScore
+			, createdate
+			, updatedate
+		FROM submitted_assignment
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId}	
+	</select>
+	
+	<!-- 학생 과제 제출 -->
+	<insert id="insertSubmittedAssignment" parameterType="com.example.lms.dto.AssignmentSubmit">
+		INSERT INTO
+			submitted_assignment(			
+			user_id
+			, assignment_id
+			, file
+			, createdate
+			)
+		VALUES (
+			#{userId}
+			, #{assignmentId}
+			, #{file}
+			, now()
+			)				
+	</insert>	
+	
+	<!-- 학생 과제 수정 -->
+	<update id="updateSubmittedAssignment" parameterType="com.example.lms.dto.AssignmentSubmit">
+		UPDATE submitted_assignment
+		SET	updatedate = now()
+			, file = #{file}
+		WHERE user_id = #{userId} AND assignment_id = #{assignmentId}
+	</update>
+</mapper>
