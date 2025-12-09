@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.lms.dto.Score;
 import com.example.lms.dto.ScoreRecord;
 
 @Mapper
@@ -22,6 +23,9 @@ public interface ScoreMapper {
     // 출석 현황
     List<Map<String, Object>> selectAttendanceStatus(int courseId);
 
+    // 수강생 성적 리스트
+    List<Score> selectStudentsScore(int courseId);
+        
     // [권순표]알림 기능을 위한 메서드 추가
     int upsertStudentScore(ScoreRecord scoreRecord);
 

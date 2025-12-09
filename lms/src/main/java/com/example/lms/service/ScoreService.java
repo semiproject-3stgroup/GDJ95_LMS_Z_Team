@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.lms.dto.Score;
 import com.example.lms.dto.ScoreRecord;
 import com.example.lms.mapper.AssignmentMapper;
 import com.example.lms.mapper.ScoreMapper;
@@ -88,11 +89,71 @@ public class ScoreService {
         sr.setGradePoint(point);
     }
     
+    // 수강생 성적 목록
     public List<Map<String, Object>> courseStudentList(int courseId) {
     	
-    	return assignmentMapper.selectStudentsListByCourseId(courseId); // 수강생 목록(userId, 학번, 이름)
+    	List<Score> scores = scoreMapper.selectStudentsScore(courseId);
+    	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId); // 수강생 목록(userId, 학번, 이름)
+    	
+    	
+    	Map<Long, Score> map = new HashMap<>();
+    	for(Score s : scores) {
+    		map.put(s.getUserId(), s);
+    	}
+    	
+    	List<Map<String, Object>> list = new ArrayList<>();
+    	for(Map<String, Object> stu : students) {
+    		
+    		Map<String, Object> m = new HashMap<>();
+    		
+    		Score score = map.get(stu.get("userId"));
+    		
+    		m.put("userId", stu.get("userId"));
+    		m.put("userName", stu.get("userName"));
+    		m.put("studentNo", stu.get("studentNo"));
+    		
+    		m.put("courseId", null);
+    		m.put("exam1Score", null);
+    		m.put("exam2Score", null);
+    		m.put("assignmentScore", null);
+    		m.put("attendanceScore", null);
+    		m.put("scoreTotal", null);
+    		
+    		if(!scores.isEmpty()) {    			
+    			m.put("courseId", score.getCourseId());
+        		m.put("exam1Score", score.getExam1Score());
+        		m.put("exam2Score", score.getExam2Score());
+        		m.put("assignmentScore", score.getAssignmentScore());
+        		m.put("attendanceScore", score.getAttendanceScore());
+        		m.put("scoreTotal", score.getScoreTotal());
+    		}
+    		
+    		list.add(m);    		    		    		        	    	
+    	}
+    	
+    	return list;
     }
     
+    // 수강생 성적 저장
+    public void courseStudentScoreSave(Score score) {
+    	
+    	ScoreRecord r = new ScoreRecord();
+        r.setUserId(score.getUserId());
+        r.setCourseId(score.getCourseId());
+        r.setExam1Score(score.getExam1Score());
+        r.setExam2Score(score.getExam2Score());
+        r.setAssignmentScore(score.getAssignmentScore());
+        r.setAttendanceScore(score.getAttendanceScore());
+        r.setScoreTotal(score.getScoreTotal());
+    	
+        int row = scoreMapper.upsertStudentScore(r);
+    	
+    	if(row < 1) {
+    		throw new RuntimeException("점수 등록 실패");
+    	}    	    	    	    	    	   
+    }
+    
+    // 수강생 출석 상황
     public List<Map<String, Object>> courseStudentAttendanceStatusList(int courseId) {
     	
     	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);

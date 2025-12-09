@@ -28,19 +28,22 @@
 						<td>기말고사</td>
 						<td>과제</td>
 						<td>출석</td>
+						<td>총점</td>
 					</tr>
 					
 				<c:forEach var="li" items="${list}">
 					<tr>
-						<td>
-							${li.studentNo}
-							
-						</td>
+						<td>${li.studentNo}</td>
 						<td>
 							<a href="${pageContext.request.contextPath}/profScoringOne?userId=${li.userId}&courseId=${li.courseId}">
 								${li.userName}
 							</a>
-						</td>						
+						</td>
+						<td>${li.exam1Score}</td>
+						<td>${li.exam2Score}</td>
+						<td>${li.assignmentScore}</td>
+						<td>${li.attendanceScore}</td>
+						<td>${li.scoreTotal}</td>
 					</tr>
 				</c:forEach>
 				</table>

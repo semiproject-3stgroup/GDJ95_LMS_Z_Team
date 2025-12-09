@@ -77,6 +77,20 @@
 		WHERE course_id = #{courseId}
 		GROUP BY user_id      
     </select>
+    
+    <!-- 수강생 성적 리스트 -->
+    <select id="selectStudentsScore" parameterType="int" resultType="com.example.lms.dto.Score">
+    	SELECT
+    		user_id userId
+    		, course_id courseId
+    		, exam1_score exam1Score
+    		, exam2_score exam2Score
+    		, assignment_score assignmentScore
+    		, attendance_score attendanceScore
+    		, score_total scoreTotal
+    	FROM score
+    	WHERE course_id = #{courseId}
+    </select>
 
     <!-- 
     [권순표]알림센터 연동

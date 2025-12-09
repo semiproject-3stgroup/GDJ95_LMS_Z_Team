@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.lms.dto.Score;
 import com.example.lms.service.ScoreService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +36,20 @@ public class ScoreController {
 	}
 	
 	@GetMapping("/profScoringOne")
-	public String courseStudentScoringOne(int courseId, int userId) {
+	public String courseStudentScoringOne(int courseId, int userId, Model model) {
 		
+		model.addAttribute("courseId", courseId);
+		model.addAttribute("userId", userId);
 		
 		return "score/profScoringOne";
+	}
+	
+	@PostMapping("/profSaveScore")
+	public String courseStudentScoreSave(Score score) {
+		
+		scoreService.courseStudentScoreSave(score);
+		
+		return "redirect:/profScoring?courseId="+score.getCourseId();
 	}
 	
 	@GetMapping("/profAttendance")
