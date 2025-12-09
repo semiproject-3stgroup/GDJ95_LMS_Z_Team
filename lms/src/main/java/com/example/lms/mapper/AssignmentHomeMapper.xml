@@ -9,7 +9,7 @@
         <result property="courseId"       column="course_id"/>
         <result property="courseName"     column="course_name"/>
         <result property="assignmentName" column="assignment_name"/>
-        <result property="endDate"        column="enddate"/>
+        <result property="endDate"        column="enddate"/>  
         <result property="dday"           column="dday"/>
     </resultMap>
     
@@ -23,7 +23,8 @@
             c.course_id,
             c.course_name,
             a.assignment_name,
-            a.enddate,
+            
+            DATE_FORMAT(a.enddate, '%Y-%m-%d %H:%i') AS enddate,
             TIMESTAMPDIFF(DAY, NOW(), a.enddate) AS dday
         FROM course_registration cr
             JOIN course c
@@ -34,10 +35,10 @@
                 ON sa.assignment_id = a.assignment_id
                AND sa.user_id = cr.user_id
         WHERE cr.user_id = #{userId}
-          -- 필요하면 수강 상태 조건 추가
-          -- AND cr.status = 'ENROLLED'
-          AND sa.assignment_id IS NULL
-          AND a.enddate >= NOW()
+          
+          AND cr.status = 'ENROLLED'
+          AND sa.assignment_id IS NULL          
+          AND a.enddate >= NOW()                
         ORDER BY a.enddate ASC
         LIMIT 3
     </select>

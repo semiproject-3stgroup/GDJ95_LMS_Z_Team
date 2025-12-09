@@ -18,10 +18,18 @@ public class ScoreService {
 
     @Autowired
     private ScoreMapper scoreMapper;
-    
+
+    // 성적 알림용
+    @Autowired
+    private NotificationService notificationService;
+
+    // 출석 / 수강생 조회용
     @Autowired
     private AssignmentMapper assignmentMapper;
 
+    /**
+     * 학생별 성적 + GPA 계산
+     */
     public Map<String, Object> getStudentGrades(Long userId) {
 
         List<ScoreRecord> list = scoreMapper.selectStudentScores(userId);
@@ -88,9 +96,40 @@ public class ScoreService {
         sr.setLetterGrade(grade);
         sr.setGradePoint(point);
     }
-    
-    // 수강생 성적 목록
+
+    /**
+     * 성적 입력/수정 + 알림 발송(upsert)
+     */
+    public int saveStudentScore(ScoreRecord scoreRecord) {
+
+        Long studentId = scoreRecord.getUserId();
+        Long courseId  = scoreRecord.getCourseId();
+
+        if (studentId == null || courseId == null) {
+            throw new IllegalArgumentException("studentId, courseId는 필수입니다.");
+        }
+
+        // 이미 성적이 있는지 확인 → 0이면 CREATE, 1 이상이면 UPDATE
+        int exists = scoreMapper.existsStudentScore(studentId, courseId);
+
+        // 점수 upsert
+        int row = scoreMapper.upsertStudentScore(scoreRecord);
+
+        // 알림 액션 구분
+        String action = (exists > 0) ? "UPDATE" : "CREATE";
+
+        // 알림 호출
+        notificationService.notifyScoreChanged(studentId, courseId, action);
+
+        return row;
+    }
+
+    // ===================== 출석 / 수강생 관련 (정순오 파트) =====================
+
+    // 과목 수강생 목록
+
     public List<Map<String, Object>> courseStudentList(int courseId) {
+
     	
     	List<Score> scores = scoreMapper.selectStudentsScore(courseId);
     	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId); // 수강생 목록(userId, 학번, 이름)
@@ -135,6 +174,7 @@ public class ScoreService {
     	
     	return list;
     }
+
     
     private void applyGradesByPercent(List<Map<String, Object>> list) {
 
@@ -196,84 +236,90 @@ public class ScoreService {
     	}    	    	    	    	    	   
     }
     
-    // 수강생 출석 상황
+
+
+    // 과목별 출석 요약 리스트
     public List<Map<String, Object>> courseStudentAttendanceStatusList(int courseId) {
-    	
-    	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);
-    	List<Map<String, Object>> states = scoreMapper.selectAttendanceStatus(courseId);
-    	
-    	Map<Long, Map<String, Object>> map = new HashMap<>();
-    	for(Map<String, Object> s : students) {
-    		map.put((Long)s.get("userId"), s);    		
-    	}
-    	
-    	
-    	List<Map<String, Object>> attendance = new ArrayList<>();
-    	for(Map<String,Object> st : states) {
-    		
-    		Map<String,Object> s = map.get(st.get("userId"));
-    		
-    		Map<String,Object> list = new HashMap<>();
-    		list.put("userId", st.get("userId"));
-    		list.put("absent", st.get("count_0"));
-    		list.put("attend", st.get("count_1"));
-    		list.put("late", st.get("count_2"));
-    		list.put("total", st.get("total_days"));
-    		
-    		list.put("userName", s.get("userName"));
-    		list.put("studentNo", s.get("studentNo"));    	
-    		
-    		attendance.add(list);
-    	}
-    	    	    	    	
-    	return attendance;
+
+        List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);
+        List<Map<String, Object>> states   = scoreMapper.selectAttendanceStatus(courseId);
+
+        Map<Long, Map<String, Object>> map = new HashMap<>();
+        for (Map<String, Object> s : students) {
+            map.put((Long) s.get("userId"), s);
+        }
+
+        List<Map<String, Object>> attendance = new ArrayList<>();
+        for (Map<String, Object> st : states) {
+
+            Map<String, Object> s = map.get(st.get("userId"));
+
+            Map<String, Object> one = new HashMap<>();
+            one.put("userId",  st.get("userId"));
+            one.put("absent",  st.get("count_0"));
+            one.put("attend",  st.get("count_1"));
+            one.put("late",    st.get("count_2"));
+            one.put("total",   st.get("total_days"));
+
+            if (s != null) {
+                one.put("userName",  s.get("userName"));
+                one.put("studentNo", s.get("studentNo"));
+            }
+
+            attendance.add(one);
+        }
+
+        return attendance;
     }
+
     
     public Score selectStudentScore(int userId, int courseId) {    	    	    
     	return scoreMapper.selectStudentScore(userId, courseId);    			    			
-    }
-        
-    // 출석부 리스트
+    }        
+
+    // 특정 날짜 출석부 리스트
     public List<Map<String, Object>> selectTodayAttendance(String date, int courseId) {
-    	
-    	Map<String, Object> map = new HashMap<>();
-    	map.put("date", date);
-    	map.put("courseId", courseId);
-    	
-    	List<Map<String, Object>> list = scoreMapper.selectTodayAttendance(map);
-    	if(!list.isEmpty()) {
-    		return list;
-    	}
-    	
-    	list = assignmentMapper.selectStudentsListByCourseId(courseId);
-    	
-    	
-    	for(Map<String, Object> li : list) {
-    		li.put("attendance", null);
-    		li.put("date", date);
-    	}
-    	
-    	return list;    	    	
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("date", date);
+        param.put("courseId", courseId);
+
+        List<Map<String, Object>> list = scoreMapper.selectTodayAttendance(param);
+        if (!list.isEmpty()) {
+            return list;
+        }
+
+        list = assignmentMapper.selectStudentsListByCourseId(courseId);
+
+        for (Map<String, Object> li : list) {
+            li.put("attendance", null);
+            li.put("date", date);
+        }
+
+        return list;
     }
-    
-    // 출석 저장
-    public void saveAttendance(List<Integer> userIds, List<Integer> statusList, String date, int courseId) {
-    	
-    	for(int i=0; i<userIds.size(); i++) {
-    		Map<String, Object> map = new HashMap<>();
-    		
-    		map.put("userId", userIds.get(i));
-    		map.put("courseId", courseId);
-    		map.put("date", date);
-    		map.put("attendance", statusList.get(i));
-    		
-    		int row = scoreMapper.updateAttendace(map);
-    		if(row==0) {
-    			row = scoreMapper.insertAttedance(map);
-    			if(row!=1) {
-    				throw new RuntimeException("출석 오류");
-    			}
-    		}
-    	}    	    	    	    	    	
+
+    // 출석 저장 (있으면 update, 없으면 insert)
+    public void saveAttendance(List<Integer> userIds,
+                               List<Integer> statusList,
+                               String date,
+                               int courseId) {
+
+        for (int i = 0; i < userIds.size(); i++) {
+            Map<String, Object> param = new HashMap<>();
+
+            param.put("userId",     userIds.get(i));
+            param.put("courseId",   courseId);
+            param.put("date",       date);
+            param.put("attendance", statusList.get(i));
+
+            int row = scoreMapper.updateAttendace(param);
+            if (row == 0) {
+                row = scoreMapper.insertAttedance(param);
+                if (row != 1) {
+                    throw new RuntimeException("출석 오류");
+                }
+            }
+        }
     }
 }

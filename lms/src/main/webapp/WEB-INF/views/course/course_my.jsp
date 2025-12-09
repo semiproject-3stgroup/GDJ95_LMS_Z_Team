@@ -20,6 +20,19 @@
 
         <h2 class="page-title">내 수강목록</h2>
 
+        <!-- 수강취소 기간 / 수동 상태 안내 배너 -->
+        <c:if test="${not empty cancelBannerText}">
+            <div class="alert
+                <c:choose>
+                    <c:when test="${cancelBannerType == 'error'}">alert-error</c:when>
+                    <c:when test="${cancelBannerType == 'success'}">alert-success</c:when>
+                    <c:otherwise>alert-info</c:otherwise>
+                </c:choose>
+            ">
+                ${cancelBannerText}
+            </div>
+        </c:if>
+
         <!-- 메시지 영역 -->
         <c:if test="${not empty message}">
             <div class="alert
@@ -33,7 +46,42 @@
             </div>
         </c:if>
 
-        <div class="box">
+        <!-- 연도/학기 필터 (수강신청 화면과 동일) -->
+        <form method="get"
+              action="${pageContext.request.contextPath}/course/my"
+              class="course-filter-form">
+            <label>
+                학년도
+                <select name="year">
+                    <option value="">전체</option>
+                    <c:forEach var="y" items="${yearList}">
+                        <option value="${y}"
+                            <c:if test="${year == y}">selected</c:if>>
+                            ${y}
+                        </option>
+                    </c:forEach>
+                </select>
+            </label>
+
+            <label>
+                학기
+                <select name="semester">
+                    <option value="">전체</option>
+                    <c:forEach var="sem" items="${semesterList}">
+                        <option value="${sem}"
+                            <c:if test="${semester == sem}">selected</c:if>>
+                            ${sem}
+                        </option>
+                    </c:forEach>
+                </select>
+            </label>
+
+            <button type="submit" class="home-btn secondary">
+                필터 적용
+            </button>
+        </form>
+
+        <div class="box" style="margin-top: 16px;">
             <div class="box-header">
                 <h3 class="box-title">수강 중인 강의</h3>
             </div>

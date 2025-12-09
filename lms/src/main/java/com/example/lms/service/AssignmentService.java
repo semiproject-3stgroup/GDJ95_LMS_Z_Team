@@ -248,9 +248,7 @@ public class AssignmentService {
 		}
 	}
 	
-	// ======================================================
-    // ★ 알림 기능 추가: 과제 등록/수정/삭제 시 공통 알림 발송 메서드
-    // ======================================================
+    //  알림 기능 추가: 과제 등록/수정/삭제 시 공통 알림 발송 메서드
     private void notifyAssignmentToCourseStudents(Assignment assignment, String action) {
 
         Long courseId = assignment.getCourseId();
@@ -308,7 +306,6 @@ public class AssignmentService {
             notification.setTitle(title);
             notification.setMessage(fullMessage);
             notification.setLinkUrl(linkUrl);
-            // readYn/deleteYn 은 XML에서 IFNULL(..., 'N') 처리
 
             notificationMapper.insertNotification(notification);
         }

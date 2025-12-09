@@ -80,19 +80,28 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, Object> delete(@PathVariable("id") Long id,
+    public Map<String, Object> delete(@PathVariable("id") Long notificationId,
                                       HttpSession session) {
-        Map<String, Object> res = new HashMap<>();
-        Long userId = getLoginUserId(session);
 
-        if (userId == null) {
-            res.put("success", false);
-            res.put("message", "로그인이 필요합니다.");
-            return res;
+        Map<String, Object> result = new HashMap<>();
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
         }
 
-        notificationService.softDelete(id, userId);
-        res.put("success", true);
-        return res;
+        Long userId = loginUser.getUserId();
+
+        // soft delete 수행
+        notificationService.softDelete(notificationId, userId);
+
+        // 남은 미확인 알림 수 재계산
+        int unreadCount = notificationService.getUnreadCount(userId);
+
+        result.put("success", true);
+        result.put("unreadCount", unreadCount);
+        return result;
     }
 }

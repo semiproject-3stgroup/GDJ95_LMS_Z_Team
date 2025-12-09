@@ -30,6 +30,10 @@ public interface ScoreMapper {
         
     // [권순표]알림 기능을 위한 메서드 추가
     int upsertStudentScore(ScoreRecord scoreRecord);
+    
+    // [권순표] 성적 존재 여부 체크 (INSERT / UPDATE 구분용)
+    int existsStudentScore(@Param("userId") Long userId,
+            @Param("courseId") Long courseId);
 
 
 }

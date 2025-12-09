@@ -20,6 +20,19 @@
 
         <h2 class="page-title">수강신청</h2>
 
+        <!-- 수강신청 기간 / 수동 상태 안내 배너 -->
+        <c:if test="${not empty registerBannerText}">
+            <div class="alert
+                <c:choose>
+                    <c:when test="${registerBannerType == 'error'}">alert-error</c:when>
+                    <c:when test="${registerBannerType == 'success'}">alert-success</c:when>
+                    <c:otherwise>alert-info</c:otherwise>
+                </c:choose>
+            ">
+                ${registerBannerText}
+            </div>
+        </c:if>
+
         <!-- 메시지 영역 -->
         <c:if test="${not empty message}">
             <div class="alert
@@ -41,14 +54,12 @@
                 학년도
                 <select name="year">
                     <option value="">전체</option>
-                    <option value="2024"
-                        <c:if test="${year == 2024}">selected</c:if>>
-                        2024
-                    </option>
-                    <option value="2025"
-                        <c:if test="${year == 2025}">selected</c:if>>
-                        2025
-                    </option>
+                    <c:forEach var="y" items="${yearList}">
+                        <option value="${y}"
+                            <c:if test="${year == y}">selected</c:if>>
+                            ${y}
+                        </option>
+                    </c:forEach>
                 </select>
             </label>
 
@@ -56,14 +67,12 @@
                 학기
                 <select name="semester">
                     <option value="">전체</option>
-                    <option value="1학기"
-                        <c:if test="${semester == '1학기'}">selected</c:if>>
-                        1학기
-                    </option>
-                    <option value="2학기"
-                        <c:if test="${semester == '2학기'}">selected</c:if>>
-                        2학기
-                    </option>
+                    <c:forEach var="sem" items="${semesterList}">
+                        <option value="${sem}"
+                            <c:if test="${semester == sem}">selected</c:if>>
+                            ${sem}
+                        </option>
+                    </c:forEach>
                 </select>
             </label>
 
@@ -103,7 +112,7 @@
                                 </thead>
                                 <tbody>
                                 <c:forEach var="c" items="${openCourses}">
-                                    <!-- 🔹 행 클릭 시 미리보기용 data-course-id 달아줌 -->
+                                    <!-- 행 클릭 시 미리보기 -->
                                     <tr class="course-row"
                                         data-course-id="${c.courseId}">
                                         <td>${c.courseName}</td>
@@ -151,7 +160,6 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- 1~9교시 / 요일별 셀에 data-day, data-period -->
                         <c:forEach var="p" begin="1" end="9">
                             <tr>
                                 <th class="timetable-period">${p}교시</th>
@@ -174,20 +182,17 @@
 
         </div> <!-- /course-page-grid -->
 
-        <!-- 🔹 주간 시간표 렌더링 스크립트 -->
+        <!-- 주간 시간표 렌더링 스크립트 -->
         <script>
-            // 셀 초기화
             function clearTimetable() {
                 const cells = document.querySelectorAll('#timetable td[data-day]');
                 cells.forEach(cell => cell.innerHTML = '');
             }
 
-            // slot 리스트를 테이블에 뿌리기
             function renderTimetable(slots) {
                 clearTimetable();
 
                 slots.forEach(slot => {
-                    // backend에서 dayOfWeek: 1=월 ~ 5=금 / period: 1~9
                     const selector =
                         '#timetable td[data-day="' + slot.dayOfWeek +
                         '"][data-period="' + slot.period + '"]';
@@ -205,7 +210,6 @@
                 });
             }
 
-            // 서버에서 주간 시간표 조회
             function loadTimetable(previewCourseId) {
                 const baseUrl = '${pageContext.request.contextPath}/api/course/weekly-timetable';
                 const params = new URLSearchParams();
@@ -227,13 +231,10 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                // 1) 처음에는 "현재 수강중인 과목" 기준 시간표만 표시
                 loadTimetable();
 
-                // 2) 강의 row 클릭 시 미리보기 (신청 버튼 클릭은 그대로 동작)
                 document.querySelectorAll('.course-row').forEach(function (row) {
                     row.addEventListener('click', function (e) {
-                        // 버튼 클릭이면 폼 submit 그대로 흘려보냄
                         if (e.target.tagName === 'BUTTON') {
                             return;
                         }

@@ -12,7 +12,7 @@ public class HomeAssignmentSummary {
     private String courseName;      // 강의명
     private String assignmentName;  // 과제명
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    // 화면에서 그대로 문자열로 쓰는 용도 (yyyy-MM-dd HH:mm 형식으로 매퍼에서 포맷)
     private String endDate;  // 마감일시
 
     private int dday;           // 남은일수

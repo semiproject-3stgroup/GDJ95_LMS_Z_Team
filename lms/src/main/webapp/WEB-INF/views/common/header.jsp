@@ -23,15 +23,15 @@
                 </span>
 
                 <!-- 🔔 알림 센터 -->
-					<div class="notification-wrapper">
-					    <button type="button" id="btnNotification" class="icon-button">
-					        🔔
-					        <!-- 🔴 읽지 않은 알림 점 -->
-					        <span id="notificationDot" class="notification-dot" style="display:none;"></span>
-					
-					        <!-- 숫자 배지 -->
-					        <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
-					    </button>
+                <div class="notification-wrapper">
+                    <button type="button" id="btnNotification" class="icon-button">
+                        🔔
+                        <!-- 🔴 읽지 않은 알림 점 -->
+                        <span id="notificationDot" class="notification-dot" style="display:none;"></span>
+
+                        <!-- 숫자 배지 -->
+                        <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
+                    </button>
 
                     <div id="notificationDropdown" class="notification-dropdown hidden">
                         <div class="dropdown-header">
@@ -70,13 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const listEl = document.getElementById('notificationList');
     const headerCount = document.getElementById('notificationHeaderCount');
     const dot = document.getElementById('notificationDot');
-    
-    
-    const delBtn = document.createElement('span');
-    
-    delBtn.className = 'notification-delete-btn';
-    delBtn.textContent = '삭제';
-    
+
     // 컨텍스트패스 (ex: /lms)
     const ctx = '<c:out value="${pageContext.request.contextPath}" />';
 
@@ -103,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'NOTICE':      return 'category-notice';
             case 'ASSIGNMENT':  return 'category-assignment';
             case 'SCORE':       return 'category-score';
-            case 'EVENT':       return 'category-event';   // 🔹 새 클래스명
+            case 'EVENT':       return 'category-event';
             default:            return 'category-notice';
         }
     }
@@ -147,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 items.forEach(item => {
                     const li = document.createElement('li');
                     li.className = 'notification-item' + (item.readYn === 'N' ? ' unread' : '');
+                    li.dataset.notificationId = item.notificationId;
 
                     // 윗줄 (카테고리 pill + 미확인 뱃지)
                     const pillRow = document.createElement('div');
@@ -200,7 +195,56 @@ document.addEventListener('DOMContentLoaded', function() {
                     li.appendChild(msgDiv);
                     li.appendChild(metaDiv);
 
-                    // 클릭 시 읽음 처리 + 이동
+                    // 🔻 삭제 버튼 추가
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.type = 'button';
+                    deleteBtn.className = 'notification-delete-btn';
+                    deleteBtn.textContent = '삭제';
+
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // li 클릭(읽음+이동) 막기
+
+                        if (!confirm('해당 알림을 삭제할까요?')) {
+                            return;
+                        }
+
+                        fetch(ctx + '/api/notifications/' + item.notificationId, {
+                            method: 'DELETE'
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (!data.success) {
+                                alert(data.message || '알림 삭제에 실패했습니다.');
+                                return;
+                            }
+
+                            // DOM에서 li 제거
+                            li.remove();
+
+                            // 뱃지/상단 카운트 갱신
+                            if (data.unreadCount != null) {
+                                refreshBadge(data.unreadCount);
+                            } else {
+                                // 응답에 없으면 fallback으로 다시 조회
+                                fetch(ctx + '/api/notifications/unread-count')
+                                    .then(res => res.json())
+                                    .then(d => {
+                                        if (d.success) {
+                                            refreshBadge(d.unreadCount || 0);
+                                        }
+                                    });
+                            }
+                        })
+                        .catch(err => {
+                            console.error('알림 삭제 오류', err);
+                            alert('알림 삭제 중 오류가 발생했습니다.');
+                        });
+                    });
+
+                    li.appendChild(deleteBtn);
+                    // 🔺 삭제 버튼 끝
+
+                    // li 전체 클릭 시 읽음 처리 + 이동
                     li.addEventListener('click', function() {
                         fetch(ctx + '/api/notifications/' + item.notificationId + '/read', {
                             method: 'POST'
@@ -246,5 +290,4 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(err => console.error(err));
 });
-		
 </script>
