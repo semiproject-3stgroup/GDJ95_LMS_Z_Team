@@ -1,5 +1,6 @@
 package com.example.lms.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,8 @@ public class ScoreService {
     		map.put((Long)s.get("userId"), s);    		
     	}
     	
+    	
+    	List<Map<String, Object>> attendance = new ArrayList<>();
     	for(Map<String,Object> st : states) {
     		
     		Map<String,Object> s = map.get(st.get("userId"));
@@ -111,15 +114,15 @@ public class ScoreService {
     		list.put("absent", st.get("count_0"));
     		list.put("attend", st.get("count_1"));
     		list.put("late", st.get("count_2"));
+    		list.put("total", st.get("total_days"));
     		
-    		list.put(null, map);
+    		list.put("userName", s.get("userName"));
+    		list.put("studentNo", s.get("studentNo"));    	
     		
+    		attendance.add(list);
     	}
-    	
-    	
-    	
-    	
-    	return states;
+    	    	    	    	
+    	return attendance;
     }
         
     // 출석부 리스트

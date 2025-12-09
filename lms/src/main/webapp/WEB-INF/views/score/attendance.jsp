@@ -22,9 +22,29 @@
 			
 			<h1>학생출석관리</h1>
 			
-				<c:forEach var="li" items="${list}">
-					${li.studentNo} / ${li.userName}	 <br>					
+				<table border="1">
+					<tr>
+						<th>학번</th>
+						<th>이름</th>
+						<th>출석</th>
+						<th>지각</th>
+						<th>결석</th>
+						<th>출석률</th>
+					</tr>
+				<c:forEach var="att" items="${attendance}">
+					<tr>
+						<td>${att.studentNo}</td>
+						<td>${att.userName}</td>
+						<td>${att.attend}</td>
+						<td>${att.late}</td>
+						<td>${att.absent}</td>
+						<td>${(att.attend+att.late)*100/att.total}%</td>					 
+					</tr>					
 				</c:forEach>
+								
+				</table>
+				
+				
 				
 				<form action="${pageContext.request.contextPath}/profAttendanceSave">
 				
@@ -63,12 +83,18 @@ $(function() {
 								<td>학번</td>
 								<td>이름</td>
 								<td>출석</td>
+								<td></td>
 						`;
 				data.forEach(item=>{
 					html += `
 						<tr>
 							<td>\${item.studentNo}</td>
 							<td>\${item.userName}</td>
+							<td>
+								\${item.attendance == 1 ? '출석'
+								: item.attendance == 2 ? '지각'
+								: item.attendance == 0 ? '결석' : ''}						
+							</td>
 							<td>
 							<input type="hidden" name="userIdList" value="\${item.userId}">
 	                            <select name="statusList">
@@ -90,11 +116,7 @@ $(function() {
 				alert('실패');
 			}				
 			});
-		});	
-	
-	
-	
-	
+		});				
 })
 </script>
 

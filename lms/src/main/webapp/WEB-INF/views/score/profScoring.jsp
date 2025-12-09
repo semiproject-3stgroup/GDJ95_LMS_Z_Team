@@ -20,10 +20,30 @@
         <main class="main-content">	
 			
 			<h1>학생성적관리</h1>
-			
-			<c:forEach var="li" items="${list}">
-				<a href="${pageContext.request.contextPath}/profScoringOne?userId=${li.userId}&courseId=${li.courseId}">${li.studentNo} / ${li.userName} </a> <br>
-			</c:forEach>
+				<table border="1">
+					<tr>
+						<td>학번</td>
+						<td>이름</td>
+						<td>중간고사</td>
+						<td>기말고사</td>
+						<td>과제</td>
+						<td>출석</td>
+					</tr>
+					
+				<c:forEach var="li" items="${list}">
+					<tr>
+						<td>
+							${li.studentNo}
+							
+						</td>
+						<td>
+							<a href="${pageContext.request.contextPath}/profScoringOne?userId=${li.userId}&courseId=${li.courseId}">
+								${li.userName}
+							</a>
+						</td>						
+					</tr>
+				</c:forEach>
+				</table>
 					
 		</main>
 	</div>
