@@ -53,7 +53,6 @@
             <label>
                 학년도
                 <select name="year">
-                    <option value="">전체</option>
                     <c:forEach var="y" items="${yearList}">
                         <option value="${y}"
                             <c:if test="${year == y}">selected</c:if>>
@@ -66,7 +65,6 @@
             <label>
                 학기
                 <select name="semester">
-                    <option value="">전체</option>
                     <c:forEach var="sem" items="${semesterList}">
                         <option value="${sem}"
                             <c:if test="${semester == sem}">selected</c:if>>
@@ -91,6 +89,15 @@
                         <h3 class="box-title">신청 가능한 강의 목록</h3>
                     </div>
 
+                    <!-- bulk 수강신청 실패 사유 -->
+                    <c:if test="${not empty bulkFailReasons}">
+                        <ul class="bulk-error-list">
+                            <c:forEach var="entry" items="${bulkFailReasons}">
+                                <li>${entry.value}</li>
+                            </c:forEach>
+                        </ul>
+                    </c:if>
+
                     <c:choose>
                         <c:when test="${empty openCourses}">
                             <p class="empty-text">현재 신청 가능한 강의가 없습니다.</p>
@@ -100,6 +107,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
+                                    <th><input type="checkbox" id="check-all"></th>
                                     <th>강의명</th>
                                     <th>담당 교수</th>
                                     <th>학년도</th>
@@ -112,9 +120,14 @@
                                 </thead>
                                 <tbody>
                                 <c:forEach var="c" items="${openCourses}">
-                                    <!-- 행 클릭 시 미리보기 -->
                                     <tr class="course-row"
                                         data-course-id="${c.courseId}">
+                                        <td>
+                                            <!-- ✅ 체크박스: change 시 미리보기 업데이트 -->
+                                            <input type="checkbox"
+                                                   class="course-check"
+                                                   value="${c.courseId}">
+                                        </td>
                                         <td>${c.courseName}</td>
                                         <td>${c.profName}</td>
                                         <td>${c.courseYear}</td>
@@ -123,6 +136,7 @@
                                         <td>${c.scheduleSummary}</td>
                                         <td>${c.status}</td>
                                         <td>
+                                            <!-- 단건 신청 버튼 (옵션, 그대로 둠) -->
                                             <form method="post"
                                                   action="${pageContext.request.contextPath}/course/register">
                                                 <input type="hidden" name="courseId" value="${c.courseId}">
@@ -135,6 +149,15 @@
                                 </c:forEach>
                                 </tbody>
                             </table>
+
+                            <!-- ✅ 카드 하단 중앙에 선택 과목 수강신청 버튼 -->
+                            <div class="box-footer" style="text-align: center; margin-top: 16px;">
+                                <button type="button"
+                                        id="btn-bulk-register"
+                                        class="home-btn primary">
+                                    선택 과목 수강신청
+                                </button>
+                            </div>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -147,7 +170,6 @@
                         <h3 class="box-title">주간 예상 시간표</h3>
                     </div>
 
-                    <!-- JS로 채울 테이블 -->
                     <table class="timetable-table" id="timetable">
                         <thead>
                         <tr>
@@ -174,16 +196,24 @@
                     </table>
 
                     <p class="timetable-hint">
-                        왼쪽에서 강의 행을 클릭하면 해당 강의를 포함한 예상 시간표를 미리 볼 수 있습니다.
-                        (신청 버튼은 실제 수강신청)
+                        왼쪽 목록에서 강의를 체크하면 해당 강의를 포함한 예상 시간표가 바로 반영됩니다.
+                        (선택 과목 수강신청 버튼은 실제 수강신청)
                     </p>
                 </div>
             </div>
 
         </div> <!-- /course-page-grid -->
 
+        <!-- bulk 수강신청용 form -->
+        <form id="bulkRegisterForm"
+              method="post"
+              action="${pageContext.request.contextPath}/course/register-bulk">
+        </form>
+
         <!-- 주간 시간표 렌더링 스크립트 -->
         <script>
+            const ctx = '${pageContext.request.contextPath}';
+
             function clearTimetable() {
                 const cells = document.querySelectorAll('#timetable td[data-day]');
                 cells.forEach(cell => cell.innerHTML = '');
@@ -210,15 +240,20 @@
                 });
             }
 
-            function loadTimetable(previewCourseId) {
-                const baseUrl = '${pageContext.request.contextPath}/api/course/weekly-timetable';
+            /**
+             * 선택된 체크박스 기준으로 주간 시간표 미리보기 요청
+             */
+            function loadTimetableWithCheckedCourses() {
+                const checked = Array.from(
+                    document.querySelectorAll('.course-check:checked')
+                ).map(cb => cb.value);
+
+                const baseUrl = ctx + '/api/course/weekly-timetable';
                 const params = new URLSearchParams();
 
-                if (previewCourseId) {
-                    params.append('previewCourseId', previewCourseId);
-                }
+                checked.forEach(id => params.append('previewCourseIds', id));
 
-                const url = params.toString() ? baseUrl + '?' + params.toString() : baseUrl;
+                const url = params.toString() ? (baseUrl + '?' + params.toString()) : baseUrl;
 
                 fetch(url)
                     .then(res => res.json())
@@ -231,19 +266,61 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                loadTimetable();
 
-                document.querySelectorAll('.course-row').forEach(function (row) {
-                    row.addEventListener('click', function (e) {
-                        if (e.target.tagName === 'BUTTON') {
-                            return;
-                        }
-                        const courseId = this.getAttribute('data-course-id');
-                        if (courseId) {
-                            loadTimetable(courseId);
-                        }
+                // 처음 진입 시: 현재 ENROLLED 기준 시간표
+                loadTimetableWithCheckedCourses();
+
+                // 개별 체크박스 change 시 → 미리보기 갱신
+                document.querySelectorAll('.course-check').forEach(function (cb) {
+                    cb.addEventListener('change', function () {
+                        loadTimetableWithCheckedCourses();
                     });
                 });
+
+                // 전체 선택 체크박스
+                const checkAll = document.getElementById('check-all');
+                if (checkAll) {
+                    checkAll.addEventListener('change', function () {
+                        const checked = this.checked;
+                        document.querySelectorAll('.course-check').forEach(function (cb) {
+                            cb.checked = checked;
+                        });
+                        loadTimetableWithCheckedCourses();
+                    });
+                }
+
+                // 선택 과목 수강신청 버튼
+                const bulkBtn = document.getElementById('btn-bulk-register');
+                const bulkForm = document.getElementById('bulkRegisterForm');
+
+                if (bulkBtn && bulkForm) {
+                    bulkBtn.addEventListener('click', function () {
+                        // 기존 hidden input 제거
+                        while (bulkForm.firstChild) {
+                            bulkForm.removeChild(bulkForm.firstChild);
+                        }
+
+                        const selected = [];
+                        document.querySelectorAll('.course-check:checked').forEach(function (cb) {
+                            selected.push(cb.value);
+                        });
+
+                        if (selected.length === 0) {
+                            alert('수강신청할 강의를 하나 이상 선택해 주세요.');
+                            return;
+                        }
+
+                        selected.forEach(function (courseId) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'courseIds';
+                            input.value = courseId;
+                            bulkForm.appendChild(input);
+                        });
+
+                        bulkForm.submit();
+                    });
+                }
             });
         </script>
 

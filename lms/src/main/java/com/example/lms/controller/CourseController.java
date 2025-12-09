@@ -1,5 +1,7 @@
 package com.example.lms.controller;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -41,6 +43,38 @@ public class CourseController {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
+     * 학년도/학기 셀렉트 박스 공통 처리
+     * - year, semester가 null/빈값이면 설정 테이블 기준으로 최신값으로 채워줌
+     */
+    private YearSemesterSelection resolveYearSemester(Integer year, String semester) {
+        List<Integer> yearList = courseRegistrationSettingMapper.selectAvailableYears();
+        List<String> semesterList = null;
+
+        // 연도 기본값: 설정 테이블에서 가장 최신 연도
+        if (year == null && yearList != null && !yearList.isEmpty()) {
+            year = yearList.get(yearList.size() - 1);
+        }
+
+        // 해당 연도의 학기 목록 조회
+        if (year != null) {
+            semesterList = courseRegistrationSettingMapper.selectAvailableSemesters(year);
+        }
+
+        // 학기 기본값: 해당 연도에서 가장 마지막(최신) 학기
+        if ((semester == null || semester.isBlank())
+                && semesterList != null && !semesterList.isEmpty()) {
+            semester = semesterList.get(semesterList.size() - 1);
+        }
+
+        YearSemesterSelection sel = new YearSemesterSelection();
+        sel.setYear(year);
+        sel.setSemester(semester);
+        sel.setYearList(yearList);
+        sel.setSemesterList(semesterList);
+        return sel;
+    }
+
+    /**
      * 수강신청 화면
      */
     @GetMapping("/register")
@@ -65,22 +99,10 @@ public class CourseController {
 
         Long studentId = loginUser.getUserId();
 
-        // 1) 사용 가능한 학년도/학기 목록
-        List<Integer> yearList = courseRegistrationSettingMapper.selectAvailableYears();
-        List<String> semesterList = null;
-
-        if (year == null && yearList != null && !yearList.isEmpty()) {
-            year = yearList.get(yearList.size() - 1); // 가장 최신 연도
-        }
-
-        if (year != null) {
-            semesterList = courseRegistrationSettingMapper.selectAvailableSemesters(year);
-        }
-
-        if ((semester == null || semester.isBlank())
-                && semesterList != null && !semesterList.isEmpty()) {
-            semester = semesterList.get(semesterList.size() - 1); // 최신 학기
-        }
+        // 1) 학년도/학기 공통 처리
+        YearSemesterSelection sel = resolveYearSemester(year, semester);
+        year = sel.getYear();
+        semester = sel.getSemester();
 
         // 2) 신청가능 강의목록
         List<Course> openCourses =
@@ -93,8 +115,8 @@ public class CourseController {
         // 4) 수강신청 기간/수동 상태 배너용
         var regStatus = courseRegistrationSettingService.getRegisterStatus(year, semester);
 
-        String registerBannerText = null;
-        String registerBannerType = "info";
+        String registerBannerText;
+        String registerBannerType;
 
         if (!regStatus.isSettingExists()) {
             registerBannerText =
@@ -102,7 +124,7 @@ public class CourseController {
             registerBannerType = "info";
         } else {
             var s = regStatus.getSetting();
-            String periodText = "";
+            String periodText;
             if (s.getRegisterStart() != null && s.getRegisterEnd() != null) {
                 periodText = s.getRegisterStart().format(DT_FMT)
                         + " ~ "
@@ -131,10 +153,11 @@ public class CourseController {
 
         model.addAttribute("openCourses", openCourses);
         model.addAttribute("weeklyTimetable", weeklyTimetable);
+
         model.addAttribute("year", year);
         model.addAttribute("semester", semester);
-        model.addAttribute("yearList", yearList);
-        model.addAttribute("semesterList", semesterList);
+        model.addAttribute("yearList", sel.getYearList());
+        model.addAttribute("semesterList", sel.getSemesterList());
 
         model.addAttribute("registerBannerText", registerBannerText);
         model.addAttribute("registerBannerType", registerBannerType);
@@ -167,30 +190,18 @@ public class CourseController {
 
         Long studentId = loginUser.getUserId();
 
-        // 학년도/학기 셀렉트 박스 (수강신청 화면과 동일)
-        List<Integer> yearList = courseRegistrationSettingMapper.selectAvailableYears();
-        List<String> semesterList = null;
-
-        if (year == null && yearList != null && !yearList.isEmpty()) {
-            year = yearList.get(yearList.size() - 1);
-        }
-
-        if (year != null) {
-            semesterList = courseRegistrationSettingMapper.selectAvailableSemesters(year);
-        }
-
-        if ((semester == null || semester.isBlank())
-                && semesterList != null && !semesterList.isEmpty()) {
-            semester = semesterList.get(semesterList.size() - 1);
-        }
+        // 학년도/학기 공통 처리
+        YearSemesterSelection sel = resolveYearSemester(year, semester);
+        year = sel.getYear();
+        semester = sel.getSemester();
 
         List<Course> myCourses =
                 courseService.getMyRegisteredCourses(studentId, year, semester);
 
         // 수강취소 기간/수동 상태 배너용
         var cancelStatus = courseRegistrationSettingService.getCancelStatus(year, semester);
-        String cancelBannerText = null;
-        String cancelBannerType = "info";
+        String cancelBannerText;
+        String cancelBannerType;
 
         if (!cancelStatus.isSettingExists()) {
             cancelBannerText =
@@ -224,10 +235,11 @@ public class CourseController {
         }
 
         model.addAttribute("myCourses", myCourses);
+
         model.addAttribute("year", year);
         model.addAttribute("semester", semester);
-        model.addAttribute("yearList", yearList);
-        model.addAttribute("semesterList", semesterList);
+        model.addAttribute("yearList", sel.getYearList());
+        model.addAttribute("semesterList", sel.getSemesterList());
 
         model.addAttribute("cancelBannerText", cancelBannerText);
         model.addAttribute("cancelBannerType", cancelBannerType);
@@ -236,7 +248,7 @@ public class CourseController {
     }
 
     /**
-     * 수강신청 처리
+     * 수강신청 처리 (단건)
      */
     @PostMapping("/register")
     public String registerCourse(@RequestParam("courseId") Long courseId,
@@ -269,10 +281,64 @@ public class CourseController {
     }
 
     /**
+     * 수강신청 처리 (여러 과목 한 번에)
+     */
+    @PostMapping("/register-bulk")
+    public String registerCoursesBulk(@RequestParam("courseIds") List<Long> courseIds,
+                                      HttpSession session,
+                                      RedirectAttributes redirectAttributes) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            redirectAttributes.addFlashAttribute("message", "로그인이 필요합니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/login";
+        }
+
+        Long studentId = loginUser.getUserId();
+
+        if (courseIds == null || courseIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "선택된 강의가 없습니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/course/register";
+        }
+
+        var failReasons = courseService.registerCoursesBulk(studentId, courseIds);
+
+        int total = courseIds.size();
+        int fail = failReasons.size();
+        int success = total - fail;
+
+        String msg;
+        String type;
+
+        if (fail == 0) {
+            msg = "선택한 " + total + "개 강의 수강신청이 모두 완료되었습니다.";
+            type = "success";
+        } else if (success == 0) {
+            msg = "선택한 과목 중 신청에 성공한 강의가 없습니다. (" + fail + "개 실패)";
+            type = "error";
+        } else {
+            msg = "총 " + total + "개 중 " + success + "개 신청 성공, "
+                    + fail + "개 실패하였습니다.";
+            type = "info";
+        }
+
+        redirectAttributes.addFlashAttribute("message", msg);
+        redirectAttributes.addFlashAttribute("messageType", type);
+        redirectAttributes.addFlashAttribute("bulkFailReasons", failReasons);
+
+        return "redirect:/course/register";
+    }
+
+    /**
      * 수강취소 처리
+     * - year, semester 를 같이 받아서 리다이렉트 시에도 유지
      */
     @PostMapping("/cancel")
     public String cancelCourse(@RequestParam("courseId") Long courseId,
+                               @RequestParam(required = false) Integer year,
+                               @RequestParam(required = false) String semester,
                                HttpSession session,
                                RedirectAttributes redirectAttributes) {
 
@@ -289,12 +355,69 @@ public class CourseController {
             courseService.cancelCourse(studentId, courseId);
             redirectAttributes.addFlashAttribute("message", "수강 취소가 완료되었습니다.");
             redirectAttributes.addFlashAttribute("messageType", "success");
+        } catch (IllegalStateException e) {
+            // 기간제한 같은 비즈니스 에러는 메시지 그대로 노출
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("messageType", "error");
         } catch (Exception e) {
+            // 그 외 시스템 에러는 로그만 남기고 공통 메시지
             log.error("수강취소 중 오류", e);
-            redirectAttributes.addFlashAttribute("message", "수강취소 처리 중 오류가 발생했습니다.");
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "수강취소 처리 중 시스템 오류가 발생했습니다."
+            );
             redirectAttributes.addFlashAttribute("messageType", "error");
         }
 
-        return "redirect:/course/my";
+        // ✅ 사용자가 보고 있던 학년도/학기를 유지해서 돌아가도록 처리
+        String redirectUrl = "/course/my";
+        if (year != null && semester != null && !semester.isBlank()) {
+            redirectUrl += "?year=" + year
+                    + "&semester=" + URLEncoder.encode(semester, StandardCharsets.UTF_8);
+        }
+
+        return "redirect:" + redirectUrl;
+    }
+
+    /**
+     * 학년도/학기 선택값을 담는 내부 클래스
+     */
+    private static class YearSemesterSelection {
+        private Integer year;
+        private String semester;
+        private List<Integer> yearList;
+        private List<String> semesterList;
+
+        public Integer getYear() {
+            return year;
+        }
+
+        public void setYear(Integer year) {
+            this.year = year;
+        }
+
+        public String getSemester() {
+            return semester;
+        }
+
+        public void setSemester(String semester) {
+            this.semester = semester;
+        }
+
+        public List<Integer> getYearList() {
+            return yearList;
+        }
+
+        public void setYearList(List<Integer> yearList) {
+            this.yearList = yearList;
+        }
+
+        public List<String> getSemesterList() {
+            return semesterList;
+        }
+
+        public void setSemesterList(List<String> semesterList) {
+            this.semesterList = semesterList;
+        }
     }
 }

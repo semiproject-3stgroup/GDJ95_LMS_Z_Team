@@ -15,46 +15,43 @@ import com.example.lms.dto.WeeklyTimetableSlot;
 @Mapper
 public interface CourseMapper {
 
-	 // 메인페이지: 로그인한 학생의 수강 중 강의 요약 리스트
+    // ===== 메인 페이지 요약 =====
+
     List<EnrolledCourseSummary> selectEnrolledCoursesForHome(
             @Param("studentId") Long studentId,
             @Param("limit") int limit,
             @Param("year") Integer year,
             @Param("semester") String semester
     );
-    
-    // 알림 기능: 해당 강의를 수강 중인 학생 ID 목록
+
     List<Long> selectEnrolledStudentIdsByCourseId(
             @Param("courseId") Long courseId
     );
-    
-    //  성적 알림용: 과목 기본 정보 조회
+
     Course selectCourseBasicById(@Param("courseId") Long courseId);
 
-    //  학생이 신청 가능한 강의 목록
+
+    // ===== 수강신청/수강목록 =====
+
     List<Course> selectOpenCoursesForRegister(
             @Param("studentId") Long studentId,
             @Param("year") Integer year,
             @Param("semester") String semester
     );
 
-    //  학생이 이미 신청한 강의 목록
     List<Course> selectMyRegisteredCourses(
             @Param("studentId") Long studentId,
             @Param("year") Integer year,
             @Param("semester") String semester
     );
 
-    //  수강신청 INSERT
     int insertCourseRegistration(CourseRegistration reg);
 
-    //  수강취소 (status 변경 or 삭제)
     int cancelCourseRegistration(
             @Param("studentId") Long studentId,
             @Param("courseId") Long courseId
     );
 
-    //  제한 룰 체크용
     int countRegisteredCoursesInSemester(
             @Param("studentId") Long studentId,
             @Param("year") Integer year,
@@ -62,30 +59,35 @@ public interface CourseMapper {
     );
 
     int countEnrolledStudentsInCourse(@Param("courseId") Long courseId);
-    
-    int countTimeConflict(@Param("studentId") Long studentId,
-            @Param("courseId") Long courseId);
-    
-    int countAlreadyRegistered(
+
+    int countTimeConflict(
             @Param("studentId") Long studentId,
             @Param("courseId") Long courseId
     );
-    
-    // 예상시간표
+
+    int countAlreadyRegistered(
+            @Param("courseId") Long courseId,
+            @Param("userId") Long userId
+    );
+
+
+    // ===== 시간표 =====
+
     List<WeeklyTimetableSlot> selectWeeklyTimetableByStudent(
             @Param("studentId") Long studentId,
             @Param("year") Integer year,
             @Param("semester") String semester
     );
-    
-    // 주간 시간표(현재 수강 + 미리보기 과목 포함)
+
+    // ✅ 주간 시간표 (현재 ENROLLED + 미리보기 과목들 포함)
     List<CourseTimeSlot> selectWeeklyTimetable(
             @Param("studentId") Long studentId,
-            @Param("previewCourseId") Long previewCourseId
+            @Param("previewCourseIds") List<Long> previewCourseIds
     );
-    
-    // 학생이 수강 중인 과목 중 가장 최근 학년/학기 1건
-    //   없으면 null
+
+
+    // ===== 기타 =====
+
     Map<String, Object> selectLatestYearSemesterForStudent(
             @Param("studentId") Long studentId
     );

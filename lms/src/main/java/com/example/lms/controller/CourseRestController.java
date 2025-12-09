@@ -25,11 +25,13 @@ public class CourseRestController {
 
     /**
      * 주간 시간표 조회
-     * - previewCourseId 가 있으면: 현재 수강 + 해당 과목까지 포함해서 반환
+     * - previewCourseIds 가 있으면: 현재 수강 + 해당 과목들까지 포함해서 반환
+     * - 없으면: 현재 수강(ENROLLED) 기준만 반환
      */
     @GetMapping("/weekly-timetable")
     public List<CourseTimeSlot> getWeeklyTimetable(
-            @RequestParam(required = false) Long previewCourseId,
+            @RequestParam(required = false, name = "previewCourseIds")
+            List<Long> previewCourseIds,
             HttpSession session) {
 
         User loginUser = (User) session.getAttribute("loginUser");
@@ -40,6 +42,6 @@ public class CourseRestController {
 
         Long studentId = loginUser.getUserId();
 
-        return courseService.getWeeklyTimetable(studentId, previewCourseId);
+        return courseService.getWeeklyTimetable(studentId, previewCourseIds);
     }
 }

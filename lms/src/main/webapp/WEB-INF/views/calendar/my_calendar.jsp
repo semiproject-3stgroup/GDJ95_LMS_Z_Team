@@ -37,7 +37,7 @@
                 <option value="CLASS">수업</option>
                 <option value="EXAM">시험</option>
                 <option value="ASSIGNMENT">과제</option>
-                <option value="SCHOOL">학사 일정</option> <!-- ✅ 추가 -->
+                <option value="SCHOOL">학사 일정</option>
             </select>
 
             <label>
@@ -49,7 +49,7 @@
             <span class="legend legend-class">수업</span>
             <span class="legend legend-exam">시험</span>
             <span class="legend legend-assignment">과제</span>
-            <span class="legend legend-school">학사</span> <!-- ✅ 추가 -->
+            <span class="legend legend-school">학사</span>
         </div>
 
         <div id="calendar"></div>
@@ -57,6 +57,32 @@
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
+
+            // ===== 시간축 라벨(시간 + 교시) =====
+            function slotLabelWithPeriod(arg) {
+                const date = arg.date;
+                const hour = date.getHours();
+                const baseText = arg.text; // 예: "오전 9시"
+
+                let period = null;
+
+                if (hour === 9)  period = '1교시';
+                else if (hour === 10) period = '2교시';
+                else if (hour === 11) period = '3교시';
+                else if (hour === 13) period = '4교시';
+                else if (hour === 14) period = '5교시';
+                else if (hour === 15) period = '6교시';
+                else if (hour === 16) period = '7교시';
+                else if (hour === 17) period = '8교시';
+
+                if (!period) {
+                    return { text: baseText };
+                }
+
+                return {
+                    html: baseText + '<br/><span style="font-size:11px; color:#6b7280;">(' + period + ')</span>'
+                };
+            }
 
             // ===== 필터 상태 전역 변수 =====
             let selectedCourseId = 'ALL';
@@ -96,28 +122,30 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
 
+                // 시간축 커스터마이징 (timeGrid* 뷰에서 사용됨)
+                slotLabelContent: slotLabelWithPeriod,
+
                 // 서버에서 내 일정 + 학사일정 한 번에 받아오기
                 events: function(info, successCallback, failureCallback) {
 
-                    // start / end 파라미터를 확실하게 붙여서 보냄
                     const params = new URLSearchParams({
                         start: info.startStr || info.start.toISOString(),
                         end:   info.endStr   || info.end.toISOString()
                     });
 
                     const url = '/api/calendar/my-events?' + params.toString();
-                    console.log('load events url = ', url); // 디버깅용
+                    console.log('load events url = ', url);
 
                     fetch(url)
                         .then(res => res.json())
                         .then(data => {
 
-                            // 백엔드 MyCalendarEvent DTO 기준:
+                            // MyCalendarEvent DTO:
                             // eventId, courseId, courseName, title, start, end, type, backgroundColor
 
                             const filtered = data.filter(e => {
 
-                                // 1) 과목 필터 (courseId 기준)
+                                // 1) 과목 필터
                                 if (selectedCourseId !== 'ALL') {
                                     if (!e.courseId || String(e.courseId) !== selectedCourseId) {
                                         return false;
@@ -142,7 +170,6 @@
                                 return true;
                             });
 
-                            // FullCalendar 이벤트 객체로 변환
                             const events = filtered.map(e => ({
                                 id: e.eventId,
                                 title: (e.courseName ? e.courseName + ' | ' : '') + e.title,
@@ -171,13 +198,12 @@
                     const eventId = info.event.id;
 
                     if (type === 'SCHOOL') {
-                        // 학사 일정 상세 페이지로 이동
                         window.location.href = `/calendar/academic/${eventId}`;
                         return;
                     }
 
-                    // 그 외(수업/시험/과제)는 기존 로직 유지
-                    // openMyEventModal(info.event);  // 있으면 여기 호출
+                    // 나머지 타입은 필요하면 모달 등으로 처리
+                    // openMyEventModal(info.event);
                 }
             });
 
