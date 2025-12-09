@@ -91,7 +91,7 @@
                         <td>${li.assignmentScore}</td>
                         <td>${li.attendanceScore}</td>
                         <td>${li.scoreTotal}</td>
-                        <td>${li.grade}</td>
+                        <td>${not empty li.scoreTotal ? li.grade : ""}</td>
                     </tr>
                 </c:forEach>
             </table>

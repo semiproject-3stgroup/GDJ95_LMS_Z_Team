@@ -65,7 +65,7 @@
 </body>
 <script>
 	$('#submitBtn').click(()=>{
-		if(confirm('정말?'){
+		if(confirm('등록하시겠습니까?')){
 			$('form').submit();	
 		}							
 	});

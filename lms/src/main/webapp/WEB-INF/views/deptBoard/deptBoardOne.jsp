@@ -48,7 +48,9 @@
 					<button type="button" id="modify">수정</button>
 					<button type="button" id="delete">삭제</button>
 				</form>
-			</c:if>										
+			</c:if>		
+			
+			<a href="${pageContext.request.contextPath}/deptBoard">목록</a>								
 		</main>
 	</div>
 	<%@ include file="/WEB-INF/views/common/footer.jsp" %>

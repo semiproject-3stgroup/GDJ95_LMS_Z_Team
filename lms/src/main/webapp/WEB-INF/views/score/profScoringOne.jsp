@@ -32,6 +32,26 @@
             border: 1px solid #d1d5db;
             font-size: 14px;
         }
+        .score-btn-area {
+		    margin-top: 20px;
+		    display: flex;
+		    gap: 10px;  /* 버튼 사이 간격 */
+		}
+		
+		/* 취소 버튼 a태그를 버튼처럼 */
+		.btn-cancel {
+		    padding: 10px 16px;
+		    background-color: #6b7280; /* 회색 */
+		    color: white;
+		    border-radius: 6px;
+		    font-size: 14px;
+		    text-decoration: none;
+		    display: inline-block;
+		}
+		
+		.btn-cancel:hover {
+		    background-color: #4b5563;
+		}
     </style>
     
 </head>
@@ -81,7 +101,11 @@
 				    				
 				    <div class="score-btn-area">
 				        <button type="submit" class="btn btn-primary">저장하기</button>
+				        
+				        <a href="${pageContext.request.contextPath}/profScoring?courseId=${courseId}" class="btn btn-cancel">취소</a>
 				    </div>
+				    
+				    
 				</form>
 			</div>
 		</main>

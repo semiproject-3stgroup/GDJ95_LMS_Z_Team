@@ -157,7 +157,7 @@
 						<td>${att.attend}</td>
 						<td>${att.late}</td>
 						<td>${att.absent}</td>
-						<td>${(att.attend+att.late)*100/att.total}%</td>					 
+						<td>${att.total!=0 ? (att.attend+att.late)*100/att.total : "0" }%</td>					 
 					</tr>					
 				</c:forEach>
 				</table>

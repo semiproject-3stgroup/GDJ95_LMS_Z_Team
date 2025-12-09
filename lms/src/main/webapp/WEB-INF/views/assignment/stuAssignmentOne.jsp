@@ -20,11 +20,11 @@
 		<!-- 오른쪽 본문 -->
         <main class="main-content">	
 
-			<h1>one</h1>
+			<h1 class="page-title">과제 제출</h1>
 		
 				<label>제목</label>
 				${course.courseName }:
-				${assignment.assignmentName}				
+				${assignment.assignmentName}			
 				<label>작성일</label>
 					<c:if test="${assignment.updatedate!=null}">
 						${assignment.updatedate}
@@ -36,7 +36,8 @@
 				${assignment.assignmentContent}
 				<label>기간</label>
 				${assignment.startdate} ~ ${assignment.enddate} 		
-
+				
+				<a href="${pageContext.request.contextPath}/stuAssignment">목록</a>
 				<hr>
 
 				<label>제출여부</label>

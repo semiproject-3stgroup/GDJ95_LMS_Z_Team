@@ -151,15 +151,14 @@ public class ScoreService {
     		m.put("userName", stu.get("userName"));
     		m.put("studentNo", stu.get("studentNo"));
     		
-    		m.put("courseId", null);
+    		m.put("courseId", courseId);
     		m.put("exam1Score", null);
     		m.put("exam2Score", null);
     		m.put("assignmentScore", null);
     		m.put("attendanceScore", null);
     		m.put("scoreTotal", null);
     		
-    		if(!scores.isEmpty()) {    			
-    			m.put("courseId", score.getCourseId());
+    		if(score != null) {    			    			
         		m.put("exam1Score", score.getExam1Score());
         		m.put("exam2Score", score.getExam2Score());
         		m.put("assignmentScore", score.getAssignmentScore());
@@ -245,25 +244,30 @@ public class ScoreService {
         List<Map<String, Object>> states   = scoreMapper.selectAttendanceStatus(courseId);
 
         Map<Long, Map<String, Object>> map = new HashMap<>();
-        for (Map<String, Object> s : students) {
+        for (Map<String, Object> s : states) {
             map.put((Long) s.get("userId"), s);
         }
 
         List<Map<String, Object>> attendance = new ArrayList<>();
-        for (Map<String, Object> st : states) {
+        for (Map<String, Object> st : students) {
 
             Map<String, Object> s = map.get(st.get("userId"));
 
             Map<String, Object> one = new HashMap<>();
             one.put("userId",  st.get("userId"));
-            one.put("absent",  st.get("count_0"));
-            one.put("attend",  st.get("count_1"));
-            one.put("late",    st.get("count_2"));
-            one.put("total",   st.get("total_days"));
+            one.put("userName",  st.get("userName"));
+            one.put("studentNo", st.get("studentNo"));                        
 
-            if (s != null) {
-                one.put("userName",  s.get("userName"));
-                one.put("studentNo", s.get("studentNo"));
+            if (s != null) {                        	
+                one.put("absent", s.get("count_0"));
+                one.put("attend", s.get("count_1"));
+                one.put("late", s.get("count_2"));
+                one.put("total", s.get("total_days"));
+            } else {
+            	one.put("absent", 0);
+                one.put("attend", 0);
+                one.put("late", 0);
+                one.put("total", 0);
             }
 
             attendance.add(one);

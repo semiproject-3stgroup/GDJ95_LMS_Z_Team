@@ -307,10 +307,16 @@
 		                            미제출
 		                        </c:if>
 		                    </span>
-		
-		                    <span class="submission-date">
-		                        ${not empty stu.updatedate ? stu.updatedate : stu.createdate}
-		                        ${stu.isLate ? "지각" : ""}                     
+							
+							<c:if test="${not empty stu.file}">							
+			                    <span class="submission-date">
+			                        ${not empty stu.updatedate ? stu.updatedate : stu.createdate}
+			                        ${stu.isLate ? "지각" : ""}                     
+			                    </span>
+			                    	${not empty stu.updatedate ? stu.updatedate : stu.createdate}
+			                    <span>
+		                    </c:if>
+		                    
 		                    </span>
 		
 		                    <input type="number" min="0" max="100"
@@ -374,11 +380,13 @@
 		$('#scoringBtn').click(()=>{
 			$('.scoreInput').toggle();
 			$('.saveBtn').toggle();
+			$('.score-state').text('');
 			
 			if($('.saveBtn').css('display') === 'none') {
 				$('#scoringBtn').text('채점')	;
 			} else {
-				$('#scoringBtn').text('닫기');
+				$('#scoringBtn').text('닫기')	;
+				
 			}			
 		});
 				

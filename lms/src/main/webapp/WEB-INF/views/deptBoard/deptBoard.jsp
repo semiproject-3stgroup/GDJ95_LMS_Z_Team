@@ -56,7 +56,7 @@
 	          <tbody>
 	          </tbody>
 	        </table>
-			<a href="${pageContext.request.contextPath}/deptBoard//deptBoardAdd">글쓰기</a>
+			<a href="${pageContext.request.contextPath}/deptBoardAdd">글쓰기</a>
 			<div class="board-footer">
 				<div class="pagination">	
 				</div>

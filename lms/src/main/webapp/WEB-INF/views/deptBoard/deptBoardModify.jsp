@@ -173,7 +173,7 @@
 	    		}
 	    	}
 	    	, error: ()=>{
-	    			alert("오류")
+	    			alert("error")
 	    	}	    	
 	    });	    	    	    
 	}
