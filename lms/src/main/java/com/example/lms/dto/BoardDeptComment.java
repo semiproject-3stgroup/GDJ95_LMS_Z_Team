@@ -6,8 +6,9 @@ import lombok.Data;
 public class BoardDeptComment {
 	private int commentId;
 	private int postId;
-	private int userId;
+	private Long userId;
 	private String content;
 	private String createdate;
 	private String updatedate;
+	private String userName;
 }

@@ -82,4 +82,22 @@
 		FROM board_department_file
 		WHERE file_id = #{fileId}
 	</delete>
+	
+	<!-- 게시물 댓글 -->
+	<select id="selectBoardDeptComment" parameterType="int" resultType="com.example.lms.dto.BoardDeptComment">
+		SELECT c.comment_id commentId, c.post_id postId, c.user_id userId, c.content, c.createdate, c.updatedate, u.user_name userName
+		FROM board_dept_comment c INNER JOIN users u ON c.user_id = u.user_id
+		WHERE post_id = #{postId}	
+	</select>
+	
+	<insert id="insertBoardDeptComment" parameterType="com.example.lms.dto.BoardDeptComment">
+		INSERT INTO board_dept_comment(post_id, user_id, content, createdate)
+		VALUES(#{postId},#{userId},#{content},now())	
+	</insert>
+	
+	<delete id="deleteBoardDeptComment" parameterType="int">
+		DELETE
+		FROM board_dept_comment
+		WHERE comment_id = #{commentId}
+	</delete>
 </mapper>

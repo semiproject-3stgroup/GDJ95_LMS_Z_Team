@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.lms.dto.BoardDepartment;
+import com.example.lms.dto.BoardDeptComment;
 import com.example.lms.dto.User;
 import com.example.lms.service.BoardDeptService;
 
@@ -81,4 +82,29 @@ public class BoardDeptRestController {
 		return result;
 	}
 	
+	@GetMapping("/rest/comment")
+	public List<BoardDeptComment> deptPostComment(int postId) {
+		
+		List<BoardDeptComment> comments = boardBeptService.selectDeptBoardPostComments(postId);
+		return comments;				
+	}
+	
+	@PostMapping("/rest/addComment")
+	public String addDeptPostComment(BoardDeptComment boardDeptComment, HttpSession session) {
+				
+		User user = (User)session.getAttribute("loginUser");
+		boardDeptComment.setUserId(user.getUserId());		
+		
+		boardBeptService.addDeptPostComment(boardDeptComment);
+		
+		return "success";
+	}
+	
+	@GetMapping("/rest/removeComment")
+	public String removeDeptPostComment(int commentId) {
+		
+		boardBeptService.removeDeptPostComment(commentId);
+		
+		return "success";
+	}
 }

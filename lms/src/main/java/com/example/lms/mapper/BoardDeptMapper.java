@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.lms.dto.BoardDepartment;
 import com.example.lms.dto.BoardDepartmentFile;
+import com.example.lms.dto.BoardDeptComment;
 
 @Mapper
 public interface BoardDeptMapper {
@@ -33,4 +34,9 @@ public interface BoardDeptMapper {
 	BoardDepartmentFile selectBoardDeptPostFile(int fileId);
 	int updateBaordDeptPost(BoardDepartment boardDept);
 	int deleteBoardDeptUploadedFile(int fileId);
+	
+	// 학과 게시물 댓글
+	List<BoardDeptComment> selectBoardDeptComment(int postId);	
+	int insertBoardDeptComment(BoardDeptComment boardDeptComment);
+	int deleteBoardDeptComment(int commentId);
 }
