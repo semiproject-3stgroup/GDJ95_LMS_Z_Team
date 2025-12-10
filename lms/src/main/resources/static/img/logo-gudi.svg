@@ -1,0 +1,37 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg width="330" height="48" viewBox="0 0 330 48" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- 라인형 로고 아이콘 -->
+  <g>
+    <rect x="4" y="6" width="40" height="36" rx="10" fill="none" stroke="#c084fc" stroke-width="2.6"></rect>
+
+    <path d="M14 30 L20 22 L27 26 L34 18" fill="none" stroke="#4ade80" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+
+    <circle cx="32" cy="28" r="3" fill="#60a5fa"></circle>
+  </g>
+
+  <!-- 텍스트 그룹 -->
+  <g font-family="Segoe UI, Pretendard, sans-serif">
+
+    <!-- 영어 대학교명 -->
+    <text x="60" y="20" font-size="20" font-weight="700" fill="#ffffff">
+      Gudi University
+    </text>
+
+    <!-- 구분선 -->
+    <text x="215" y="20" font-size="19" font-weight="300" fill="#a78bfa">
+      |
+    </text>
+
+    <!-- 한국어 대학교명 -->
+    <text x="228" y="20" font-size="20" font-weight="700" fill="#e9d5ff">
+      구디대학교
+    </text>
+
+    <!-- 서브 라벨 -->
+    <text x="60" y="38" font-size="12" font-weight="600" letter-spacing="1.5" fill="#c7d2fe">
+      LEARNING  MANAGEMENT  SYSTEM
+    </text>
+
+  </g>
+</svg>

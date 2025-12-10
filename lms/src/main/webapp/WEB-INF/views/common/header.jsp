@@ -5,15 +5,18 @@
 
     <!-- 🔹 Left 영역 : LMS 시스템 이름 -->
     <div class="site-header-left">
-        <div class="site-logo">L</div>
-        <div>
-            <span class="site-title-main">LMS 학사관리 시스템</span><br/>
-        </div>
+        <div class="site-logo">LMS</div>
     </div>
 
-    <!-- 🔹 Center 영역 : 구디대학교 -->
+    <!-- 중앙 브랜드 로고 -->
     <div class="site-header-center">
-        구디대학교
+        <a href="${pageContext.request.contextPath}/home"
+           class="brand-logo-link"
+           aria-label="Gudi University 홈으로 이동">
+            <img src="${pageContext.request.contextPath}/img/logo-gudi.svg"
+                 alt="Gudi University | 구디대학교"
+                 class="brand-logo-svg" />
+        </a>
     </div>
 
     <!-- 🔹 Right 영역 : 로그인 정보 + 알림센터 + 마이페이지/로그아웃 -->

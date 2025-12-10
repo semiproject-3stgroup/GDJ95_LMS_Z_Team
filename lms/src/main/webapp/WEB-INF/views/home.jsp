@@ -24,39 +24,24 @@
     <!-- 오른쪽 본문 -->
     <main class="main-content home-main">
 
-        <!-- 상단 인사/요약 영역 -->
+                <!-- 상단 인사/요약 영역 -->
         <div class="home-hero">
             <c:choose>
                 <c:when test="${not empty loginUser}">
-                    <h2 class="home-hero-title">
-                        안녕하세요, ${loginUser.userName} 님 👋
-                    </h2>
-                    <p class="home-hero-text">
-                        오늘도 좋은 하루 보내세요. 이번 학기 수업과 과제, 학사 일정을 한 번에 확인해보세요.
-                    </p>
+                    <div class="home-hero-inner">
+                        <!-- 인사 + 문구 -->
+                        <div class="home-hero-text-col">
+                            <h2 class="home-hero-title">
+                                안녕하세요, ${loginUser.userName} 님 👋
+                            </h2>
 
-                    <!-- 요약 칩 -->
-                    <div class="home-hero-chips">
-                        <a href="${pageContext.request.contextPath}/calendar/my" class="home-chip">
-                            다가오는 일정 <strong>${fn:length(upcomingEvents)}</strong>건
-                        </a>
+                            <p class="home-hero-message">
+                                구디대학교는 학생 여러분의 힘찬 미래를 위해 함께합니다.
+                            </p>
+                        </div>
 
-                        <a href="#" class="home-chip">
-                            진행 중 과제 <strong>${fn:length(homeAssignments)}</strong>개
-                        </a>
-
-                        <a href="#" class="home-chip">
-                            수강 중 강의 <strong>${fn:length(enrolledCourses)}</strong>개
-                        </a>
-                    </div>
-
-                    <!-- 액션 버튼 -->
-                    <div class="home-hero-actions">
-                        <a href="${pageContext.request.contextPath}/calendar/my"
-                           class="home-btn primary">시간표 보기</a>
-
-                        <a href="${pageContext.request.contextPath}/stuAssignment"
-                           class="home-btn secondary">과제 바로가기</a>
+                        <!-- 바로 아래 학생 사진 배너 한 장 -->
+                        <div class="home-hero-banner"></div>
                     </div>
                 </c:when>
 
@@ -71,10 +56,14 @@
                     <div class="home-hero-actions">
                         <a href="${pageContext.request.contextPath}/login"
                            class="home-btn primary">로그인하기</a>
+
+                        <a href="${pageContext.request.contextPath}/signup"
+                           class="home-btn secondary">회원가입</a>
                     </div>
                 </c:otherwise>
             </c:choose>
         </div>
+
 
         <!-- 메인 그리드 -->
         <div class="home-grid">
@@ -91,7 +80,7 @@
                     </div>
 
                     <c:choose>
-                        <c:when test="${empty recentNotices}">
+                        <c:when test="${empty recentNotices}}">
                             <p class="empty-text">등록된 공지사항이 없습니다.</p>
                         </c:when>
 
