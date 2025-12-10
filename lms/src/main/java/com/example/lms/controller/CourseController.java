@@ -420,4 +420,83 @@ public class CourseController {
             this.semesterList = semesterList;
         }
     }
+    
+    /**
+     * 교수용 강의 목록
+     */
+    @GetMapping("/prof")
+    public String showProfessorCourses(@RequestParam(required = false) Integer year,
+                                       @RequestParam(required = false) String semester,
+                                       HttpSession session,
+                                       Model model,
+                                       RedirectAttributes redirectAttributes) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            redirectAttributes.addFlashAttribute("message", "로그인이 필요합니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/login";
+        }
+
+        if (!"PROF".equalsIgnoreCase(loginUser.getRole())) {
+            redirectAttributes.addFlashAttribute("message", "교수만 강의 목록을 조회할 수 있습니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/home";
+        }
+
+        Long profId = loginUser.getUserId();
+
+        // 학년도/학기 기본값 처리 (수강신청 설정 기준)
+        YearSemesterSelection sel = resolveYearSemester(year, semester);
+        year = sel.getYear();
+        semester = sel.getSemester();
+
+        var courseList = courseService.getProfessorCourses(profId, year, semester);
+
+        model.addAttribute("courseList", courseList);
+        model.addAttribute("year", year);
+        model.addAttribute("semester", semester);
+        model.addAttribute("yearList", sel.getYearList());
+        model.addAttribute("semesterList", sel.getSemesterList());
+
+        return "course/prof_course_list";
+    }
+    
+    /**
+     * 교수용 수강생 목록
+     */
+    @GetMapping("/prof/students")
+    public String showCourseStudents(@RequestParam("courseId") Long courseId,
+                                     HttpSession session,
+                                     Model model,
+                                     RedirectAttributes redirectAttributes) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            redirectAttributes.addFlashAttribute("message", "로그인이 필요합니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/login";
+        }
+
+        if (!"PROF".equalsIgnoreCase(loginUser.getRole())) {
+            redirectAttributes.addFlashAttribute("message", "교수만 수강생 목록을 조회할 수 있습니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/home";
+        }
+
+        Course course = courseService.getCourseBasic(courseId);
+        if (course == null) {
+            redirectAttributes.addFlashAttribute("message", "존재하지 않는 강의입니다.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/course/prof";
+        }
+
+        var students = courseService.getCourseStudents(courseId);
+
+        model.addAttribute("course", course);
+        model.addAttribute("students", students);
+
+        return "course/prof_course_students";
+    }
+    
 }

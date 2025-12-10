@@ -91,4 +91,19 @@ public interface CourseMapper {
     Map<String, Object> selectLatestYearSemesterForStudent(
             @Param("studentId") Long studentId
     );
+    
+    
+    // ===== 교수용 강의/수강생 조회 =====
+
+    // 교수 본인이 담당하는 강의 목록
+    List<Course> selectCoursesByProfessor(
+            @Param("profId") Long profId,
+            @Param("year") Integer year,
+            @Param("semester") String semester
+    );
+
+    // 특정 강의를 수강 중인 학생 목록
+    List<com.example.lms.dto.CourseStudent> selectCourseStudents(
+            @Param("courseId") Long courseId
+    );
 }

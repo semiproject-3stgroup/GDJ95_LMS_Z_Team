@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.lms.dto.AttendanceDetail;
+import com.example.lms.dto.Course;
 import com.example.lms.dto.Score;
+import com.example.lms.dto.User;
 import com.example.lms.service.ScoreService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,11 +28,14 @@ public class ScoreController {
 	ScoreService scoreService;
 
 	@GetMapping("/profScoring")
-	public String courseStudentList(int courseId, Model model) { 
+	public String courseStudentList(@RequestParam int courseId, Model model) { 
 		
 		List<Map<String, Object>> list = scoreService.courseStudentList(courseId);
+        Course course = scoreService.getCourseBasic(courseId);
 		
 		model.addAttribute("list", list);
+        model.addAttribute("course", course);
+        model.addAttribute("courseId", courseId);
 		
 		return "score/profScoring";
 	}
@@ -43,8 +50,6 @@ public class ScoreController {
 		model.addAttribute("courseId", courseId);
 		model.addAttribute("userId", userId);
 		
-		
-		
 		return "score/profScoringOne";
 	}
 	
@@ -57,13 +62,15 @@ public class ScoreController {
 	}
 	
 	@GetMapping("/profAttendance")
-	public String courseStudentAttendance(int courseId, Model model) {
+	public String courseStudentAttendance(@RequestParam int courseId, Model model) {
 		List<Map<String, Object>> list = scoreService.courseStudentList(courseId);
 		List<Map<String, Object>> attendance = scoreService.courseStudentAttendanceStatusList(courseId);
+        Course course = scoreService.getCourseBasic(courseId);
 		
 		model.addAttribute("attendance", attendance);
 		model.addAttribute("list", list);
 		model.addAttribute("courseId", courseId);
+        model.addAttribute("course", course);
 		return "score/attendance";
 	}
 	
@@ -80,14 +87,58 @@ public class ScoreController {
 	
 	@PostMapping("/profAttendanceSave")
 	public String saveAttendance(
-				@RequestParam("userIdList") List<Integer> userIds
-				, @RequestParam("satusList") List<Integer> satusList
-				, String date
-				, int courseId) {
-		
-		scoreService.saveAttendance(userIds, satusList, date, courseId);		
-		
-		return "score/profAttendance?courseId="+courseId;
+	        @RequestParam("userIdList") List<Integer> userIds,
+	        @RequestParam("statusList") List<Integer> statusList,
+	        String date,
+	        int courseId) {
+
+	    scoreService.saveAttendance(userIds, statusList, date, courseId);
+	    return "redirect:/profAttendance?courseId=" + courseId;
 	}
 	
+	/**
+	 * 교수용 : 특정 수강생 일자별 출결 상세
+	 */
+	@GetMapping("/profAttendanceDetail")
+	public String profAttendanceDetail(@RequestParam int courseId,
+	                                   @RequestParam long userId,
+	                                   @RequestParam String userName,
+	                                   @RequestParam String studentNo,
+	                                   Model model) {
+
+	    Course course = scoreService.getCourseBasic(courseId);
+	    List<AttendanceDetail> history = scoreService.getAttendanceHistory(courseId, userId);
+
+	    model.addAttribute("course", course);
+	    model.addAttribute("history", history);
+	    model.addAttribute("userName", userName);
+	    model.addAttribute("studentNo", studentNo);
+
+	    return "score/attendanceDetail";
+	}
+
+	/**
+	 * 학생용 : 본인 일자별 출결 상세
+	 */
+	@GetMapping("/stuAttendanceDetail")
+	public String stuAttendanceDetail(@RequestParam int courseId,
+	                                  HttpSession session,
+	                                  Model model) {
+
+	    User loginUser = (User) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        return "redirect:/login";
+	    }
+
+	    long userId = loginUser.getUserId();
+	    Course course = scoreService.getCourseBasic(courseId);
+	    List<AttendanceDetail> history = scoreService.getAttendanceHistory(courseId, userId);
+
+	    model.addAttribute("course", course);
+	    model.addAttribute("history", history);
+	    model.addAttribute("userName", loginUser.getUserName());
+	    model.addAttribute("studentNo", loginUser.getStudentNo());
+
+	    return "score/attendanceDetail";
+	}
 }

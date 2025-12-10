@@ -383,5 +383,64 @@
             END DESC
         LIMIT 1
     </select>
+    
+    <!-- 수강생 정보 매핑 -->
+    <resultMap id="CourseStudentResultMap"
+               type="com.example.lms.dto.CourseStudent">
+        <id     property="userId"         column="user_id"/>
+        <result property="studentNo"      column="student_no"/>
+        <result property="userName"       column="user_name"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="phone"          column="phone"/>
+        <result property="email"          column="email"/>
+    </resultMap>
+
+    <!-- 교수 본인이 담당하는 강의 목록 -->
+    <select id="selectCoursesByProfessor"
+            resultType="com.example.lms.dto.Course">
+        SELECT
+            c.course_id      AS courseId,
+            c.course_name    AS courseName,
+            c.user_id        AS userId,
+            c.course_year    AS courseYear,
+            c.course_semester AS courseSemester,
+            c.credit         AS credit,
+            c.max_capacity   AS maxCapacity,
+            c.status         AS status,
+            c.createdate     AS createdate,
+            c.updatedate     AS updatedate
+        FROM course c
+        WHERE c.user_id = #{profId}
+        <if test="year != null">
+            AND c.course_year = #{year}
+        </if>
+        <if test="semester != null and semester != ''">
+            AND c.course_semester = #{semester}
+        </if>
+        ORDER BY c.course_year DESC,
+                 c.course_semester,
+                 c.course_name
+    </select>
+
+    <!-- 특정 강의 수강생 목록 -->
+    <select id="selectCourseStudents"
+            parameterType="long"
+            resultMap="CourseStudentResultMap">
+        SELECT
+            u.user_id,
+            u.student_no,
+            u.user_name,
+            d.department_name,
+            u.phone,
+            u.email
+        FROM course_registration cr
+        JOIN users u
+          ON cr.user_id = u.user_id
+        LEFT JOIN department d
+          ON u.department_id = d.department_id
+        WHERE cr.course_id = #{courseId}
+          AND cr.status = 'ENROLLED'
+        ORDER BY u.student_no, u.user_name
+    </select>
 
 </mapper>

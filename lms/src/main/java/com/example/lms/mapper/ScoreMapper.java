@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.lms.dto.AttendanceDetail;
 import com.example.lms.dto.Score;
 import com.example.lms.dto.ScoreRecord;
 
@@ -33,7 +34,9 @@ public interface ScoreMapper {
     
     // [권순표] 성적 존재 여부 체크 (INSERT / UPDATE 구분용)
     int existsStudentScore(@Param("userId") Long userId,
-            @Param("courseId") Long courseId);
+                           @Param("courseId") Long courseId);
 
-
+    // 일자별 출석 이력
+    List<AttendanceDetail> selectAttendanceHistory(@Param("courseId") int courseId,
+                                                   @Param("userId") long userId);
 }

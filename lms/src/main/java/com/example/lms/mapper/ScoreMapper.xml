@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.lms.mapper.ScoreMapper">
 
-<resultMap id="scoreRecordMap" type="com.example.lms.dto.ScoreRecord">
+    <resultMap id="scoreRecordMap" type="com.example.lms.dto.ScoreRecord">
         <id property="userId" column="user_id"/>
         <id property="courseId" column="course_id"/>
 
@@ -102,9 +102,6 @@
 			, score_total scoreTotal
 		FROM score
 		WHERE user_id=#{userId} AND course_id=#{courseId}
-	
-	
-	
 	</select>	
 	
     <!-- 
@@ -140,14 +137,38 @@
         attendance_score = VALUES(attendance_score),
         score_total      = VALUES(score_total),
         updatedate       = NOW()
-</insert>
+    </insert>
 
-<select id="existsStudentScore" resultType="int">
-    SELECT COUNT(*)
-    FROM score
-    WHERE user_id = #{userId}
-      AND course_id = #{courseId}
-</select>
+    <select id="existsStudentScore" resultType="int">
+        SELECT COUNT(*)
+        FROM score
+        WHERE user_id = #{userId}
+          AND course_id = #{courseId}
+    </select>
+
+    <!-- 일자별 출석 이력 -->
+    <resultMap id="attendanceDetailMap" type="com.example.lms.dto.AttendanceDetail">
+        <id property="userId"      column="user_id"/>
+        <result property="courseId"       column="course_id"/>
+        <result property="attendanceDate" column="attendance_date"/>
+        <result property="attendance"     column="attendance"/>
+        <result property="userName"       column="user_name"/>
+        <result property="studentNo"      column="student_no"/>
+    </resultMap>
+
+    <select id="selectAttendanceHistory" resultMap="attendanceDetailMap">
+        SELECT
+            a.user_id,
+            a.course_id,
+            a.attendance_date,
+            a.attendance,
+            u.user_name,
+            u.student_no
+        FROM attendance a
+        JOIN users u ON u.user_id = a.user_id
+        WHERE a.course_id = #{courseId}
+          AND a.user_id = #{userId}
+        ORDER BY a.attendance_date ASC
+    </select>
     
 </mapper>
-

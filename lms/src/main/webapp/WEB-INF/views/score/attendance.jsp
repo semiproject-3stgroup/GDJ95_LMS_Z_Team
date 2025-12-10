@@ -6,17 +6,14 @@
 	<meta charset="UTF-8">
 	<title>학생출석관리</title>
 
-	<!-- 공통 레이아웃 CSS -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- 이 페이지 전용 스타일 -->
     <style>
         .main-content {
             padding: 40px;
         }
 
-        /* 위쪽 출석 통계 테이블 */
         .attendance-table {
             width: 100%;
             border-collapse: collapse;
@@ -52,7 +49,6 @@
             background-color: #f1f5f9;
         }
 
-        /* 아래쪽 날짜 선택 후 나오는 입력용 테이블 */
         .attendance-input-table {
             width: 100%;
             border-collapse: collapse;
@@ -88,7 +84,6 @@
             background-color: #f1f5f9;
         }
 
-        /* 날짜/버튼 정리용 */
         form {
             margin-top: 30px;
         }
@@ -98,7 +93,6 @@
             margin-right: 10px;
         }
 
-        /* 저장 버튼 */
 		#saveBtn {
 		    padding: 8px 16px;
 		    border: none;
@@ -113,18 +107,17 @@
 		    background-color: #1d4ed8;
 		}
 		
-		/* 취소 버튼 */
 		.cancel-btn {
 		    padding: 8px 16px;
 		    border: none;
 		    border-radius: 4px;
-		    background-color: #6b7280; /* 연한 회색 */
+		    background-color: #6b7280;
 		    color: #fff;
 		    cursor: pointer;
 		}
 		
 		.cancel-btn:hover {
-		    background-color: #4b5563; /* 조금 더 어두운 회색 */
+		    background-color: #4b5563;
 		}
     </style>
 </head>
@@ -133,44 +126,65 @@
 
     <div class="layout">
 
-        <!-- 왼쪽 사이드바 include -->
         <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
 		
-		<!-- 오른쪽 본문 -->
         <main class="main-content">	
 			
-			<h1>출석</h1>
+			<h2 class="page-title">
+                출석 관리
+                <c:if test="${not empty course}">
+                    - ${course.courseName} (${course.courseYear}년 ${course.courseSemester})
+                </c:if>
+            </h2>
+
+            <div style="margin-bottom: 16px;">
+                <a href="${pageContext.request.contextPath}/course/prof"
+                   class="home-btn secondary">
+                    ← 담당 강의 목록으로
+                </a>
+                <c:if test="${not empty course}">
+                    <a href="${pageContext.request.contextPath}/course/prof/students?courseId=${course.courseId}"
+                       class="home-btn outline"
+                       style="margin-left: 8px;">
+                        수강생 목록
+                    </a>
+                </c:if>
+            </div>
 			
-				<table class="attendance-table">
-					<tr>
-						<th>학번</th>
-						<th>이름</th>
-						<th>출석</th>
-						<th>지각</th>
-						<th>결석</th>
-						<th>출석률</th>
-					</tr>
+			<table class="attendance-table">
+				<tr>
+					<th>학번</th>
+					<th>이름</th>
+					<th>출석</th>
+					<th>지각</th>
+					<th>결석</th>
+					<th>출석률</th>
+				</tr>
 				<c:forEach var="att" items="${attendance}">
 					<tr>
 						<td>${att.studentNo}</td>
-						<td>${att.userName}</td>
+						<td>
+                            <a href="${pageContext.request.contextPath}/profAttendanceDetail?courseId=${courseId}&userId=${att.userId}&userName=${att.userName}&studentNo=${att.studentNo}">
+                                ${att.userName}
+                            </a>
+                        </td>
 						<td>${att.attend}</td>
 						<td>${att.late}</td>
 						<td>${att.absent}</td>
 						<td>${att.total!=0 ? (att.attend+att.late)*100/att.total : "0" }%</td>					 
 					</tr>					
 				</c:forEach>
-				</table>
+			</table>
 				
-				<form method="post" action="${pageContext.request.contextPath}/profAttendanceSave">
-					<input type="hidden" id="courseId" value="${courseId}">
-					<input type="date" id="today" name="date">
+			<form method="post" action="${pageContext.request.contextPath}/profAttendanceSave">
+				<input type="hidden" id="courseId" name="courseId" value="${courseId}">
+				<input type="date" id="today" name="date">
 					
-					<div id="attendance"></div>			
+				<div id="attendance"></div>			
 				
-					<button type="submit" id="saveBtn" hidden>저장</button> 
-					<button type="button" id="cancelBtn" class="cancel-btn" hidden>취소</button>
-				</form>
+				<button type="submit" id="saveBtn" hidden>저장</button> 
+				<button type="button" id="cancelBtn" class="cancel-btn" hidden>취소</button>
+			</form>
 			
 		</main>
 	</div>
@@ -214,10 +228,10 @@ $(function() {
 							<td>
 								<input type="hidden" name="userIdList" value="\${item.userId}">
 	                            <select name="statusList">
-		                            <option value="" hidden selected>선택</option>
-		                            <option value="1" \${item.attendance == '1' ? 'selected' : ''}>출석</option>
-		                            <option value="2" \${item.attendance == '2' ? 'selected' : ''}>지각</option>
-		                            <option value="0" \${item.attendance == '0' ? 'selected' : ''}>결석</option>
+		                            <!-- 기본값: 출석(1), 기존 값이 있으면 그 값으로 선택 -->
+		                            <option value="1" \${(item.attendance == null || item.attendance === '' || item.attendance == 1) ? 'selected' : ''}>출석</option>
+		                            <option value="2" \${item.attendance == 2 ? 'selected' : ''}>지각</option>
+		                            <option value="0" \${item.attendance == 0 ? 'selected' : ''}>결석</option>
 	                        	</select>
 							</td>
                 		</tr>
@@ -237,7 +251,7 @@ $(function() {
 		$('#cancelBtn').removeAttr('hidden');
 	});	
 	
-	$('#cancelBtn').click (()=>{		
+	$('#cancelBtn').click (()=>{
 		$('#attendance').empty();
 		$('#saveBtn').attr('hidden', true);
 		$('#cancelBtn').attr('hidden', true);

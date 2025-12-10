@@ -8,9 +8,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.lms.dto.AttendanceDetail;
+import com.example.lms.dto.Course;
 import com.example.lms.dto.Score;
 import com.example.lms.dto.ScoreRecord;
 import com.example.lms.mapper.AssignmentMapper;
+import com.example.lms.mapper.CourseMapper;
 import com.example.lms.mapper.ScoreMapper;
 
 @Service
@@ -26,6 +29,17 @@ public class ScoreService {
     // 출석 / 수강생 조회용
     @Autowired
     private AssignmentMapper assignmentMapper;
+
+    // 강의 기본 정보 조회용
+    @Autowired
+    private CourseMapper courseMapper;
+
+    /**
+     * 특정 과목 기본 정보
+     */
+    public Course getCourseBasic(long courseId) {
+        return courseMapper.selectCourseBasicById(courseId);
+    }
 
     /**
      * 학생별 성적 + GPA 계산
@@ -55,7 +69,6 @@ public class ScoreService {
         return result;
     }
 
-    // 총점 → 등급 변환
     private void applyGrade(ScoreRecord sr) {
         Double total = sr.getScoreTotal();
         if (total == null) {
@@ -97,9 +110,6 @@ public class ScoreService {
         sr.setGradePoint(point);
     }
 
-    /**
-     * 성적 입력/수정 + 알림 발송(upsert)
-     */
     public int saveStudentScore(ScoreRecord scoreRecord) {
 
         Long studentId = scoreRecord.getUserId();
@@ -109,31 +119,23 @@ public class ScoreService {
             throw new IllegalArgumentException("studentId, courseId는 필수입니다.");
         }
 
-        // 이미 성적이 있는지 확인 → 0이면 CREATE, 1 이상이면 UPDATE
         int exists = scoreMapper.existsStudentScore(studentId, courseId);
 
-        // 점수 upsert
         int row = scoreMapper.upsertStudentScore(scoreRecord);
 
-        // 알림 액션 구분
         String action = (exists > 0) ? "UPDATE" : "CREATE";
 
-        // 알림 호출
         notificationService.notifyScoreChanged(studentId, courseId, action);
 
         return row;
     }
 
-    // ===================== 출석 / 수강생 관련 (정순오 파트) =====================
-
-    // 과목 수강생 목록
+    // ===================== 출석 / 수강생 관련 =====================
 
     public List<Map<String, Object>> courseStudentList(int courseId) {
 
-    	
     	List<Score> scores = scoreMapper.selectStudentsScore(courseId);
-    	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId); // 수강생 목록(userId, 학번, 이름)
-    	
+    	List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);
     	
     	Map<Long, Score> map = new HashMap<>();
     	for(Score s : scores) {
@@ -166,7 +168,7 @@ public class ScoreService {
         		m.put("scoreTotal", score.getScoreTotal());
     		}
     		
-    		list.add(m);    		    		    		        	    	
+    		list.add(m);    		    		    		        	
     	}
     	
     	applyGradesByPercent(list);
@@ -216,28 +218,30 @@ public class ScoreService {
     }
     
     
-    // 수강생 성적 저장
     public void courseStudentScoreSave(Score score) {
-    	
-    	ScoreRecord r = new ScoreRecord();
-        r.setUserId(score.getUserId());
-        r.setCourseId(score.getCourseId());
+
+        ScoreRecord r = new ScoreRecord();
+
+        
+        r.setUserId(score.getUserId().longValue());
+        r.setCourseId(score.getCourseId().longValue());
+
         r.setExam1Score(score.getExam1Score());
         r.setExam2Score(score.getExam2Score());
         r.setAssignmentScore(score.getAssignmentScore());
         r.setAttendanceScore(score.getAttendanceScore());
         r.setScoreTotal(score.getScoreTotal());
-    	
-        int row = scoreMapper.upsertStudentScore(r);
-    	
-    	if(row < 1) {
-    		throw new RuntimeException("점수 등록 실패");
-    	}    	    	    	    	    	   
+
+        // (업서트 + 알림 발송)
+        int row = this.saveStudentScore(r);
+
+        if (row < 1) {
+            throw new RuntimeException("점수 등록 실패");
+        }
     }
     
 
 
-    // 과목별 출석 요약 리스트
     public List<Map<String, Object>> courseStudentAttendanceStatusList(int courseId) {
 
         List<Map<String, Object>> students = assignmentMapper.selectStudentsListByCourseId(courseId);
@@ -281,7 +285,6 @@ public class ScoreService {
     	return scoreMapper.selectStudentScore(userId, courseId);    			    			
     }        
 
-    // 특정 날짜 출석부 리스트
     public List<Map<String, Object>> selectTodayAttendance(String date, int courseId) {
 
         Map<String, Object> param = new HashMap<>();
@@ -303,7 +306,6 @@ public class ScoreService {
         return list;
     }
 
-    // 출석 저장 (있으면 update, 없으면 insert)
     public void saveAttendance(List<Integer> userIds,
                                List<Integer> statusList,
                                String date,
@@ -325,5 +327,12 @@ public class ScoreService {
                 }
             }
         }
+    }
+
+    /**
+     * 특정 학생의 일자별 출석 이력 조회
+     */
+    public List<AttendanceDetail> getAttendanceHistory(int courseId, long userId) {
+        return scoreMapper.selectAttendanceHistory(courseId, userId);
     }
 }

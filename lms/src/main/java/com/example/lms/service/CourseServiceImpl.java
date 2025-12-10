@@ -237,4 +237,26 @@ public class CourseServiceImpl implements CourseService {
         if (studentId == null) return List.of();
         return courseMapper.selectWeeklyTimetable(studentId, previewCourseIds);
     }
+    
+    @Override
+    public List<Course> getProfessorCourses(Long profId,
+                                            Integer year,
+                                            String semester) {
+        if (profId == null) {
+            return List.of();
+        }
+        return courseMapper.selectCoursesByProfessor(profId, year, semester);
+    }
+
+    @Override
+    public Course getCourseBasic(Long courseId) {
+        if (courseId == null) return null;
+        return courseMapper.selectCourseBasicById(courseId);
+    }
+
+    @Override
+    public List<com.example.lms.dto.CourseStudent> getCourseStudents(Long courseId) {
+        if (courseId == null) return List.of();
+        return courseMapper.selectCourseStudents(courseId);
+    }
 }

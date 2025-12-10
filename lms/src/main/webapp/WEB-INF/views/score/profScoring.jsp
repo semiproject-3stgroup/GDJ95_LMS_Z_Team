@@ -4,26 +4,24 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Insert title here</title>
+	<title>성적 관리</title>
 	<!-- 공통 레이아웃 CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">       
 
     <style>
-        /* 메인 영역 전체에 여백 조금 주기 */
         .main-content {
             padding: 40px;
         }
 
-        /* 테이블을 카드처럼 보이게 */
         .score-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
 
-            background-color: #ffffff;      /* 테이블 배경 흰색 */
-            border-radius: 8px;             /* 모서리 둥글게 */
-            overflow: hidden;               /* radius 밖으로 안 튀어나오게 */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);  /* 살짝 그림자 */
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .score-table th,
@@ -32,7 +30,7 @@
         }
 
         .score-table th {
-            background-color: #f4f4f4;      /* 헤더 살짝 회색 */
+            background-color: #f4f4f4;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
             font-weight: 600;
@@ -42,12 +40,10 @@
             border-bottom: 1px solid #f0f0f0;
         }
 
-        /* 홀수/짝수 줄 색 다르게 */
         .score-table tr:nth-child(even) td {
             background-color: #fafafa;
         }
 
-        /* 마우스 올렸을 때 */
         .score-table tr:hover td {
             background-color: #f1f5f9;
         }
@@ -58,13 +54,30 @@
 
     <div class="layout">
 
-        <!-- 왼쪽 사이드바 include -->
         <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
 		
-		<!-- 오른쪽 본문 -->
         <main class="main-content">	
 			
-			<h2>성적</h2>
+			<h2 class="page-title">
+                성적 관리
+                <c:if test="${not empty course}">
+                    - ${course.courseName} (${course.courseYear}년 ${course.courseSemester})
+                </c:if>
+            </h2>
+
+            <div style="margin-bottom: 16px;">
+                <a href="${pageContext.request.contextPath}/course/prof"
+                   class="home-btn secondary">
+                    ← 담당 강의 목록으로
+                </a>
+                <c:if test="${not empty course}">
+                    <a href="${pageContext.request.contextPath}/course/prof/students?courseId=${course.courseId}"
+                       class="home-btn outline"
+                       style="margin-left: 8px;">
+                        수강생 목록
+                    </a>
+                </c:if>
+            </div>
 
             <table class="score-table">
                 <tr>

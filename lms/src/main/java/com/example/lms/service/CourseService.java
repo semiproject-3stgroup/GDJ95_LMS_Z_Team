@@ -34,6 +34,17 @@ public interface CourseService {
                                                  Integer year,
                                                  String semester);
 
-    // ✅ 주간 시간표 조회(현재 수강 + 미리보기 과목들 포함)
+    // 주간 시간표 조회(현재 수강 + 미리보기 과목들 포함)
     List<CourseTimeSlot> getWeeklyTimetable(Long studentId, List<Long> previewCourseIds);
+    
+    // ===== 교수용 강의/수강생 조회 =====
+
+    // 교수 본인이 담당하는 강의들
+    List<Course> getProfessorCourses(Long profId, Integer year, String semester);
+
+    // 특정 강의 기본 정보 (제목, 연도/학기 등)
+    Course getCourseBasic(Long courseId);
+
+    // 특정 강의 수강생 목록
+    List<com.example.lms.dto.CourseStudent> getCourseStudents(Long courseId);
 }
