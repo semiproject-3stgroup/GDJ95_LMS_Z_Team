@@ -2,31 +2,38 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <header class="site-header">
+
+    <!-- 🔹 Left 영역 : LMS 시스템 이름 -->
     <div class="site-header-left">
         <div class="site-logo">L</div>
         <div>
-            <span class="site-title-main">LMS 학사관리 시스템</span>
-            <span class="site-title-sub">GDJ95 Z팀</span>
+            <span class="site-title-main">LMS 학사관리 시스템</span><br/>
         </div>
     </div>
 
+    <!-- 🔹 Center 영역 : 구디대학교 -->
+    <div class="site-header-center">
+        구디대학교
+    </div>
+
+    <!-- 🔹 Right 영역 : 로그인 정보 + 알림센터 + 마이페이지/로그아웃 -->
     <div class="site-header-right">
         <c:choose>
             <c:when test="${not empty loginUser}">
                 <!-- 로그인 정보 -->
                 <span class="header-user-info">
-					${loginUser.departmentId}
-					/
-					${loginUser.userName}
-					/
-					${loginUser.studentNo}
+                    ${loginUser.departmentName}
+                    /
+                    ${loginUser.userName}
+                    /
+                    ${loginUser.studentNo}
                 </span>
 
                 <!-- 🔔 알림 센터 -->
                 <div class="notification-wrapper">
                     <button type="button" id="btnNotification" class="icon-button">
                         🔔
-                        <!-- 🔴 읽지 않은 알림 점 -->
+                        <!-- 빨간 점 -->
                         <span id="notificationDot" class="notification-dot" style="display:none;"></span>
 
                         <!-- 숫자 배지 -->
@@ -48,8 +55,8 @@
                 </div>
 
                 <!-- 마이페이지 / 로그아웃 -->
-                <a href="${pageContext.request.contextPath}/mypage">마이페이지</a>
-                <a href="${pageContext.request.contextPath}/logout">로그아웃</a>
+                <a href="${pageContext.request.contextPath}/mypage" class="header-link">마이페이지</a>
+  			    <a href="${pageContext.request.contextPath}/logout" class="header-link">로그아웃</a>
             </c:when>
 
             <c:otherwise>
@@ -59,6 +66,7 @@
             </c:otherwise>
         </c:choose>
     </div>
+
 </header>
 
 <!-- 🔔 알림센터용 JS -->
