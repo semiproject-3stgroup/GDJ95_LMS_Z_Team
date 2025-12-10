@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.lms.dto.BoardDepartment;
 import com.example.lms.dto.BoardDepartmentFile;
 import com.example.lms.dto.BoardDepartmentForm;
+import com.example.lms.dto.BoardDeptComment;
 import com.example.lms.mapper.BoardDeptMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -222,4 +223,19 @@ public class BoardDeptService {
 			log.debug("임시파일이 존재하지 않습니다");
 		}
 	}	
+	
+	// 댓글 모음
+	public List<BoardDeptComment> selectDeptBoardPostComments(int postId) {		
+		return boardDeptMapper.selectBoardDeptComment(postId);				
+	}
+	
+	public void addDeptPostComment(BoardDeptComment boardDeptComment) {				
+		
+		boardDeptMapper.insertBoardDeptComment(boardDeptComment);
+	}
+	
+	public void removeDeptPostComment(int commentId) {
+		
+		boardDeptMapper.deleteBoardDeptComment(commentId);
+	}
 }

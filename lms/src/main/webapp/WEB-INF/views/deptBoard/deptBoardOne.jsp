@@ -42,21 +42,35 @@
 
 
 			<c:if test="${one.bo.userId == userId}">					
-				<form>	
-					<input type="hidden" name="postId" value="${one.bo.postId}">
-					
+				<form>											
 					<button type="button" id="modify">수정</button>
 					<button type="button" id="delete">삭제</button>
 				</form>
 			</c:if>		
 			
-			<a href="${pageContext.request.contextPath}/deptBoard">목록</a>								
+			<input type="hidden" name="postId" value="${one.bo.postId}">
+			
+			<hr>
+			
+			<div id="commentsArea"></div>
+			
+			<div id="addComment">
+				<textarea id="commentContent"></textarea>
+				<button type="button" id="addCommentBtn">저장</button>
+			</div>
+			
+			<a href="${pageContext.request.contextPath}/deptBoard">목록</a>							
 		</main>
 	</div>
 	<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 	
 </body>
 <script>
+	$(()=>{
+		const postId = $('input[name="postId"]').val();
+		commentTable(postId);
+	});
+	
 	$('#delete').click(()=>{
 		if (confirm('삭제하시겠습니까?')) {
 			$('form').attr('action', '${pageContext.request.contextPath}/deptBoardRemove');
@@ -67,7 +81,86 @@
 	$('#modify').click(()=>{
 		$('form').attr('action', '${pageContext.request.contextPath}/deptBoardModify');
 		$('form').submit();
-	})
+	});
 	
+	$('#addCommentBtn').click(()=>{
+		const postId = $('input[name="postId"]').val();
+		const content = $('#commentContent').val();
+		
+		addComment(postId, content);		
+	});
+	
+	
+	$(document).on('click', '.removeCommentBtn', function() {
+		const commentId = $(this).data('commentId');
+		const postId = $('input[name="postId"]').val();
+		
+		if(!confirm('댓글을 삭제하시겠습니까?')) return;
+		
+		$.ajax({
+			url:'/rest/removeComment'
+			, data: { commentId : commentId	}
+			, success: ()=>{
+				commentTable(postId);
+			}
+			, error: ()=>{
+				alert('댓글 삭제 실패')
+			}
+		});		
+	});
+	
+	function commentTable(postId) {
+		$.ajax({
+			url: '/rest/comment'			
+			, data: {postId : postId}
+			, success: (data)=>{
+				
+				const cArea = $('#commentsArea');
+				const loginUserId = ${userId};
+				let html = '<table>'
+				
+				data.forEach(item => {
+					html += `					
+						<tr><td>작성자 \${item.userName}</td></tr>							 
+						<tr><td>\${item.content}</td></tr>																							
+						`;
+						
+					if(item.userId === loginUserId) {
+						html += `
+							<tr><td><button type="button" class="removeCommentBtn" data-comment-id="\${item.commentId}">삭제</button></td></tr>	
+							`
+					}
+						
+					html += '<tr><td><hr></td></tr>';						
+				});									
+				
+				html += '</table>';
+				
+				cArea.html(html);
+			}
+			, error: () => {
+				alert('댓글 불러오기 실패');
+			}
+		});		
+	}	
+	
+	function addComment(postId, content) {
+		$.ajax({
+			url: '/rest/addComment'
+			, type: 'post'
+			, data: {
+				postId : postId
+				, content : content
+				}
+			, success: () => {
+				commentTable(postId);
+				$('#commentContent').val('')
+			}
+			, error: () => {
+				alert('댓글 저장 실패');
+			}
+		});				
+	}		
+		
 </script>
 </html>
