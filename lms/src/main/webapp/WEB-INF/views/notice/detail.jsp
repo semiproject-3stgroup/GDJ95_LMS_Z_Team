@@ -6,74 +6,83 @@
 <head>
     <meta charset="UTF-8">
     <title>공지 상세</title>
-    
-    <link rel="stylesheet" href="/css/layout.css">
-    <link rel="stylesheet" href="/css/notice.css">
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notice.css">
 </head>
-<body>
+<body class="notice-page">
 
     <%@ include file="/WEB-INF/views/common/header.jsp" %>
 
     <div class="layout">
-        <main class="content">
+        <%@ include file="/WEB-INF/views/common/sidebar.jsp" %>
+
+        <main class="main-content">
+            <!-- 페이지 헤더 -->
             <div class="page-header">
-			    <h1>공지사항 상세</h1>
-			
-			    <div style="margin-left:auto;">
-			
-			        <c:if test="${not empty sessionScope.loginUser 
-			                     and sessionScope.loginUser.userId == notice.userId}">
-			            <a href="/notice/edit?noticeId=${notice.noticeId}" class="btn btn-secondary">수정</a>
-			
-			            <form action="/notice/delete" method="post" style="display:inline;"
-			                  onsubmit="return confirm('정말 삭제할까요? 복구할 수 없습니다.');">
-			                <input type="hidden" name="noticeId" value="${notice.noticeId}">
-			                <input type="hidden" name="page" value="${currentPage}">
-			                <button type="submit" class="btn btn-danger">삭제</button>
-			            </form>
-			        </c:if>
-			
-			    </div>
-			</div>
+                <h1 class="page-title">공지사항</h1>
 
-            <div class="card" style="padding: 16px;">
-                <h2 style="margin-top:0;">${notice.title}</h2>
+                <div class="page-header-actions">
+                    <c:if test="${not empty sessionScope.loginUser 
+                                 and sessionScope.loginUser.userId == notice.userId}">
+                        <a href="${pageContext.request.contextPath}/notice/edit?noticeId=${notice.noticeId}"
+                           class="btn btn-secondary">
+                            수정
+                        </a>
 
-                <div style="font-size: 14px; color:#555; margin-bottom:12px;">
-                    <span>작성자: ${notice.writerName}</span>
-                    <span style="margin-left:16px;">조회수: ${notice.hitCount}</span>
-                    <span style="margin-left:16px;">작성일: ${notice.createdate}</span>
-                </div>
-
-                <hr/>
-
-                <div style="min-height:150px; white-space:pre-wrap;">
-                    ${notice.content}
+                        <form action="${pageContext.request.contextPath}/notice/delete"
+                              method="post"
+                              class="inline-form"
+                              onsubmit="return confirm('정말 삭제할까요? 복구할 수 없습니다.');">
+                            <input type="hidden" name="noticeId" value="${notice.noticeId}">
+                            <input type="hidden" name="page" value="${currentPage}">
+                            <button type="submit" class="btn btn-primary btn-danger">
+                                삭제
+                            </button>
+                        </form>
+                    </c:if>
                 </div>
             </div>
 
-			<c:if test="${not empty fileList}">
-			    <div style="margin-top: 20px;">
-			        <strong>첨부파일</strong>
-			        <ul>
-			            <c:forEach var="file" items="${fileList}">
-			                <li>
-			                    <!-- 다운로드 매핑 -->
-			                    <a href="/notice/file/download?fileId=${file.fileId}">
-			                        ${file.originName}
-			                    </a>
-			                    (${file.fileSize} Byte)
-			                </li>
-			            </c:forEach>
-			        </ul>
-			    </div>
-			</c:if>
+            <!-- 내용 카드 -->
+            <div class="card notice-detail-card">
+                <h2 class="notice-detail-title">${notice.title}</h2>
 
+                <div class="notice-detail-meta">
+                    <span>작성자: ${notice.writerName}</span>
+                    <span>조회수: ${notice.hitCount}</span>
+                    <span>작성일: ${notice.createdate}</span>
+                </div>
 
-            <div style="margin-top:16px;">
-                <a href="/notice/list?page=${currentPage}
-   					     &searchType=${searchType}
-   					     &searchWord=${searchWord}" class="btn btn-light">
+                <div class="notice-detail-body">
+                    ${notice.content}
+                </div>
+
+                <c:if test="${not empty fileList}">
+                    <div class="notice-detail-files">
+                        <strong>첨부파일</strong>
+                        <ul>
+                            <c:forEach var="file" items="${fileList}">
+                                <li>
+                                    <a href="${pageContext.request.contextPath}/notice/file/download?fileId=${file.fileId}">
+                                        ${file.originName}
+                                    </a>
+                                    <span class="file-size">
+                                        (${file.fileSize} Byte)
+                                    </span>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:if>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div class="notice-detail-footer">
+                <a href="${pageContext.request.contextPath}/notice/list?page=${currentPage}
+                         &searchType=${searchType}
+                         &searchWord=${searchWord}"
+                   class="btn btn-secondary">
                     목록으로
                 </a>
             </div>

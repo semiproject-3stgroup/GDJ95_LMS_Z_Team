@@ -119,9 +119,9 @@
                     </a>
                 </li>
                 <li class="${menu eq 'scoreProf' ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/score/profScoring">
+                    <a href="${pageContext.request.contextPath}/course/prof">
                         <span class="sidebar-icon">🧮</span>
-                        <span>과제 채점</span>
+                        <span>내 강의 목록</span>
                     </a>
                 </li>
             </ul>

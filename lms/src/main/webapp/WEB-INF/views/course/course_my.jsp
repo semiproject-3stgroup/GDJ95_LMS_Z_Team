@@ -14,26 +14,40 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
-    <!-- 이 페이지용 간단 레이아웃 -->
+    <!-- 이 페이지용 레이아웃 조정 -->
     <style>
         .mycourse-layout {
             display: flex;
             gap: 24px;
             align-items: flex-start;
         }
+        /* 왼쪽은 살짝만 넓게, 오른쪽이 더 넓게 먹도록 */
         .mycourse-left {
-            flex: 1 1 auto;
+            flex: 0 0 640px;
             min-width: 0;
         }
         .mycourse-right {
-            flex: 0 0 520px;
+            flex: 1 1 auto;
+            min-width: 540px;
         }
         #myCourseWeeklyCalendar {
             margin-top: 8px;
             background-color: #ffffff;
-            border-radius: 10px;
-            padding: 12px;
-            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+            border-radius: 14px;
+            padding: 10px 12px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        /* 화면 좁아지면 위아래로 쌓이게 */
+        @media (max-width: 1200px) {
+            .mycourse-layout {
+                flex-direction: column;
+            }
+            .mycourse-left,
+            .mycourse-right {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
         }
     </style>
 </head>
@@ -232,7 +246,8 @@ document.addEventListener('DOMContentLoaded', function () {
         initialView: 'timeGridWeek',
         initialDate: new Date(),   // 오늘 기준 주간
         locale: 'ko',
-        firstDay: 0,               // 일요일 시작
+        firstDay: 1,               // 월요일 시작
+        weekends: false,           // 🔥 토/일 숨기고 월~금만 표시 → 칸 넓어짐
         allDaySlot: false,
         slotMinTime: '09:00:00',
         slotMaxTime: '18:00:00',
@@ -258,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? raw
                     : (raw.data && Array.isArray(raw.data) ? raw.data : []);
 
-                // ----- 이번 주 일요일을 기준 날짜로 계산 -----
+                // ----- 이번 주 월요일을 기준 날짜로 계산 (firstDay:1과 맞춤) -----
                 const baseDate = calendar.getDate();   // 캘린더가 보고 있는 기준 날짜
                 const weekStart = new Date(
                     baseDate.getFullYear(),
@@ -266,13 +281,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     baseDate.getDate()
                 );
                 const dow = weekStart.getDay();        // 0=일, 1=월, ...
-                weekStart.setDate(weekStart.getDate() - dow); // 이번 주 일요일로 이동
+                weekStart.setDate(weekStart.getDate() - (dow - 1)); // 이번 주 월요일로 이동
                 weekStart.setHours(0, 0, 0, 0);
 
                 console.log('[my-course] baseDate = ', baseDate, 'weekStart = ', weekStart);
 
                 const events = data.map(e => {
-                    const dayOffset = e.dayOfWeek;
+                    const dayOffset = e.dayOfWeek;  // 0=월, 1=화 ... 라고 가정
 
                     const date = new Date(weekStart);
                     date.setDate(weekStart.getDate() + dayOffset);
@@ -282,12 +297,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     const d = String(date.getDate()).padStart(2, '0');
 
                     const times = PERIOD_TIME[e.period] || PERIOD_TIME[1];
-   
+
                     const start = y + '-' + m + '-' + d + 'T' + times.start;
                     const end   = y + '-' + m + '-' + d + 'T' + times.end;
 
                     return {
-                        
                         title: e.courseName + ' | ' + e.professorName,
                         start: start,
                         end: end,
@@ -299,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 console.log('[my-course] built events = ', events);
 
-                // 기존 이벤트 제거 후 새로 추가 (개별 addEvent 사용)
+                // 기존 이벤트 제거 후 새로 추가
                 calendar.removeAllEvents();
                 events.forEach(function (evt) {
                     calendar.addEvent(evt);
@@ -316,8 +330,6 @@ document.addEventListener('DOMContentLoaded', function () {
     loadWeeklyTimetable();
 });
 </script>
-
-
 
 </body>
 </html>

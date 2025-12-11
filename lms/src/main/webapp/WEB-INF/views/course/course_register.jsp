@@ -8,7 +8,7 @@
     <title>수강신청</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
 </head>
-<body>
+<body class="course-page">
 
 <%@ include file="/WEB-INF/views/common/header.jsp" %>
 
@@ -18,7 +18,43 @@
 
     <main class="main-content">
 
-        <h2 class="page-title">수강신청</h2>
+        <!-- 페이지 헤더 : 타이틀 + 연도/학기 필터 -->
+        <div class="page-header">
+            <h1 class="page-title">수강신청</h1>
+
+            <!-- 연도/학기 필터 -->
+            <form method="get"
+                  action="${pageContext.request.contextPath}/course/register"
+                  class="course-filter-form">
+                <label>
+                    <span class="course-filter-label">학년도</span>
+                    <select name="year">
+                        <c:forEach var="y" items="${yearList}">
+                            <option value="${y}"
+                                <c:if test="${year == y}">selected</c:if>>
+                                ${y}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </label>
+
+                <label>
+                    <span class="course-filter-label">학기</span>
+                    <select name="semester">
+                        <c:forEach var="sem" items="${semesterList}">
+                            <option value="${sem}"
+                                <c:if test="${semester == sem}">selected</c:if>>
+                                ${sem}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </label>
+
+                <button type="submit" class="home-btn secondary">
+                    필터 적용
+                </button>
+            </form>
+        </div>
 
         <!-- 수강신청 기간 / 수동 상태 안내 배너 -->
         <c:if test="${not empty registerBannerText}">
@@ -45,39 +81,6 @@
                 ${message}
             </div>
         </c:if>
-
-        <!-- 연도/학기 필터 -->
-        <form method="get"
-              action="${pageContext.request.contextPath}/course/register"
-              class="course-filter-form">
-            <label>
-                학년도
-                <select name="year">
-                    <c:forEach var="y" items="${yearList}">
-                        <option value="${y}"
-                            <c:if test="${year == y}">selected</c:if>>
-                            ${y}
-                        </option>
-                    </c:forEach>
-                </select>
-            </label>
-
-            <label>
-                학기
-                <select name="semester">
-                    <c:forEach var="sem" items="${semesterList}">
-                        <option value="${sem}"
-                            <c:if test="${semester == sem}">selected</c:if>>
-                            ${sem}
-                        </option>
-                    </c:forEach>
-                </select>
-            </label>
-
-            <button type="submit" class="home-btn secondary">
-                필터 적용
-            </button>
-        </form>
 
         <!-- 좌측: 강의 목록 / 우측: 주간 예상 시간표 -->
         <div class="course-page-grid">
@@ -107,22 +110,24 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="check-all"></th>
+                                    <th class="table-cell-center" style="width: 40px;">
+                                        <input type="checkbox" id="check-all">
+                                    </th>
                                     <th>강의명</th>
                                     <th>담당 교수</th>
-                                    <th>학년도</th>
-                                    <th>학기</th>
-                                    <th>학점</th>
+                                    <th class="table-cell-center" style="width: 80px;">학년도</th>
+                                    <th class="table-cell-center" style="width: 70px;">학기</th>
+                                    <th class="table-cell-center" style="width: 60px;">학점</th>
                                     <th>수업시간</th>
-                                    <th>상태</th>
-                                    <th></th>
+                                    <th class="table-cell-center" style="width: 80px;">상태</th>
+                                    <th class="table-cell-center" style="width: 90px;"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach var="c" items="${openCourses}">
                                     <tr class="course-row"
                                         data-course-id="${c.courseId}">
-                                        <td>
+                                        <td class="table-cell-center">
                                             <!-- ✅ 체크박스: change 시 미리보기 업데이트 -->
                                             <input type="checkbox"
                                                    class="course-check"
@@ -130,13 +135,17 @@
                                         </td>
                                         <td>${c.courseName}</td>
                                         <td>${c.profName}</td>
-                                        <td>${c.courseYear}</td>
-                                        <td>${c.courseSemester}</td>
-                                        <td>${c.credit}</td>
+                                        <td class="table-cell-center">${c.courseYear}</td>
+                                        <td class="table-cell-center">${c.courseSemester}</td>
+                                        <td class="table-cell-center">${c.credit}</td>
                                         <td>${c.scheduleSummary}</td>
-                                        <td>${c.status}</td>
-                                        <td>
-                                            <!-- 단건 신청 버튼 (옵션, 그대로 둠) -->
+                                        <td class="table-cell-center">
+                                            <span class="status-pill status-${c.status}">
+                                                ${c.status}
+                                            </span>
+                                        </td>
+                                        <td class="table-cell-center">
+                                            <!-- 단건 신청 버튼 -->
                                             <form method="post"
                                                   action="${pageContext.request.contextPath}/course/register">
                                                 <input type="hidden" name="courseId" value="${c.courseId}">
@@ -173,7 +182,7 @@
                     <table class="timetable-table" id="timetable">
                         <thead>
                         <tr>
-                            <th></th>
+                            <th class="timetable-period"> </th>
                             <th>월</th>
                             <th>화</th>
                             <th>수</th>
@@ -214,21 +223,31 @@
         <script>
             const ctx = '${pageContext.request.contextPath}';
 
+            // 시간표 모든 셀 비우기
             function clearTimetable() {
                 const cells = document.querySelectorAll('#timetable td[data-day]');
-                cells.forEach(cell => cell.innerHTML = '');
+                cells.forEach(function (cell) {
+                    cell.innerHTML = '';
+                });
             }
 
+            // 슬롯 데이터로 시간표 채우기
             function renderTimetable(slots) {
                 clearTimetable();
 
-                slots.forEach(slot => {
+                if (!Array.isArray(slots)) {
+                    return;
+                }
+
+                slots.forEach(function (slot) {
                     const selector =
                         '#timetable td[data-day="' + slot.dayOfWeek +
                         '"][data-period="' + slot.period + '"]';
 
                     const cell = document.querySelector(selector);
-                    if (!cell) return;
+                    if (!cell) {
+                        return;
+                    }
 
                     const box = document.createElement('div');
                     box.className = 'tt-slot';
@@ -240,27 +259,45 @@
                 });
             }
 
-            /**
-             * 선택된 체크박스 기준으로 주간 시간표 미리보기 요청
-             */
+            // 체크된 강의에 따라 행 스타일 업데이트
+            function updateSelectedRowStyles() {
+                document.querySelectorAll('.course-row').forEach(function (row) {
+                    const cb = row.querySelector('.course-check');
+                    if (cb && cb.checked) {
+                        row.classList.add('course-row-selected');
+                    } else {
+                        row.classList.remove('course-row-selected');
+                    }
+                });
+            }
+
+            // 선택된 체크박스 기준으로 주간 시간표 미리보기 요청
             function loadTimetableWithCheckedCourses() {
                 const checked = Array.from(
                     document.querySelectorAll('.course-check:checked')
-                ).map(cb => cb.value);
+                ).map(function (cb) {
+                    return cb.value;
+                });
 
                 const baseUrl = ctx + '/api/course/weekly-timetable';
                 const params = new URLSearchParams();
 
-                checked.forEach(id => params.append('previewCourseIds', id));
+                // previewCourseIds 파라미터로 전달 (백엔드와 맞춤)
+                checked.forEach(function (id) {
+                    params.append('previewCourseIds', id);
+                });
 
                 const url = params.toString() ? (baseUrl + '?' + params.toString()) : baseUrl;
 
                 fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                        renderTimetable(data);
+                    .then(function (res) {
+                        return res.json();
                     })
-                    .catch(err => {
+                    .then(function (data) {
+                        renderTimetable(data);
+                        updateSelectedRowStyles();
+                    })
+                    .catch(function (err) {
                         console.error('주간 시간표 로딩 실패', err);
                     });
             }
@@ -270,10 +307,11 @@
                 // 처음 진입 시: 현재 ENROLLED 기준 시간표
                 loadTimetableWithCheckedCourses();
 
-                // 개별 체크박스 change 시 → 미리보기 갱신
+                // 개별 체크박스 change 시 → 미리보기 갱신 + 행 하이라이트
                 document.querySelectorAll('.course-check').forEach(function (cb) {
                     cb.addEventListener('change', function () {
                         loadTimetableWithCheckedCourses();
+                        updateSelectedRowStyles();
                     });
                 });
 
@@ -281,11 +319,12 @@
                 const checkAll = document.getElementById('check-all');
                 if (checkAll) {
                     checkAll.addEventListener('change', function () {
-                        const checked = this.checked;
+                        const checked = checkAll.checked;
                         document.querySelectorAll('.course-check').forEach(function (cb) {
                             cb.checked = checked;
                         });
                         loadTimetableWithCheckedCourses();
+                        updateSelectedRowStyles();
                     });
                 }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,19 +33,28 @@ public class AssignmentController {
 	// ======================== 교수 ============================
 	
 	// 교수 강의, 과제
+	// 교수 강의, 과제
 	@GetMapping("/profAssignment")
-	public String profAssignment(Model model, HttpSession session) {
-		
-		User user = (User)session.getAttribute("loginUser");
-		
-		List<Course> course = assignmentService.courseListByProf(user.getUserId());
-		List<Map<String, Object>> list = assignmentService.courseListWithAssignment(user.getUserId());					
-		
-		model.addAttribute("list", list);
-		model.addAttribute("course", course);
-						
-		return "assignment/profAssignment";
+	public String profAssignment(
+	        Model model,
+	        HttpSession session,
+	        @RequestParam(required = false) Long courseId   // ⭐ 추가
+	) {
+
+	    User user = (User) session.getAttribute("loginUser");
+
+	    List<Course> course = assignmentService.courseListByProf(user.getUserId());
+	    List<Map<String, Object>> list = assignmentService.courseListWithAssignment(user.getUserId());
+
+	    model.addAttribute("list", list);
+	    model.addAttribute("course", course);
+
+	    // 어떤 강의에서 들어왔는지(필터용) 넘겨주기
+	    model.addAttribute("selectedCourseId", courseId);
+
+	    return "assignment/profAssignment";
 	}
+	
 	// 과제 추가
 	@GetMapping("/profAssignmentAdd")
 	public String profAssignmentAdd(Model model, HttpSession session) {

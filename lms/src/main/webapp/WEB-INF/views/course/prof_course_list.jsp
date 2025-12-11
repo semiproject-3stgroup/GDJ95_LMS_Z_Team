@@ -17,6 +17,49 @@
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
+        
+            .course-actions {
+        display: flex;
+        flex-wrap: wrap;          /* 2x2 줄바꿈 */
+        gap: 8px;
+        max-width: 260px;
+    }
+
+    .course-action-btn {
+        flex: 1 1 calc(50% - 4px);  /* 한 줄에 두 개씩 */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid #4f46e5;  /* 진한 보라 */
+        background-color: #ffffff;
+        color: #4f46e5;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease,
+                    box-shadow 0.15s ease, transform 0.05s ease;
+        white-space: nowrap;
+    }
+
+    .course-action-btn.primary {
+        background-color: #4f46e5;
+        color: #ffffff;
+    }
+
+    .course-action-btn:hover {
+        background-color: #4338ca;
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(79, 70, 229, 0.35);
+        transform: translateY(-1px);
+    }
+
+    .course-action-btn.primary:hover {
+        background-color: #3730a3;
+    }
+    
         .course-table th,
         .course-table td {
             padding: 12px 16px;
@@ -91,7 +134,7 @@
                         <th>학점</th>
                         <th>정원</th>
                         <th>상태</th>
-                        <th style="width: 280px;">관리</th>
+                        <th style="width: 320px;">관리</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -104,21 +147,30 @@
                             <td>${c.maxCapacity}</td>
                             <td>${c.status}</td>
                             <td>
-                                <a href="${pageContext.request.contextPath}/course/prof/students?courseId=${c.courseId}"
-                                   class="home-btn secondary">
-                                    수강생 목록
-                                </a>
-                                <a href="${pageContext.request.contextPath}/profScoring?courseId=${c.courseId}"
-                                   class="home-btn primary"
-                                   style="margin-left: 6px;">
-                                    성적 관리
-                                </a>
-                                <a href="${pageContext.request.contextPath}/profAttendance?courseId=${c.courseId}"
-                                   class="home-btn outline"
-                                   style="margin-left: 6px;">
-                                    출석 관리
-                                </a>
-                            </td>
+							    <div class="course-actions">
+							        <!-- 1줄 위에 두 개 -->
+							        <a href="${pageContext.request.contextPath}/course/prof/students?courseId=${c.courseId}"
+							           class="course-action-btn">
+							            수강생 목록
+							        </a>
+							
+							        <a href="${pageContext.request.contextPath}/profScoring?courseId=${c.courseId}"
+							           class="course-action-btn">
+							            성적 관리
+							        </a>
+							
+							        <!-- 2줄 아래 두 개 -->
+							        <a href="${pageContext.request.contextPath}/profAttendance?courseId=${c.courseId}"
+							           class="course-action-btn">
+							            출석 관리
+							        </a>
+							
+							        <a href="${pageContext.request.contextPath}/profAssignment?courseId=${c.courseId}"
+							           class="course-action-btn">
+							            과제 관리
+							        </a>
+							    </div>
+							</td>
                         </tr>
                     </c:forEach>
                     </tbody>

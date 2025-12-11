@@ -172,7 +172,7 @@ public class BoardNoticeController {
         // 공지 자체도 모델에 담기
         model.addAttribute("notice", notice);
 
-        return "notice/edit";
+        return "notice/modify";
     }
 
     /**

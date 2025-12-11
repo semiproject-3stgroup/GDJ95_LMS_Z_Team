@@ -1,6 +1,356 @@
 /* ============================
+   공지 폼 라벨 & 인풋
+============================ */
+.board-form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.board-form-input,
+.board-form-textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+.board-form-input:focus,
+.board-form-textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+/* 파일 드래그&드롭 영역 */
+.file-dropzone {
+    border: 2px dashed #9ca3af;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #4b5563;
+    background-color: #f9fafb;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.file-dropzone .file-dropzone-click {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.file-dropzone.dragover {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+}
+
+.file-list {
+    margin: 8px 0 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.file-list li + li {
+    margin-top: 2px;
+}
+
+/* 공지 수정 - 기존 첨부파일 영역 */
+.board-files-old {
+    margin-bottom: 16px;
+}
+
+.board-files-old-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.board-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
+}
+
+.board-file-icon {
+    font-size: 14px;
+}
+
+.board-file-link {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.board-file-link:hover {
+    text-decoration: underline;
+}
+
+.board-file-size {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.board-file-delete {
+    margin-left: auto;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* ============================
+   공지사항 목록/상세 전용
+============================ */
+
+/* 공지 페이지에서 전체 레이아웃을 살짝 왼쪽으로 */
+.notice-page .layout {
+    justify-content: flex-start;
+}
+
+/* 메인 컨텐츠 폭 + 위치 (게시판을 살짝 오른쪽 + 더 넓게) */
+.notice-page .main-content {
+    max-width: 1280px;      /* 전체 폭 더 크게 */
+    margin: 0 0 0 80px;     /* 사이드바에서 80px 떨어져서 화면 가운데로 당김 */
+}
+
+/* 검색바 */
+.notice-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 13px;
+}
+
+.notice-search-select {
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 6px 10px;
+    font-size: 13px;
+    background-color: #ffffff;
+}
+
+.notice-search-input {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 7px 12px;
+    font-size: 13px;
+    outline: none;
+    background-color: #f9fafb;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.notice-search-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+    background-color: #ffffff;
+}
+
+.notice-search-btn {
+    padding-inline: 14px;
+}
+
+/* 목록 카드 여유 */
+.notice-list-card {
+    margin-top: 4px;
+}
+
+/* 제목 링크 & 필독 배지 */
+.notice-title-link {
+    text-decoration: none;
+    color: #111827;
+}
+
+.notice-title-link:hover {
+    text-decoration: underline;
+}
+
+.notice-badge-pill {
+    display: inline-block;
+    margin-right: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #b91c1c;
+    background-color: #fee2e2;
+}
+
+/* 상세 페이지 */
+.notice-detail-card {
+    margin-top: 6px;
+}
+
+.notice-detail-title {
+    margin: 0 0 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.notice-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 14px;
+}
+
+.notice-detail-body {
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+    white-space: pre-wrap;
+    font-size: 14px;
+    color: #111827;
+    min-height: 180px;
+}
+
+.notice-detail-files {
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+.notice-detail-files ul {
+    margin: 6px 0 0 18px;
+    padding: 0;
+}
+
+.notice-detail-files li + li {
+    margin-top: 3px;
+}
+
+.notice-detail-footer {
+    margin-top: 16px;
+}
+
+/* 인라인 폼(삭제 버튼) */
+.inline-form {
+    display: inline-block;
+    margin-left: 4px;
+}
+
+/* 위험 버튼 (삭제) */
+.btn-danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+/* 2컬럼 레이아웃 */
+.notice-2col {
+    display: grid;
+    grid-template-columns: minmax(0, 2.6fr) minmax(0, 1.1fr); /* 왼쪽 메인 더 넓게 */
+    column-gap: 18px;
+    row-gap: 0;
+    align-items: flex-start;
+}
+
+/* 오른쪽 패널 */
+.notice-side-card {
+    background-color: #1f133b;   /* 🔹 사이드바 색과 통일 */
+    color: #f9fafb;
+    border-radius: 18px;
+    padding: 18px 18px 20px;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.55);
+}
+
+/* 제목/텍스트 */
+.notice-side-title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #f9fafb;
+}
+
+.notice-side-text {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: rgba(249, 250, 251, 0.9);
+}
+
+/* 그림 칸은 안 쓸 거라 숨김 (예전 lorem 카드) */
+.notice-side-illustration {
+    display: none;
+}
+
+/* 링크 목록 */
+.notice-side-links {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    font-size: 13px;
+}
+
+.notice-side-links li + li {
+    margin-top: 4px;
+}
+
+.notice-side-links a {
+    color: #e0e7ff;
+    text-decoration: none;
+}
+
+.notice-side-links a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* 🔹 공통 세로 배너 (모든 페이지에서 사용 가능) */
+.right-vertical-banner {
+    border-radius: 16px;
+    min-height: 260px;
+    background-image: url('/img/banner-right-vert.jpg'); /* 순표가 넣을 새 이미지 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.35);
+    margin-top: 12px;
+}
+
+/* 화면 좁아지면 1컬럼으로 */
+@media (max-width: 1200px) {
+    .notice-2col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 공지 목록 테이블 폭 설정 */
+.notice-list-card .table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* 두 번째 컬럼(제목)은 자동으로 넓게 */
+.notice-list-card .table th:nth-child(2),
+.notice-list-card .table td:nth-child(2) {
+    width: auto;
+}
+
+/* ============================
    1. Global 기본 설정
 ============================ */
+
+/* 공지사항 전용 배경 */
+.notice-page {
+    /* 이제는 공통 배경색만, 그림 없음 */
+    background-color: #f6f6fb;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -66,10 +416,9 @@ body {
 }
 
 /* ============================
-   2. 상단 헤더 영역 (위쪽 옛 header 정의는 제거함)
-   → 실제 적용은 맨 아래 HEADER 섹션 참고
+   2. 상단 헤더 영역
 ============================ */
-/* (여기 있던 .site-header / .site-header-left / .site-logo / .site-header-right 등은 삭제됨) */
+/* (위쪽 옛 header 정의는 제거된 상태라고 가정) */
 
 
 /* ============================
@@ -287,6 +636,39 @@ body {
 }
 
 /* ============================
+   공통 알림 배너
+============================ */
+
+.alert {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    border: 1px solid transparent;
+    background-color: #eff6ff;
+    color: #1e3a8a;
+}
+
+.alert-info {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.alert-success {
+    background-color: #ecfdf3;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.alert-error {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+/* ============================
    D-Day 배지
 ============================ */
 .dday-pill {
@@ -320,7 +702,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 22px;   /* 20 → 22 */
     color: #f9fafb;
 }
 
@@ -401,22 +783,158 @@ body {
    수강신청 페이지
 ============================ */
 
+/* 수강신청 메인 레이아웃: 왼쪽 리스트 + 오른쪽 시간표 */
 .course-page-grid {
-    display: grid;
-    grid-template-columns: 2fr 1.2fr;
-    gap: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
 }
 
+/* 왼쪽: 강의 목록 영역 (고정 폭 느낌) */
+.course-page-left {
+    flex: 0 0 760px;    /* 필요하면 740~780 사이로 조정 가능 */
+}
+
+/* 오른쪽: 시간표는 남은 공간을 꽉 채움 */
+.course-page-right {
+    min-width: 520px;
+}
+
+/* 화면 좁아지면 위아래로 쌓이도록 */
+@media (max-width: 1200px) {
+    .course-page-grid {
+        flex-direction: column;
+    }
+
+    .course-page-left,
+    .course-page-right {
+        flex: 1 1 auto;
+    }
+}
+
+/* 페이지 헤더 안의 필터 폼 */
 .course-filter-form {
     display: flex;
+    align-items: flex-end;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-left: auto;
 }
 
+.course-filter-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.course-filter-label {
+    margin-bottom: 4px;
+}
+
+.course-filter-form select {
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    font-size: 13px;
+    background-color: #ffffff;
+    min-width: 110px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.course-filter-form select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+}
+
+/* 수강신청 - 선택된 강의 행 하이라이트 */
+.course-row-selected td {
+    background-color: #f5f3ff;           /* 연보라 */
+}
+
+.course-row-selected td:first-child {
+    border-top-left-radius: 8px;
+}
+.course-row-selected td:last-child {
+    border-top-right-radius: 8px;
+}
+
+/* 상태 Pill 살짝 더 입체감 */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: #eef2ff;
+    color: #4338ca;
+    box-shadow: 0 1px 3px rgba(148, 163, 184, 0.45);
+}
+
+/* 시간표 슬롯 간 여백 */
+.tt-slot {
+    border-radius: 10px;
+    padding: 4px 6px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    text-align: left;
+    line-height: 1.3;
+    margin: 2px 0;           /* 위아래 살짝 여백 */
+}
+
+/* 좁은 화면에서 필터 줄바꿈 */
+@media (max-width: 768px) {
+    .course-filter-form {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-top: 8px;
+    }
+}
+
+/* 강의 상태 Pill */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: #eef2ff;
+    color: #4338ca;
+}
+
+/* 대표 상태값별 색 (OPEN / ENROLLED / CLOSED 등) */
+.status-OPEN {
+    background-color: #ecfdf3;
+    color: #166534;
+}
+
+.status-ENROLLED {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.status-CLOSED,
+.status-END {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+/* 주간 시간표 테이블 */
 .timetable-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
+    table-layout: fixed;
+}
+
+.timetable-table thead {
+    background-color: #f9fafb;
 }
 
 .timetable-table th,
@@ -424,6 +942,48 @@ body {
     border: 1px solid #e5e7eb;
     padding: 6px 8px;
     text-align: center;
+}
+
+/* 요일 컬럼(월~금) 폭 넓게: 4글자 + 여백 정도 */
+.timetable-table th:nth-child(n+2),
+.timetable-table td:nth-child(n+2) {
+    width: 120px;      /* 필요하면 100~110 으로 조금씩 조절해봐도 됨 */
+}
+
+.timetable-period {
+    width: 70px;
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+/* 시간표 안의 개별 강의 박스 */
+.tt-slot {
+    border-radius: 10px;
+    padding: 4px 6px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.tt-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.tt-prof {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+/* 시간표 안내 문구 */
+.timetable-hint {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6b7280;
 }
 
 /* ============================
@@ -435,19 +995,19 @@ body {
     width: 260px;
     background-color: #1f133b;
     color: #e5e7eb;
-    padding: 28px 22px;      /* 전체 여백도 살짝 키움 */
+    padding: 28px 22px;
     box-sizing: border-box;
 }
 
-/* 섹션 간격 (소제목 사이 간격 ↑) */
+/* 섹션 간격 */
 .sidebar-section {
-    margin-bottom: 34px;      /* 기존 28px → 34px */
+    margin-bottom: 34px;
 }
 
-/* 섹션 제목 (소제목 폰트/간격 ↑) */
+/* 섹션 제목 */
 .sidebar-title {
-    font-size: 14px;          /* 기존 13px → 14px */
-    margin-bottom: 14px;      /* 기존 10px → 14px */
+    font-size: 14px;
+    margin-bottom: 14px;
     color: #9ca3af;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -461,19 +1021,19 @@ body {
     margin: 0;
 }
 
-/* 메뉴들 사이 간격 ↑ */
+/* 메뉴들 사이 간격 */
 .sidebar-menu li {
     position: relative;
-    margin-bottom: 10px;      /* 기존 6px → 10px */
+    margin-bottom: 10px;
 }
 
-/* 각 메뉴 항목 (폰트/패딩 ↑) */
+/* 각 메뉴 항목 */
 .sidebar-menu li a {
     display: flex;
     align-items: center;
-    padding: 12px 16px;       /* 기존 10px 14px → 12px 16px */
+    padding: 12px 16px;
     border-radius: 10px;
-    font-size: 16px;          /* 기존 15px → 16px */
+    font-size: 16px;
     color: #e5e7eb;
     text-decoration: none;
     transition: background-color 0.15s ease,
@@ -506,13 +1066,13 @@ body {
     background-color: #a78bfa;
 }
 
-/* 이모지/아이콘 숨기기 (원하면 나중에 살릴 수 있음) */
+/* 이모지/아이콘 숨기기 */
 .sidebar-icon {
     display: none;
 }
 
 /* ======================================================
-   5. 홈 상단 버튼 & 대시보드 2x2 레이아웃 (추가 부분)
+   5. 홈 상단 버튼 & 대시보드 2x2 레이아웃
    ====================================================== */
 
 .home-main {
@@ -577,7 +1137,7 @@ body {
     gap: 20px;
 }
 
-/* 반응형: 화면 좁으면 1열로 쌓기 */
+/* 반응형 */
 @media (max-width: 1200px) {
     .home-grid {
         grid-template-columns: 1fr;
@@ -587,14 +1147,14 @@ body {
 /* HEADER ------------------------------------------------------------ */
 
 .site-header {
-    height: 70px;
-    padding: 0 32px;
-    background: linear-gradient(90deg, #1a103a, #25175a, #1f133b);
+    height: 90px;
+    padding: 0 40px;
+    background: #1a103a;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #fff;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.28);
 }
 
 .site-header-left {
@@ -604,15 +1164,15 @@ body {
 }
 
 .site-logo {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #6d5dfc;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
 }
 
@@ -629,13 +1189,13 @@ body {
 .site-header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
-    font-size: 15px;
+    gap: 24px;
+    font-size: 16px;
 }
 
 .header-user-info {
-    font-weight: 500;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: 16px;
     color: #ffffff !important;
 }
 
@@ -660,8 +1220,8 @@ body {
 /* 링크 */
 .header-link {
     color: #ffffff !important;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -690,7 +1250,7 @@ body {
    ====================================================== */
 
 .auth-main {
-    min-height: calc(100vh - 100px); /* 헤더/푸터 고려한 대략값 */
+    min-height: calc(100vh - 100px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -708,7 +1268,7 @@ body {
     border: 1px solid #e5e7eb;
 }
 
-/* 로그인 카드 용도 - 필요하면 회원가입 카드랑 분리 가능 */
+/* 로그인 카드 */
 .login-card {
     /* 필요시 개별 스타일 추가 */
 }
@@ -842,21 +1402,21 @@ body {
 /* 메인 인사 문구 강조 */
 .home-hero-message {
     margin-top: 8px;
-    font-size: 18px;        /* 글씨 더 크게 */
-    font-weight: 600;       /* 조금 더 굵게 */
+    font-size: 18px;
+    font-weight: 600;
     color: #111827;
-    max-width: 680px;       /* 옆으로 더 길게 펼쳐지게 */
+    max-width: 680px;
     line-height: 1.5;
 }
 
 /* 상단 인사 영역 레이아웃 */
 .home-hero-inner {
     display: flex;
-    flex-direction: column;   /* 텍스트 위, 사진 아래 */
+    flex-direction: column;
     gap: 18px;
 }
 
-/* 텍스트 영역 */
+/* 위쪽 텍스트 컬럼 */
 .home-hero-text-col {
     flex: none;
     display: flex;
@@ -864,15 +1424,81 @@ body {
     justify-content: center;
 }
 
-/* 아래에 들어갈 학생 사진 배너 */
-.home-hero-banner {
+/* ============================
+   홈 상단 인사 + 메인 배너
+============================ */
+
+.home-hero {
+    margin-bottom: 24px;
+}
+
+/* 인사 문구 */
+.home-hero-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.home-hero-message {
+    margin-top: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+/* 상단 인사 영역 레이아웃 */
+.home-hero-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 텍스트 컬럼 */
+.home-hero-text-col {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ============================
+   홈 상단 인사 + 2장 배너
+============================ */
+
+.home-hero-banners {
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/* 공통 배너 카드 */
+.hero-banner-card {
     border-radius: 16px;
-    min-height: 520px;                 
-    background-image: url('/img/home-students.jpg');  /* 학생 사진 경로 */
     background-size: cover;
     background-position: center;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+    min-height: 460px;
+}
+
+/* 왼쪽 큰 배너 : 학생 사진 */
+.hero-banner-main {
+    background-image: url('/img/home-students.jpg');
+}
+
+/* 오른쪽 배너 : 콜라주 스트립 */
+.hero-banner-sub {
+    background-image: url('/img/home-campus-strip.jpg');
+}
+
+@media (max-width: 1200px) {
+    .home-hero-banners {
+        grid-template-columns: 1fr;
+    }
+    .hero-banner-card {
+        min-height: 300px;
+    }
 }
 
 /* ============================
@@ -885,11 +1511,11 @@ body {
 }
 
 .header-brand {
-    font-size: 24px;                 /* 조금 더 크게 */
-    font-weight: 800;                /* 두껍게, 대학 로고 느낌 */
-    letter-spacing: 2px;             /* 자간 넓혀서 브랜드 느낌 */
-    color: #e5d9ff;                  /* 고급스러운 연보라 톤 */
-    text-shadow: 0 2px 8px rgba(99, 102, 241, 0.45);  /* 은은한 발광 */
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #e5d9ff;
+    text-shadow: 0 2px 8px rgba(99, 102, 241, 0.45);
     font-family: 'Segoe UI', sans-serif;
     cursor: default;
     user-select: none;
@@ -898,24 +1524,20 @@ body {
 
 .header-brand:hover {
     transform: translateY(-1px);
-    color: #ffffff;                  /* 호버 시 더 밝게 */
+    color: #ffffff;
 }
 
-/* ============================
-   HEADER BRAND LOGO
-============================ */
-
+/* HEADER BRAND LOGO (중복 정의 통합) */
 .site-header {
     height: 66px;
     padding: 0 32px;
-    background: #1a103a;   /* 기존과 맞춰 사용 */
+    background: #1a103a;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #fff;
 }
 
-/* 좌/우 영역은 이미 있을 텐데, 중앙 정렬만 확실히 */
 .site-header-left,
 .site-header-right {
     display: flex;
@@ -923,14 +1545,7 @@ body {
     gap: 16px;
 }
 
-/* 중앙 브랜드 영역 */
-.site-header-center {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-/* 로고 링크(클릭 영역) */
+/* 로고 링크 */
 .brand-logo-link {
     display: inline-flex;
     align-items: center;
@@ -940,7 +1555,7 @@ body {
 
 /* 중앙 로고 */
 .brand-logo-svg {
-    height: 42px;         /* 기존 30~34px → 확실히 키움 */
+    height: 56px;
     width: auto;
     filter: drop-shadow(0 4px 12px rgba(0,0,0,0.45));
     transition: transform 0.15s ease, filter 0.2s ease;
@@ -951,15 +1566,7 @@ body {
     filter: drop-shadow(0 6px 20px rgba(167,139,250,0.85));
 }
 
-/* 중앙 정렬 강화 */
-.site-header-center {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    padding-top: 4px;     /* 로고 밸런스 맞추기 */
-}
-
-/* 왼쪽에 쓰는 미니 로고(있으면) */
+/* 왼쪽 미니 로고 */
 .site-logo-mini {
     display: inline-flex;
     align-items: center;
@@ -976,3 +1583,301 @@ body {
 .site-logo-mini:hover {
     filter: brightness(1.05);
 }
+
+/* ============================
+   공통 메인 컨텐츠 / 페이지 헤더 / 카드 / 테이블
+============================ */
+
+/* main 영역 */
+.content,
+.main-content {
+    flex: 1;
+    padding: 24px 32px;
+    box-sizing: border-box;
+}
+
+/* 페이지 상단 타이틀 영역 */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.page-header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 공통 카드 */
+.card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+}
+
+/* 공통 테이블 */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table thead {
+    background-color: #f9fafb;
+}
+
+.table th,
+.table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.table th {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.table td {
+    color: #111827;
+}
+
+.table tr:hover td {
+    background-color: #f9fafb;
+}
+
+.table-empty {
+    text-align: center;
+    padding: 26px 0;
+    color: #9ca3af;
+}
+
+/* 셀 가운데 정렬용 헬퍼 */
+.table-cell-center {
+    text-align: center;
+}
+
+/* 제목 칼럼 */
+.table-cell-title {
+    max-width: 540px;
+}
+
+/* 페이징 공통 */
+.pagination {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.page-link {
+    padding: 5px 10px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #4b5563;
+    border: 1px solid transparent;
+}
+
+.page-link:hover {
+    border-color: #c7d2fe;
+    color: #4f46e5;
+    background-color: #eef2ff;
+}
+
+.page-link.current {
+    border-color: #4f46e5;
+    background-color: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ============================
+   학생 과제 목록 (진행 중인 과제)
+============================ */
+
+.assignment-page .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.assignment-page-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin: -4px 0 18px;
+}
+
+/* 과제 카드 전체 박스 */
+.assignment-list-card {
+    margin-top: 6px;
+}
+
+/* 과목별 그룹 */
+.assignment-course-group {
+    padding-top: 4px;
+    padding-bottom: 10px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.assignment-course-group:first-of-type {
+    border-top: none;
+}
+
+.assignment-course-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.assignment-course-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* 과제 아이템 링크 전체 클릭 가능 */
+.assignment-item-link {
+    text-decoration: none;
+}
+
+/* 개별 과제 카드 */
+.assignment-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    margin-top: 8px;
+    transition: background-color 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.05s ease;
+}
+
+.assignment-item:hover {
+    background-color: #eef2ff;
+    box-shadow: 0 6px 16px rgba(148, 163, 184, 0.28);
+    transform: translateY(-1px);
+}
+
+.assignment-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.assignment-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* 하단 메타 정보 (기간 등) */
+.assignment-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.assignment-period {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================
+   학점 조회 (학생 GPA 페이지)
+============================ */
+
+.score-page .main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* 상단 요약 그리드 */
+.score-summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.score-summary-main {
+    flex: 1 1 320px;
+}
+
+.score-summary-side {
+    flex: 0 0 280px;
+}
+
+/* GPA 메인 카드 */
+.score-summary-header {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.score-gpa-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.score-gpa-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #4f46e5;
+}
+
+.score-gpa-scale {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+.score-summary-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 4px 0;
+}
+
+.score-summary-meta {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 6px;
+}
+
+/* 안내 카드 */
+.score-summary-side-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #111827;
+}
+
+.score-summary-side-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* 상세 테이블 섹션 */
+.score-table-card .score-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 10px;
+    color: #111827;
+}
+
+

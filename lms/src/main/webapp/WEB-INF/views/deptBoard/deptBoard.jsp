@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/layout.css">
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
-<body>
+<body class="board-page dept-page">
 
 	<%@ include file="/WEB-INF/views/common/header.jsp" %>
 	   

@@ -69,6 +69,12 @@
                class="home-btn outline">
                 출석 관리
             </a>
+            
+            <a href="${pageContext.request.contextPath}/profAssignment?courseId=${course.courseId}"
+			   class="home-btn secondary"
+			   style="margin-right: 6px;">
+			    과제 관리
+			</a>
         </div>
 
         <c:choose>

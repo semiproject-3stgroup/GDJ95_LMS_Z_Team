@@ -24,24 +24,29 @@
     <!-- 오른쪽 본문 -->
     <main class="main-content home-main">
 
-                <!-- 상단 인사/요약 영역 -->
+        <!-- 상단 인사/요약 영역 -->
         <div class="home-hero">
             <c:choose>
                 <c:when test="${not empty loginUser}">
                     <div class="home-hero-inner">
-                        <!-- 인사 + 문구 -->
+                        <!-- 텍스트 -->
                         <div class="home-hero-text-col">
                             <h2 class="home-hero-title">
                                 안녕하세요, ${loginUser.userName} 님 👋
                             </h2>
-
                             <p class="home-hero-message">
                                 구디대학교는 학생 여러분의 힘찬 미래를 위해 함께합니다.
                             </p>
                         </div>
 
-                        <!-- 바로 아래 학생 사진 배너 한 장 -->
-                        <div class="home-hero-banner"></div>
+                        <!-- 사진 2장 그리드 -->
+                        <div class="home-hero-banners">
+                            <!-- 왼쪽 : 학생들 사진 -->
+                            <div class="hero-banner-card hero-banner-main"></div>
+
+                            <!-- 오른쪽 : 콜라주/스트립 사진 -->
+                            <div class="hero-banner-card hero-banner-sub"></div>
+                        </div>
                     </div>
                 </c:when>
 
@@ -64,7 +69,6 @@
             </c:choose>
         </div>
 
-
         <!-- 메인 그리드 -->
         <div class="home-grid">
 
@@ -80,7 +84,7 @@
                     </div>
 
                     <c:choose>
-                        <c:when test="${empty recentNotices}}">
+                        <c:when test="${empty recentNotices}">
                             <p class="empty-text">등록된 공지사항이 없습니다.</p>
                         </c:when>
 
