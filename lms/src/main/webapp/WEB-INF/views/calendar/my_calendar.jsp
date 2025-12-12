@@ -24,7 +24,7 @@
     <div class="page-header">
       <div>
         <h1 class="page-title">내 강의 / 과제 일정</h1>
-        <p class="page-subtitle">수업/시험/과제 + 학사 일정을 한 번에 확인하고 필터로 골라볼 수 있어.</p>
+        <p class="page-subtitle">수업/시험/과제 + 학사 일정을 한 번에 확인할 수 있습니다.</p>
       </div>
     </div>
 

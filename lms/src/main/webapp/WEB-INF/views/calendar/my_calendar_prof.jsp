@@ -24,7 +24,7 @@
     <div class="page-header">
       <div>
         <h1 class="page-title">내 강의 / 과제 일정 (교수)</h1>
-        <p class="page-subtitle">과목/유형 필터로 일정만 깔끔하게 골라볼 수 있어.</p>
+        <p class="page-subtitle">과목/유형 필터로 일정을 볼 수 있습니다.</p>
       </div>
     </div>
 
