@@ -24,7 +24,7 @@
     <div class="page-header">
       <div>
         <h1 class="page-title">학사 일정 캘린더</h1>
-        <p class="page-subtitle">개강, 종강, 시험기간, 휴강, 공휴일, 등록기간 등의 학사 일정을 한 눈에 확인할 수 있어.</p>
+        <p class="page-subtitle">개강, 종강, 시험기간, 휴강, 공휴일, 등록기간 등의 학사 일정을 한 눈에 볼 수 있습니다.</p>
       </div>
     </div>
 
@@ -45,16 +45,27 @@ document.addEventListener('DOMContentLoaded', function () {
     locale: 'ko',
     height: 'auto',
     headerToolbar: {
-      left: 'prev,next today',
+      left: 'prev,next',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      right: ''
     },
-    events: '${pageContext.request.contextPath}/api/calendar/events',
 
-    eventClick: function (info) {
+    // month 고정 (다른 뷰 사용 불가)
+    views: {
+      dayGridMonth: {
+        fixedWeekCount: false
+      }
+    },
+
+    // 학사 일정 데이터
+    events: '/api/calendar/events',
+
+    // 일정 클릭 → 상세
+    eventClick: function(info) {
       const eventId = info.event.id;
       if (eventId) {
-        window.location.href = '${pageContext.request.contextPath}/calendar/academic/' + eventId;
+        window.location.href =
+          '${pageContext.request.contextPath}/calendar/academic/' + eventId;
       }
     }
   });
