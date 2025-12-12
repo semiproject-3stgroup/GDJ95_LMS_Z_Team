@@ -271,7 +271,9 @@
     </main>
 </div>
 
-<!-- jQuery가 layout 쪽에서 이미 포함되어 있다고 가정 -->
+<!-- jQuery 먼저 -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script>
     // 저장 버튼 클릭 → 점수 저장 AJAX
     $('.saveBtn').on('click', function (e) {

@@ -244,4 +244,11 @@
             </if>
         </where>
     </select>
+    
+    <update id="toggleUserStatus">
+	  UPDATE users
+	  SET status = CASE WHEN status='ACTIVE' THEN 'INACTIVE' ELSE 'ACTIVE' END
+	  WHERE user_id = #{userId}
+	</update>
+	
 </mapper>

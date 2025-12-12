@@ -1,87 +1,326 @@
-/* 학사일정 / 이벤트 박스 공통 */
+/* =====================================================
+   calendar.css
+   - 캘린더(학사/내일정/교수일정) 공통 스타일
+   - layout.css / board.css 톤에 맞춤
+   ===================================================== */
 
-.upcoming-box .box-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 12px;
+/* 페이지 배경 톤 통일 */
+.calendar-page {
+  background-color: #f6f6fb;
 }
 
-.event-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* 메인 컨텐츠 폭/간격은 layout.css의 .main-content 기준 */
+.calendar-page .main-content {
+  max-width: 1280px;
 }
 
-.event-item + .event-item {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #e5e7eb;
+/* 페이지 헤더(공지/게시판과 동일 톤) */
+.calendar-page .page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.event-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 2px;
+.calendar-page .page-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
 }
 
-.event-date {
-    font-size: 12px;
-    color: #6b7280;
+.calendar-page .page-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
 }
 
-.event-context {
-    font-size: 13px;
-    color: #4b5563;
-    margin-top: 2px;
+/* 캘린더 카드(우리 box 스타일 재사용) */
+.calendar-card {
+  padding: 18px 18px;
 }
 
-.empty-text {
-    font-size: 13px;
-    color: #6b7280;
+.calendar-card .card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.calendar-card .card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
 }
 
 /* ========================
-   내 캘린더 상단 필터 & 범례
+   상단 필터 & 범례 (내 캘린더)
    ======================== */
-
 .calendar-filters {
-    margin-top: 16px;
-    margin-bottom: 8px;
-    font-size: 14px;
-
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
+  margin: 6px 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
 }
 
-.calendar-filters select,
+.calendar-filters select {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 13px;
+}
+
+.calendar-filters label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #374151;
+}
+
 .calendar-filters input[type="checkbox"] {
-    padding: 4px 8px;
-    font-size: 13px;
+  width: 14px;
+  height: 14px;
 }
 
+/* 범례(동그라미) */
 .legend {
-    display: inline-block;
-    margin-left: 8px;
-    padding-left: 16px;
-    position: relative;
-    font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #374151;
 }
 
 .legend::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    transform: translateY(-50%);
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
 }
 
-/* 수업 / 시험 / 과제 / 학사 일정 색상 */
-.legend-class::before { background-color: #2563eb; }    /* 수업 */
-.legend-exam::before { background-color: #dc2626; }     /* 시험 */
-.legend-assignment::before { background-color: #16a34a; } /* 과제 */
-.legend-school::before { background-color: #0f766e; }   /* 학사 일정 */
+/* 수업 / 시험 / 과제 / 학사 일정 */
+.legend-class::before { background-color: #2563eb; }
+.legend-exam::before { background-color: #dc2626; }
+.legend-assignment::before { background-color: #16a34a; }
+.legend-school::before { background-color: #0f766e; }
+
+/* 교수 캘린더(기존 mycal-toolbar/legend-dot 지원) */
+.mycal-toolbar {
+  margin: 6px 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.mycal-toolbar select {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 13px;
+}
+
+.mycal-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #374151;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-right: 6px;
+}
+.legend-dot.legend-class { background: #2563eb; }
+.legend-dot.legend-exam { background: #dc2626; }
+.legend-dot.legend-assignment { background: #16a34a; }
+.legend-dot.legend-etc { background: #6b7280; }
+
+/* ========================
+   FullCalendar 테마 오버라이드
+   ======================== */
+
+/* 캘린더 바탕/테두리 */
+.calendar-page .fc {
+  --fc-border-color: #e5e7eb;
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #f9fafb;
+  --fc-today-bg-color: #eef2ff; /* 오늘 칸 */
+  font-size: 13px;
+}
+
+/* 캘린더 전체 프레임 카드처럼 */
+.calendar-page .fc .fc-scrollgrid,
+.calendar-page .fc .fc-scrollgrid table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 헤더(월 타이틀) */
+.calendar-page .fc .fc-toolbar-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* 버튼들: 우리 pill 버튼 톤 */
+.calendar-page .fc .fc-button {
+  border-radius: 10px !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+  font-weight: 700;
+  padding: 6px 10px !important;
+  box-shadow: 0 1px 2px rgba(15,23,42,0.05);
+}
+
+.calendar-page .fc .fc-button:hover {
+  background: #f9fafb !important;
+}
+
+.calendar-page .fc .fc-button-primary:not(:disabled).fc-button-active,
+.calendar-page .fc .fc-button-primary:not(:disabled):active {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+/* today 버튼만 살짝 포인트 */
+.calendar-page .fc .fc-today-button {
+  border-color: #c7d2fe !important;
+  background: #eef2ff !important;
+}
+
+/* 요일 헤더 */
+.calendar-page .fc .fc-col-header-cell-cushion {
+  padding: 10px 0;
+  font-weight: 700;
+  color: #374151;
+}
+
+/* 날짜 숫자 */
+.calendar-page .fc .fc-daygrid-day-number {
+  padding: 8px 10px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* 이벤트 칩: 둥글 + 그림자 살짝 */
+.calendar-page .fc .fc-event {
+  border-radius: 999px;
+  border: 0;
+  padding: 2px 8px;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.10);
+}
+
+.calendar-page .fc .fc-event-title {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.calendar-page .fc .fc-event-time {
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* listWeek 등 리스트뷰도 깔끔하게 */
+.calendar-page .fc .fc-list {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.calendar-page .fc .fc-list-day-cushion {
+  background: #f9fafb;
+}
+
+/* 반응형: 좁아지면 toolbar 줄바꿈 */
+@media (max-width: 1024px) {
+  .calendar-page .fc .fc-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* =========================
+   FullCalendar UI Fix (week/day 깨짐 방지)
+   ========================= */
+
+/* 교시 라벨 */
+#calendar .fc-period {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* 공통: 이벤트 텍스트가 넘치면 깔끔하게 */
+#calendar .fc-event-title,
+#calendar .fc-event-time {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ✅ month(dayGrid)에서는 알약 느낌 유지 */
+#calendar .fc-daygrid-event {
+  border-radius: 999px !important;
+  padding: 2px 8px !important;
+}
+
+/* ✅ week/day(timeGrid)에서는 “카드”처럼 (거대한 반원 방지) */
+#calendar .fc-timegrid-event,
+#calendar .fc-timegrid-event .fc-event-main {
+  border-radius: 12px !important;
+}
+
+#calendar .fc-timegrid-event .fc-event-main {
+  padding: 6px 8px !important;
+  line-height: 1.2 !important;
+}
+
+/* all-day 라인은 너무 두껍지 않게 */
+#calendar .fc-timegrid-axis,
+#calendar .fc-timegrid-slot-label {
+  font-size: 12px;
+  color: #374151;
+}
+
+#calendar .fc-timegrid-slot {
+  height: 34px; /* 너무 빽빽하면 32~40에서 취향대로 */
+}
+
+/* 버튼(week/day/month) UI 조금 더 자연스럽게 */
+#calendar .fc .fc-button {
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+}
+
+/* 제목(2025년 12월 …) 너무 커 보이면 살짝 다운 */
+#calendar .fc-toolbar-title {
+  font-size: 22px;
+  font-weight: 800;
+}
+

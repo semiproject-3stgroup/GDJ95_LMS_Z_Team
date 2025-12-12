@@ -152,12 +152,6 @@
                         <span>사용자 관리</span>
                     </a>
                 </li>
-                <li class="${menu eq 'adminDept' ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/admin/department">
-                        <span class="sidebar-icon">🏫</span>
-                        <span>학과 관리</span>
-                    </a>
-                </li>
                 <li class="${menu eq 'adminNotice' ? 'active' : ''}">
                     <!-- 공지 관리도 공지 컨트롤러 재사용 -->
                     <a href="${pageContext.request.contextPath}/notice/list">

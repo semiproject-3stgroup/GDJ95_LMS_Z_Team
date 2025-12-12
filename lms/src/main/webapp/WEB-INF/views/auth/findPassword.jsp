@@ -1,60 +1,77 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>비밀번호 찾기</title>
-    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css">
 </head>
 <body>
 
-<div class="auth-page">
+<%@ include file="/WEB-INF/views/common/header.jsp" %>
+
+<main class="auth-main">
+
     <div class="auth-card">
 
-        <h2>비밀번호 찾기</h2>
-        <p class="subtitle">
-            회원가입 시 등록한 <strong>아이디</strong>, <strong>이름</strong>, <strong>이메일</strong>을 입력해 주세요.
+        <h1 class="auth-title">비밀번호 찾기</h1>
+        <p class="auth-subtitle">
+            회원가입 시 등록한 정보를 입력해주세요.
         </p>
 
-        <c:if test="${not empty errorMsg}">
-            <div class="alert error">
-                ${errorMsg}
-            </div>
-        </c:if>
+        <form method="post" action="${pageContext.request.contextPath}/find-password" class="auth-form">
 
-        <c:if test="${not empty infoMsg}">
-            <div class="alert success">
-                ${infoMsg}
-            </div>
-        </c:if>
-
-        <form action="/find-password" method="post" class="form-vertical">
-
-            <div class="form-group">
-                <label>아이디<span class="req">*</span></label>
-                <input type="text" name="loginId" value="${loginId}" required>
+            <div class="auth-field">
+                <label for="loginId">아이디</label>
+                <input type="text"
+                       id="loginId"
+                       name="loginId"
+                       class="auth-input"
+                       required>
             </div>
 
-            <div class="form-group">
-                <label>이름<span class="req">*</span></label>
-                <input type="text" name="userName" value="${userName}" required>
+            <div class="auth-field">
+                <label for="userName">이름</label>
+                <input type="text"
+                       id="userName"
+                       name="userName"
+                       class="auth-input"
+                       required>
             </div>
 
-            <div class="form-group">
-                <label>이메일<span class="req">*</span></label>
-                <input type="email" name="email" value="${email}" required>
+            <div class="auth-field">
+                <label for="email">이메일</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="auth-input"
+                       required>
             </div>
 
-            <div class="btn-row">
-                <a href="/login" class="btn-secondary">로그인 화면으로</a>
-                <button type="submit" class="btn-primary">다음 단계</button>
-            </div>
+            <button type="submit" class="btn btn-primary auth-submit">
+                다음 단계
+            </button>
         </form>
 
+        <div class="auth-meta">
+            <div class="auth-meta-links">
+                <a href="${pageContext.request.contextPath}/login" class="auth-link">
+                    로그인 화면으로
+                </a>
+            </div>
+            <div class="auth-meta-sub">
+                계정이 기억나지 않나요?
+                <a href="${pageContext.request.contextPath}/find-id" class="auth-link-strong">
+                    아이디 찾기
+                </a>
+            </div>
+        </div>
+
     </div>
-</div>
+
+</main>
+
+<%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
 </body>
 </html>

@@ -38,6 +38,14 @@
             box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
         }
 
+        /* 수강목록 버튼들(취소 + QnA) 정렬용 */
+        .mycourse-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* 화면 좁아지면 위아래로 쌓이게 */
         @media (max-width: 1200px) {
             .mycourse-layout {
@@ -147,7 +155,7 @@
                                     <th>학년도</th>
                                     <th>학기</th>
                                     <th>학점</th>
-                                    <th></th>
+                                    <th>관리</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -159,17 +167,26 @@
                                         <td>${c.courseSemester}</td>
                                         <td>${c.credit}</td>
                                         <td>
-                                            <form method="post"
-                                                  action="${pageContext.request.contextPath}/course/cancel"
-                                                  onsubmit="return confirm('정말 수강을 취소하시겠습니까?');">
-                                                <input type="hidden" name="courseId" value="${c.courseId}">
-                                                <!-- 현재 필터 유지용 -->
-                                                <input type="hidden" name="year" value="${year}">
-                                                <input type="hidden" name="semester" value="${semester}">
-                                                <button type="submit" class="home-btn secondary">
-                                                    취소
-                                                </button>
-                                            </form>
+                                            <div class="mycourse-actions">
+                                                <!-- 🔹 QnA 게시판 바로가기 버튼 (GET) -->
+                                                <a href="${pageContext.request.contextPath}/qna/list/${c.courseId}"
+                                                   class="home-btn secondary">
+                                                    QnA 게시판
+                                                </a>
+
+                                                <!-- 🔹 수강 취소 (POST) -->
+                                                <form method="post"
+                                                      action="${pageContext.request.contextPath}/course/cancel"
+                                                      onsubmit="return confirm('정말 수강을 취소하시겠습니까?');">
+                                                    <input type="hidden" name="courseId" value="${c.courseId}">
+                                                    <!-- 현재 필터 유지용 -->
+                                                    <input type="hidden" name="year" value="${year}">
+                                                    <input type="hidden" name="semester" value="${semester}">
+                                                    <button type="submit" class="home-btn secondary">
+                                                        취소
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -247,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         initialDate: new Date(),   // 오늘 기준 주간
         locale: 'ko',
         firstDay: 1,               // 월요일 시작
-        weekends: false,           // 🔥 토/일 숨기고 월~금만 표시 → 칸 넓어짐
+        weekends: false,           // 토/일 숨기고 월~금만 표시
         allDaySlot: false,
         slotMinTime: '09:00:00',
         slotMaxTime: '18:00:00',

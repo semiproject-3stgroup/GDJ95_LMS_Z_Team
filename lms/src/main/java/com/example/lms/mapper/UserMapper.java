@@ -63,4 +63,6 @@ public interface UserMapper {
             @Param("searchKeyword") String searchKeyword
     );
     
+    int updateUserStatus(@Param("userId") Long userId, @Param("status") String status);
+    
 }

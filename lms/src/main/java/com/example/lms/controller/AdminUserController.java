@@ -1,15 +1,17 @@
 package com.example.lms.controller;
 
-import com.example.lms.dto.User;
-import com.example.lms.mapper.UserMapper;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import com.example.lms.dto.User;
+import com.example.lms.mapper.UserMapper;
 
 @Controller
 @RequestMapping("/admin/user")
@@ -80,4 +82,26 @@ public class AdminUserController {
         // list.jsp 뷰로 이동
         return "admin/user/list"; 
     }
+    
+    @PostMapping("/status")
+    public String changeStatus(
+            @RequestParam Long userId,
+            @RequestParam String status,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String searchKeyword
+    ) {
+        userMapper.updateUserStatus(userId, status);
+
+        // 목록으로 복귀 + 검색/페이징 유지
+        String redirect = "redirect:/admin/user/list?page=" + (page != null ? page : 1)
+                + "&pageSize=" + (pageSize != null ? pageSize : 10);
+
+        if (searchType != null && !searchType.isBlank() && searchKeyword != null && !searchKeyword.isBlank()) {
+            redirect += "&searchType=" + searchType + "&searchKeyword=" + searchKeyword;
+        }
+        return redirect;
+    }
+    
 }

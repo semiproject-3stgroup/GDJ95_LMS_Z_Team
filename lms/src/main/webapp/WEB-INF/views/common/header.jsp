@@ -3,302 +3,250 @@
 
 <header class="site-header">
 
-    <!-- 🔹 Left 영역 : LMS 시스템 이름 -->
-    <div class="site-header-left">
-        <div class="site-logo">LMS</div>
-    </div>
+  <!-- Left -->
+  <div class="site-header-left">
+    <a href="${pageContext.request.contextPath}/home" class="site-logo-link" aria-label="홈으로">
+      <div class="site-logo">LMS</div>
+    </a>
+  </div>
 
-    <!-- 중앙 브랜드 로고 -->
-    <div class="site-header-center">
-        <a href="${pageContext.request.contextPath}/home"
-           class="brand-logo-link"
-           aria-label="Gudi University 홈으로 이동">
-            <img src="${pageContext.request.contextPath}/img/logo-gudi.svg"
-                 alt="Gudi University | 구디대학교"
-                 class="brand-logo-svg" />
-        </a>
-    </div>
+  <!-- Center -->
+  <div class="site-header-center">
+    <a href="${pageContext.request.contextPath}/home"
+       class="brand-logo-link"
+       aria-label="Gudi University 홈으로 이동">
 
-    <!-- 🔹 Right 영역 : 로그인 정보 + 알림센터 + 마이페이지/로그아웃 -->
-    <div class="site-header-right">
-        <c:choose>
-            <c:when test="${not empty loginUser}">
-                <!-- 로그인 정보 -->
-                <span class="header-user-info">
-                    ${loginUser.departmentName}
-                    /
-                    ${loginUser.userName}
-                    /
-                    ${loginUser.studentNo}
-                </span>
+      <!-- 1) SVG 로고 -->
+      <img src="${pageContext.request.contextPath}/img/logo-gudi.svg"
+           alt="Gudi University | 구디대학교"
+           class="brand-logo-svg"
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
 
-                <!-- 🔔 알림 센터 -->
-                <div class="notification-wrapper">
-                    <button type="button" id="btnNotification" class="icon-button">
-                        🔔
-                        <!-- 빨간 점 -->
-                        <span id="notificationDot" class="notification-dot" style="display:none;"></span>
+      <!-- 2) SVG 깨지면 보여줄 텍스트 로고 -->
+      <span class="brand-logo-text" style="display:none;">
+        <span class="brand-en">Gudi University</span>
+        <span class="brand-sep">|</span>
+        <span class="brand-ko">구디대학교</span>
+      </span>
+    </a>
+  </div>
 
-                        <!-- 숫자 배지 -->
-                        <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
-                    </button>
+  <!-- Right -->
+  <div class="site-header-right">
+    <c:choose>
+      <c:when test="${not empty loginUser}">
+        <span class="header-user-info">
+          ${loginUser.departmentName} / ${loginUser.userName} / ${loginUser.studentNo}
+        </span>
 
-                    <div id="notificationDropdown" class="notification-dropdown hidden">
-                        <div class="dropdown-header">
-                            <span>알림센터</span>
-                            <span id="notificationHeaderCount" class="header-count"></span>
-                        </div>
-                        <ul id="notificationList" class="notification-list">
-                            <!-- JS에서 채움 -->
-                        </ul>
-                        <div class="dropdown-footer">
-                            <span class="dropdown-tip">알림을 클릭하면 해당 페이지로 이동합니다.</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- 🔔 알림 (로그인시에만 노출) -->
+        <div class="notification-wrapper">
+          <button type="button" id="btnNotification" class="icon-button" aria-label="알림">
+            🔔
+            <span id="notificationDot" class="notification-dot" style="display:none;"></span>
+            <span id="notificationBadge" class="notification-badge" style="display:none;">0</span>
+          </button>
 
-                <!-- 마이페이지 / 로그아웃 -->
-                <a href="${pageContext.request.contextPath}/mypage" class="header-link">마이페이지</a>
-  			    <a href="${pageContext.request.contextPath}/logout" class="header-link">로그아웃</a>
-            </c:when>
+          <div id="notificationDropdown" class="notification-dropdown hidden">
+            <div class="dropdown-header">
+              <span>알림센터</span>
+              <span id="notificationHeaderCount" class="header-count"></span>
+            </div>
+            <ul id="notificationList" class="notification-list"></ul>
+            <div class="dropdown-footer">
+              <span class="dropdown-tip">알림을 클릭하면 해당 페이지로 이동합니다.</span>
+            </div>
+          </div>
+        </div>
 
-            <c:otherwise>
-                <a href="${pageContext.request.contextPath}/login">로그인</a>
-                <a href="${pageContext.request.contextPath}/findId">아이디 찾기</a>
-                <a href="${pageContext.request.contextPath}/reset-Password">비밀번호 찾기</a>
-            </c:otherwise>
-        </c:choose>
-    </div>
+        <a href="${pageContext.request.contextPath}/mypage" class="header-link">마이페이지</a>
+        <a href="${pageContext.request.contextPath}/logout" class="header-link">로그아웃</a>
+      </c:when>
+
+      <c:otherwise>
+        <a href="${pageContext.request.contextPath}/login" class="header-link">로그인</a>
+        <a href="${pageContext.request.contextPath}/find-id" class="header-link">아이디 찾기</a>
+        <a href="${pageContext.request.contextPath}/find-password" class="header-link">비밀번호 찾기</a>
+      </c:otherwise>
+    </c:choose>
+  </div>
 
 </header>
 
-<!-- 🔔 알림센터용 JS -->
+<!-- 알림 JS는 그대로 두되, header.jsp에 한 번만 존재해야 함 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('btnNotification');
-    const dropdown = document.getElementById('notificationDropdown');
-    const badge = document.getElementById('notificationBadge');
-    const listEl = document.getElementById('notificationList');
-    const headerCount = document.getElementById('notificationHeaderCount');
-    const dot = document.getElementById('notificationDot');
+  const btn = document.getElementById('btnNotification');
+  const dropdown = document.getElementById('notificationDropdown');
+  if (!btn || !dropdown) return; // 비로그인일 땐 아예 없음
 
-    // 컨텍스트패스 (ex: /lms)
-    const ctx = '<c:out value="${pageContext.request.contextPath}" />';
+  const badge = document.getElementById('notificationBadge');
+  const listEl = document.getElementById('notificationList');
+  const headerCount = document.getElementById('notificationHeaderCount');
+  const dot = document.getElementById('notificationDot');
+  const ctx = '<c:out value="${pageContext.request.contextPath}" />';
 
-    if (!btn || !dropdown) return;
+  function refreshBadge(unreadCount) {
+    if (unreadCount > 0) {
+      badge.style.display = 'inline-flex';
+      badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+      headerCount.textContent = '미확인 알림 ' + unreadCount + '건';
+      if (dot) dot.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+      headerCount.textContent = '미확인 알림 0건';
+      if (dot) dot.style.display = 'none';
+    }
+  }
 
-    function categoryLabel(category) {
-        if (!category) return '';
+  function categoryLabel(category) {
+    if (!category) return '';
+    const key = category.toLowerCase();
+    switch (key) {
+      case 'notice': return '공지';
+      case 'assignment': return '과제';
+      case 'score': return '성적';
+      case 'event':
+      case 'schedule': return '학사일정';
+      default: return category;
+    }
+  }
 
-        const key = category.toLowerCase();
-        switch (key) {
-            case 'notice':     return '공지';
-            case 'assignment': return '과제';
-            case 'score':      return '성적';
-            case 'event':      // DB 값이 EVENT 인 경우
-            case 'schedule':   return '학사일정';
-            default:           return category;
+  function categoryClass(category) {
+    const key = (category || '').toUpperCase();
+    switch (key) {
+      case 'NOTICE': return 'category-notice';
+      case 'ASSIGNMENT': return 'category-assignment';
+      case 'SCORE': return 'category-score';
+      case 'EVENT': return 'category-event';
+      default: return 'category-notice';
+    }
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    return dateStr.replace('T', ' ').substring(0, 16);
+  }
+
+  function loadNotifications() {
+    fetch(ctx + '/api/notifications/recent?limit=5')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) return;
+
+        const items = data.items || [];
+        refreshBadge(data.unreadCount || 0);
+
+        listEl.innerHTML = '';
+        if (items.length === 0) {
+          const li = document.createElement('li');
+          li.className = 'notification-item';
+          li.textContent = '새 알림이 없습니다.';
+          listEl.appendChild(li);
+          return;
         }
-    }
 
-    function categoryClass(category) {
-        const key = (category || '').toUpperCase();
+        items.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'notification-item' + (item.readYn === 'N' ? ' unread' : '');
+          li.dataset.notificationId = item.notificationId;
 
-        switch (key) {
-            case 'NOTICE':      return 'category-notice';
-            case 'ASSIGNMENT':  return 'category-assignment';
-            case 'SCORE':       return 'category-score';
-            case 'EVENT':       return 'category-event';
-            default:            return 'category-notice';
-        }
-    }
+          const pillRow = document.createElement('div');
+          pillRow.className = 'notification-pill-row';
 
-    function formatDate(dateStr) {
-        if (!dateStr) return '';
-        return dateStr.replace('T', ' ').substring(0, 16); // 2025-12-04 15:05
-    }
+          const iconSpan = document.createElement('span');
+          iconSpan.className = 'notification-category-icon';
+          iconSpan.textContent = (function(cat) {
+            const k = (cat || '').toLowerCase();
+            switch (k) {
+              case 'notice': return '📢';
+              case 'assignment': return '📌';
+              case 'score': return '📊';
+              case 'event':
+              case 'schedule': return '🎓';
+              default: return '🔔';
+            }
+          })(item.category);
+          pillRow.appendChild(iconSpan);
 
-    function refreshBadge(unreadCount) {
-        if (unreadCount > 0) {
-            badge.style.display = 'inline-flex';
-            badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-            headerCount.textContent = '미확인 알림 ' + unreadCount + '건';
-            if (dot) dot.style.display = 'block';
-        } else {
-            badge.style.display = 'none';
-            headerCount.textContent = '미확인 알림 0건';
-            if (dot) dot.style.display = 'none';
-        }
-    }
+          const pill = document.createElement('span');
+          pill.className = 'notification-category-pill ' + categoryClass(item.category);
+          pill.textContent = categoryLabel(item.category);
+          pillRow.appendChild(pill);
 
-    function loadNotifications() {
-        fetch(ctx + '/api/notifications/recent?limit=5')
-            .then(res => res.json())
-            .then(data => {
-                if (!data.success) return;
+          if (item.readYn === 'N') {
+            const unreadSpan = document.createElement('span');
+            unreadSpan.className = 'notification-unread-badge';
+            unreadSpan.textContent = '미확인';
+            pillRow.appendChild(unreadSpan);
+          }
 
-                const items = data.items || [];
-                refreshBadge(data.unreadCount || 0);
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'notification-title';
+          titleDiv.textContent = item.title;
 
-                listEl.innerHTML = '';
-                if (items.length === 0) {
-                    const li = document.createElement('li');
-                    li.className = 'notification-item';
-                    li.textContent = '새 알림이 없습니다.';
-                    listEl.appendChild(li);
-                    return;
+          const msgDiv = document.createElement('div');
+          msgDiv.className = 'notification-message';
+          msgDiv.textContent = item.message || '';
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'notification-meta';
+          metaDiv.textContent = formatDate(item.createdate);
+
+          li.appendChild(pillRow);
+          li.appendChild(titleDiv);
+          li.appendChild(msgDiv);
+          li.appendChild(metaDiv);
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.type = 'button';
+          deleteBtn.className = 'notification-delete-btn';
+          deleteBtn.textContent = '삭제';
+          deleteBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!confirm('해당 알림을 삭제할까요?')) return;
+
+            fetch(ctx + '/api/notifications/' + item.notificationId, { method: 'DELETE' })
+              .then(res => res.json())
+              .then(d => {
+                if (!d.success) {
+                  alert(d.message || '알림 삭제에 실패했습니다.');
+                  return;
                 }
+                li.remove();
+                if (d.unreadCount != null) refreshBadge(d.unreadCount);
+              });
+          });
+          li.appendChild(deleteBtn);
 
-                items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'notification-item' + (item.readYn === 'N' ? ' unread' : '');
-                    li.dataset.notificationId = item.notificationId;
+          li.addEventListener('click', function() {
+            fetch(ctx + '/api/notifications/' + item.notificationId + '/read', { method: 'POST' })
+              .then(() => { if (item.linkUrl) window.location.href = ctx + item.linkUrl; });
+          });
 
-                    // 윗줄 (카테고리 pill + 미확인 뱃지)
-                    const pillRow = document.createElement('div');
-                    pillRow.className = 'notification-pill-row';
+          listEl.appendChild(li);
+        });
+      });
+  }
 
-                    // 카테고리 아이콘
-                    const iconSpan = document.createElement('span');
-                    iconSpan.className = 'notification-category-icon';
-                    iconSpan.textContent = (function(cat) {
-                        const key = (cat || '').toLowerCase();
-                        switch (key) {
-                            case 'notice':     return '📢';
-                            case 'assignment': return '📌';
-                            case 'score':      return '📊';
-                            case 'event':
-                            case 'schedule':   return '🎓';
-                            default:           return '🔔';
-                        }
-                    })(item.category);
-                    pillRow.appendChild(iconSpan);
-
-                    const pill = document.createElement('span');
-                    pill.className = 'notification-category-pill ' + categoryClass(item.category);
-                    pill.textContent = categoryLabel(item.category);
-                    pillRow.appendChild(pill);
-
-                    if (item.readYn === 'N') {
-                        const unreadSpan = document.createElement('span');
-                        unreadSpan.className = 'notification-unread-badge';
-                        unreadSpan.textContent = '미확인';
-                        pillRow.appendChild(unreadSpan);
-                    }
-
-                    // 제목
-                    const titleDiv = document.createElement('div');
-                    titleDiv.className = 'notification-title';
-                    titleDiv.textContent = item.title;
-
-                    // 메시지
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = 'notification-message';
-                    msgDiv.textContent = item.message || '';
-
-                    // 날짜
-                    const metaDiv = document.createElement('div');
-                    metaDiv.className = 'notification-meta';
-                    metaDiv.textContent = formatDate(item.createdate);
-
-                    li.appendChild(pillRow);
-                    li.appendChild(titleDiv);
-                    li.appendChild(msgDiv);
-                    li.appendChild(metaDiv);
-
-                    // 🔻 삭제 버튼 추가
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.type = 'button';
-                    deleteBtn.className = 'notification-delete-btn';
-                    deleteBtn.textContent = '삭제';
-
-                    deleteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation(); // li 클릭(읽음+이동) 막기
-
-                        if (!confirm('해당 알림을 삭제할까요?')) {
-                            return;
-                        }
-
-                        fetch(ctx + '/api/notifications/' + item.notificationId, {
-                            method: 'DELETE'
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (!data.success) {
-                                alert(data.message || '알림 삭제에 실패했습니다.');
-                                return;
-                            }
-
-                            // DOM에서 li 제거
-                            li.remove();
-
-                            // 뱃지/상단 카운트 갱신
-                            if (data.unreadCount != null) {
-                                refreshBadge(data.unreadCount);
-                            } else {
-                                // 응답에 없으면 fallback으로 다시 조회
-                                fetch(ctx + '/api/notifications/unread-count')
-                                    .then(res => res.json())
-                                    .then(d => {
-                                        if (d.success) {
-                                            refreshBadge(d.unreadCount || 0);
-                                        }
-                                    });
-                            }
-                        })
-                        .catch(err => {
-                            console.error('알림 삭제 오류', err);
-                            alert('알림 삭제 중 오류가 발생했습니다.');
-                        });
-                    });
-
-                    li.appendChild(deleteBtn);
-                    // 🔺 삭제 버튼 끝
-
-                    // li 전체 클릭 시 읽음 처리 + 이동
-                    li.addEventListener('click', function() {
-                        fetch(ctx + '/api/notifications/' + item.notificationId + '/read', {
-                            method: 'POST'
-                        }).then(() => {
-                            if (item.linkUrl) {
-                                window.location.href = ctx + item.linkUrl;
-                            }
-                        });
-                    });
-
-                    listEl.appendChild(li);
-                });
-            })
-            .catch(err => console.error('알림 조회 오류', err));
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const hidden = dropdown.classList.contains('hidden');
+    if (hidden) {
+      dropdown.classList.remove('hidden');
+      loadNotifications();
+    } else {
+      dropdown.classList.add('hidden');
     }
+  });
 
-    // 드롭다운 토글
-    btn.addEventListener('click', function(event) {
-        event.stopPropagation();
-        const hidden = dropdown.classList.contains('hidden');
-        if (hidden) {
-            dropdown.classList.remove('hidden');
-            loadNotifications();
-        } else {
-            dropdown.classList.add('hidden');
-        }
-    });
+  document.addEventListener('click', function() {
+    dropdown.classList.add('hidden');
+  });
+  dropdown.addEventListener('click', function(e) { e.stopPropagation(); });
 
-    // 바깥 클릭 시 닫기
-    document.addEventListener('click', function() {
-        dropdown.classList.add('hidden');
-    });
-    dropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-
-    // 최초 배지 숫자만 한 번 가져오기
-    fetch(ctx + '/api/notifications/unread-count')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) return;
-            refreshBadge(data.unreadCount || 0);
-        })
-        .catch(err => console.error(err));
+  fetch(ctx + '/api/notifications/unread-count')
+    .then(res => res.json())
+    .then(data => { if (data.success) refreshBadge(data.unreadCount || 0); });
 });
 </script>
