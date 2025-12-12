@@ -113,54 +113,59 @@
                 </div>
 
                 <!-- 과제 요약 카드 -->
-                <c:if test="${not empty homeAssignments}">
-                    <div class="home-card">
-                        <div class="home-card-header">
-                            <h3 class="home-card-title">진행 중인 과제</h3>
-
-                            <!-- 전체 과제 보기 링크 -->
-                            <a href="${pageContext.request.contextPath}/stuAssignment"
-                               class="home-card-more">전체 과제 보기</a>
-                        </div>
-
-                        <ul class="course-list">
-                            <c:forEach var="a" items="${homeAssignments}">
-                                <li class="course-item"
-                                    onclick="location.href='${pageContext.request.contextPath}/stuAssignmentOne?assignmentId=${a.assignmentId}'"
-                                    style="cursor:pointer;">
-
-                                    <div class="course-main">
-                                        <span class="course-name">${a.assignmentName}</span>
-
-                                        <span>
-                                            <c:choose>
-                                                <c:when test="${a.dday lt 0}">
-                                                    <span class="dday-pill dday-over">마감 지남</span>
-                                                </c:when>
-
-                                                <c:when test="${a.dday eq 0}">
-                                                    <span class="dday-pill dday-today">D-day</span>
-                                                </c:when>
-
-                                                <c:otherwise>
-                                                    <span class="dday-pill dday-soon">D-${a.dday}</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </span>
-                                    </div>
-
-                                    <div class="course-sub">
-                                        <span>${a.courseName}</span>
-                                        <span>
-                                            <c:set var="endStr" value="${fn:replace(a.endDate, 'T', ' ')}" />
-                                            ${fn:substring(endStr, 0, 16)}
-                                        </span>
-                                    </div>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </div>
-                </c:if>
+				<c:if test="${not empty homeAssignments}">
+				  <div class="home-card">
+				    <div class="home-card-header">
+				      <h3 class="home-card-title">진행 중인 과제</h3>
+				      <a href="${pageContext.request.contextPath}/stuAssignment" class="home-card-more">전체 과제 보기</a>
+				    </div>
+				
+				    <ul class="event-list task-list">
+				      <c:forEach var="a" items="${homeAssignments}">
+				        <li class="event-item task-item"
+				            onclick="location.href='${pageContext.request.contextPath}/stuAssignmentOne?assignmentId=${a.assignmentId}'"
+				            style="cursor:pointer;">
+				
+				          <div class="event-row">
+				            <span class="event-icon task-icon">&#x1F4CC;</span>
+				
+				            <div class="event-body">
+				              <div class="event-meta-row">
+				                <span class="task-meta">
+				                  <span class="task-course">${a.courseName}</span>
+				                </span>
+				
+				                <span class="task-pill">
+				                  <c:choose>
+				                    <c:when test="${a.dday lt 0}">
+				                      <span class="dday-pill dday-over">마감 지남</span>
+				                    </c:when>
+				                    <c:when test="${a.dday eq 0}">
+				                      <span class="dday-pill dday-today">D-day</span>
+				                    </c:when>
+				                    <c:otherwise>
+				                      <span class="dday-pill dday-soon">D-${a.dday}</span>
+				                    </c:otherwise>
+				                  </c:choose>
+				                </span>
+				              </div>
+				
+				              <div class="event-title task-title">
+				                ${a.assignmentName}
+				              </div>
+				
+				              <div class="event-context task-deadline">
+				                <c:set var="endStr" value="${fn:replace(a.endDate, 'T', ' ')}" />
+				                마감: ${fn:substring(endStr, 0, 16)}
+				              </div>
+				            </div>
+				          </div>
+				
+				        </li>
+				      </c:forEach>
+				    </ul>
+				  </div>
+				</c:if>
 
             </section>
 
@@ -234,32 +239,40 @@
 
                 <!-- 수강 중인 강의 카드 -->
                 <c:if test="${not empty enrolledCourses}">
-                    <div class="home-card">
-                        <div class="home-card-header">
-                            <h3 class="home-card-title">이번 학기 수강 과목</h3>
-
-                            <!-- 전체 강의 보기 링크 -->
-                            <a href="${pageContext.request.contextPath}/course/my"
-                               class="home-card-more">전체 과목 보기</a>
-                        </div>
-
-                        <ul class="course-list">
-                            <c:forEach var="course" items="${enrolledCourses}">
-                                <li class="course-item">
-                                    <div class="course-main">
-                                        <span class="course-name">${course.courseName}</span>
-                                        <span class="course-credit">${course.credit}학점</span>
-                                    </div>
-
-                                    <div class="course-sub">
-                                        <span>${course.courseYear}년 ${course.courseSemester}</span>
-                                        <span>${course.professorName}</span>
-                                    </div>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </div>
-                </c:if>
+				  <div class="home-card">
+				    <div class="home-card-header">
+				      <h3 class="home-card-title">이번 학기 수강 과목</h3>
+				      <a href="${pageContext.request.contextPath}/course/my" class="home-card-more">전체 과목 보기</a>
+				    </div>
+				
+				    <ul class="event-list course-pretty-list">
+				      <c:forEach var="course" items="${enrolledCourses}">
+				        <li class="event-item course-pretty-item">
+				          <div class="event-row">
+				            <span class="event-icon course-icon">&#x1F4DA;</span>
+				
+				            <div class="event-body">
+				              <div class="event-meta-row">
+				                <span class="course-meta">
+				                  ${course.courseYear}년 ${course.courseSemester}
+				                </span>
+				                <span class="course-credit-pill">${course.credit}학점</span>
+				              </div>
+				
+				              <div class="event-title course-title">
+				                ${course.courseName}
+				              </div>
+				
+				              <div class="event-context course-prof">
+				                담당: ${course.professorName}
+				              </div>
+				            </div>
+				          </div>
+				        </li>
+				      </c:forEach>
+				    </ul>
+				  </div>
+				</c:if>
 
             </section>
 
