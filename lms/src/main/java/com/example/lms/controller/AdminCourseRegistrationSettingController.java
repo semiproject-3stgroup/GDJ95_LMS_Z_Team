@@ -33,6 +33,8 @@ public class AdminCourseRegistrationSettingController {
     public String showSettingPage(@RequestParam(required = false) Integer year,
                                   @RequestParam(required = false) String semester,
                                   Model model) {
+    	
+    	model.addAttribute("menu", "adminCourseRegisterSetting");
 
         log.debug("[AdminCourseRegistrationSetting] GET year={}, semester={}", year, semester);
 

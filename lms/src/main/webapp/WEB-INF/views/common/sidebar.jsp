@@ -140,34 +140,35 @@
         <div class="sidebar-section">
             <div class="sidebar-title">관리</div>
             <ul class="sidebar-menu">
-                <li class="${menu eq 'adminEvent' ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/admin/events">
-                        <span class="sidebar-icon">📅</span>
-                        <span>학사일정 관리</span>
-                    </a>
-                </li>
-                <li class="${menu eq 'adminUser' ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/admin/user/list">
-                        <span class="sidebar-icon">👥</span>
-                        <span>사용자 관리</span>
-                    </a>
-                </li>
-                <li class="${menu eq 'adminNotice' ? 'active' : ''}">
-                    <!-- 공지 관리도 공지 컨트롤러 재사용 -->
-                    <a href="${pageContext.request.contextPath}/notice/list">
-                        <span class="sidebar-icon">📢</span>
-                        <span>공지 관리</span>
-                    </a>
-                </li>
-                <%-- 필요하면 여기 학과별 게시판 관리 메뉴도 추가 가능
-                <li class="${menu eq 'adminDeptBoard' ? 'active' : ''}">
-                    <a href="${pageContext.request.contextPath}/admin/dept/board">
-                        <span class="sidebar-icon">💬</span>
-                        <span>학과 게시판 관리</span>
-                    </a>
-                </li>
-                --%>
-            </ul>
+			  <li class="${menu eq 'adminEvent' ? 'active' : ''}">
+			    <a href="${pageContext.request.contextPath}/admin/events">
+			      <span class="sidebar-icon">📅</span>
+			      <span>학사일정 관리</span>
+			    </a>
+			  </li>
+			
+			  <!-- ✅ 여기 추가 -->
+			  <li class="${menu eq 'adminCourseRegisterSetting' ? 'active' : ''}">
+			    <a href="${pageContext.request.contextPath}/admin/course-register-setting">
+			      <span class="sidebar-icon">🗓️</span>
+			      <span>수강신청 설정</span>
+			    </a>
+			  </li>
+			
+			  <li class="${menu eq 'adminUser' ? 'active' : ''}">
+			    <a href="${pageContext.request.contextPath}/admin/user/list">
+			      <span class="sidebar-icon">👥</span>
+			      <span>사용자 관리</span>
+			    </a>
+			  </li>
+			
+			  <li class="${menu eq 'adminNotice' ? 'active' : ''}">
+			    <a href="${pageContext.request.contextPath}/notice/list">
+			      <span class="sidebar-icon">📢</span>
+			      <span>공지 관리</span>
+			    </a>
+			  </li>
+			</ul>
         </div>
 
         <!-- 관리자 마이페이지 (있다면) -->

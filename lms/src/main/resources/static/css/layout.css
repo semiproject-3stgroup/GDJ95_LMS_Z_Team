@@ -1767,4 +1767,19 @@ body.auth-page .auth-meta-sub{
   padding-top: 6px;
 }
 
+.admin-course-setting-page .page-title{
+  margin-bottom: 14px;
+}
+
+.admin-course-setting-page .section-title{
+  margin:0;
+  font-size:16px;
+  font-weight:950;
+  color:#111827;
+}
+
+.admin-course-setting-page .help-text{
+  font-size:13px;
+  color:#6b7280;
+}
 
